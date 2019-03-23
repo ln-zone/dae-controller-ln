@@ -47,6 +47,12 @@
 			<artifactId>lib-commands-ln</artifactId>
 			<version>0.1</version>
 		</dependency>
+		
+				<dependency>
+			<groupId>bittech</groupId>
+			<artifactId>lib-commands-lnzone</artifactId>
+			<version>0.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>bittech</groupId>
@@ -136,7 +142,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>bittech.dea.controller.ln.App</mainClass>
+							<mainClass>bittech.dae.controller.ln.App</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

@@ -1,4 +1,4 @@
-package bittech.dea.controller.ln.lnd;
+package bittech.dae.controller.ln.lnd;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;

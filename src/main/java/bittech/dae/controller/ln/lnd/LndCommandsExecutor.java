@@ -1,4 +1,4 @@
-package bittech.dea.controller.ln.lnd;
+package bittech.dae.controller.ln.lnd;
 
 import java.util.ArrayList;
 import java.util.List;

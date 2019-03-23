@@ -1,4 +1,4 @@
-package bittech.dea.controller.ln.listeners;
+package bittech.dae.controller.ln.listeners;
 
 import bittech.lib.commands.ln.channels.ChannelChangedRequest;
 

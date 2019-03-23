@@ -1,6 +1,6 @@
-package bittech.dea.controller.ln.listeners;
+package bittech.dae.controller.ln.listeners;
 
-import bittech.dea.controller.ln.lnd.LndCommandsExecutor;
+import bittech.dae.controller.ln.lnd.LndCommandsExecutor;
 import bittech.lib.commands.ln.channels.CloseChannelCommand;
 import bittech.lib.commands.ln.channels.ListChannelsCommand;
 import bittech.lib.commands.ln.channels.ListChannelsResponse;

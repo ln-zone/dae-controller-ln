@@ -1,4 +1,4 @@
-package bittech.dea.controller.ln.lnd;
+package bittech.dae.controller.ln.lnd;
 
 public class LndModuleConfig {
 	String moduleName;

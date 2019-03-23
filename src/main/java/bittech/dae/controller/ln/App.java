@@ -1,6 +1,6 @@
-package bittech.dea.controller.ln;
+package bittech.dae.controller.ln;
 
-import bittech.dea.controller.ln.lnd.LndModule;
+import bittech.dae.controller.ln.lnd.LndModule;
 
 public class App {
 
