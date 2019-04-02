@@ -1,6 +1,7 @@
 package bittech.dae.controller.ln.listeners;
 
 import bittech.dae.controller.ln.lnd.LndCommandsExecutor;
+import bittech.lib.commands.ln.onchain.FundsReceivedCommand;
 import bittech.lib.commands.ln.onchain.ListChainTxnsCommand;
 import bittech.lib.commands.ln.onchain.ListUnspentCommand;
 import bittech.lib.commands.ln.onchain.NewAddressCommand;
@@ -13,7 +14,9 @@ import bittech.lib.manager.commands.GetNodeDetailsResponse;
 import bittech.lib.protocol.Command;
 import bittech.lib.protocol.Listener;
 import bittech.lib.protocol.Node;
+import bittech.lib.protocol.common.NoDataResponse;
 import bittech.lib.protocol.helpers.CommandBroadcaster;
+import bittech.lib.utils.Btc;
 import bittech.lib.utils.Notificator;
 import bittech.lib.utils.Require;
 import bittech.lib.utils.Utils;
@@ -25,23 +28,27 @@ import lnrpc.LightningGrpc;
 import lnrpc.Rpc;
 import lnrpc.Rpc.Transaction;
 
-public class OnChainListener implements Listener, ManagerDataProvider, AutoCloseable {
+public class OnChainListener implements Listener, ManagerDataProvider, OnChainFundsReceivedEvent, AutoCloseable {
 
 	private final Notificator<OnChainChangedEvent> onchainAmountsChangedNotifier = new Notificator<OnChainChangedEvent>();
-	private final CommandBroadcaster commandBroadcaster;
+	private final Notificator<OnChainFundsReceivedEvent> onchainTransactionReceivedNotifier = new Notificator<OnChainFundsReceivedEvent>();
+	private final CommandBroadcaster onchainTransactionReceivedBroadcaster;
 
 	private final ManagedChannel channel;
 	private final LndCommandsExecutor executor;
 
 	private WalletBalanceResponse lastResponse = null;
-	
+
 //	private Map<String, Btc> addrAmounts = new HashMap<String, Btc>();
 
 	public OnChainListener(Node node, ManagedChannel channel, LndCommandsExecutor executor) {
-		this.commandBroadcaster = new CommandBroadcaster(node, "onchain_funds_recv_subsribed.json");
+//		this.onchainAmountsChangedBroadcaster = new CommandBroadcaster(node, "onchainAmountsChangedBroadcaster.json");
+		this.onchainTransactionReceivedBroadcaster = new CommandBroadcaster(node,
+				"onchainTransactionReceivedBroadcaster.json");
 		this.channel = Require.notNull(channel, "channel");
 		this.executor = Require.notNull(executor, "executor");
 		subcribeTransactions();
+		onchainTransactionReceivedNotifier.register(this);
 	}
 
 	public void start() {
@@ -49,7 +56,7 @@ public class OnChainListener implements Listener, ManagerDataProvider, AutoClose
 	}
 
 	private void subcribeTransactions() {
-		
+
 		LightningGrpc.LightningStub blockingStub = LightningGrpc.newStub(channel);
 
 		Rpc.GetTransactionsRequest request = Rpc.GetTransactionsRequest.newBuilder().build();
@@ -59,8 +66,8 @@ public class OnChainListener implements Listener, ManagerDataProvider, AutoClose
 			public void onNext(Transaction tx) {
 				try {
 					Log.build().param("transaction", tx).event("New transaction returned");
-					
-					
+					onchainTransactionReceivedNotifier.notifyThem((m) -> m.onchainFundsReceived("addr", new Btc()));
+
 				} catch (Exception ex) {
 					new StoredException("Grab wallet balance failed", ex);
 				}
@@ -78,8 +85,8 @@ public class OnChainListener implements Listener, ManagerDataProvider, AutoClose
 
 		});
 
-}
-	
+	}
+
 //	private void extaractAmountPerAddr(Transaction tx) {
 //		ListUnspentCommand listUnspentCmd = new ListUnspentCommand();
 //		executor.execute(listUnspentCmd);
@@ -101,7 +108,7 @@ public class OnChainListener implements Listener, ManagerDataProvider, AutoClose
 //		for(String addr : tx.getDestAddressesList()) {
 //			Btc oldValue = addrAmounts.get(addr);
 //			Btc newValue = newAddrAmounts.get(addr);
-			
+
 //			if(newValue.equals(oldValue))
 //			
 //			
@@ -110,7 +117,7 @@ public class OnChainListener implements Listener, ManagerDataProvider, AutoClose
 //		}
 //	}
 //		
-	
+
 //	
 //	public void start() {
 //		th.start();
@@ -149,7 +156,9 @@ public class OnChainListener implements Listener, ManagerDataProvider, AutoClose
 			grabWalletBalance();
 			cmd.response = lastResponse;
 		} else if (command instanceof RegisterFundsReceivedCommand) {
-			commandBroadcaster.addService(fromServiceName);
+			RegisterFundsReceivedCommand cmd = (RegisterFundsReceivedCommand) command;
+			onchainTransactionReceivedBroadcaster.addService(fromServiceName);
+			cmd.response = new NoDataResponse();
 		} else {
 			executor.execute(command);
 		}
@@ -176,6 +185,12 @@ public class OnChainListener implements Listener, ManagerDataProvider, AutoClose
 			details.summary.put("onchain_uconf", "pending...");
 			details.summary.put("onchain_total", "pending...");
 		}
+	}
+
+	@Override
+	public void onchainFundsReceived(String addr, Btc amount) {
+		FundsReceivedCommand cmd = new FundsReceivedCommand(addr, amount);
+		onchainTransactionReceivedBroadcaster.broadcast(cmd);
 	}
 
 }
