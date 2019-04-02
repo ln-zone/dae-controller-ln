@@ -10,27 +10,30 @@ import bittech.lib.commands.ln.GetInfoResponse;
 import bittech.lib.commands.ln.channels.CloseChannelCommand;
 import bittech.lib.commands.ln.channels.ListChannelsCommand;
 import bittech.lib.commands.ln.channels.ListChannelsResponse;
+import bittech.lib.commands.ln.channels.ListChannelsResponse.ActiveChannel;
 import bittech.lib.commands.ln.channels.ListPendingChannelsCommand;
 import bittech.lib.commands.ln.channels.ListPendingChannelsResponse;
-import bittech.lib.commands.ln.channels.OpenChannelCommand;
-import bittech.lib.commands.ln.channels.OpenChannelResponse;
-import bittech.lib.commands.ln.channels.ListChannelsResponse.ActiveChannel;
 import bittech.lib.commands.ln.channels.ListPendingChannelsResponse.ClosedChannel;
 import bittech.lib.commands.ln.channels.ListPendingChannelsResponse.ForceClosedChannel;
 import bittech.lib.commands.ln.channels.ListPendingChannelsResponse.PendingHTLC;
 import bittech.lib.commands.ln.channels.ListPendingChannelsResponse.PendingOpenChannel;
 import bittech.lib.commands.ln.channels.ListPendingChannelsResponse.WaitingCloseChannel;
+import bittech.lib.commands.ln.channels.OpenChannelCommand;
+import bittech.lib.commands.ln.channels.OpenChannelResponse;
 import bittech.lib.commands.ln.invoices.AddInvoiceCommand;
 import bittech.lib.commands.ln.invoices.AddInvoiceResponse;
 import bittech.lib.commands.ln.invoices.DecodeInvoiceCommand;
 import bittech.lib.commands.ln.invoices.DecodeInvoiceResponse;
-import bittech.lib.commands.ln.invoices.PayInvoiceCommand;
-import bittech.lib.commands.ln.invoices.PayInvoiceResponse;
 import bittech.lib.commands.ln.invoices.DecodeInvoiceResponse.HopHint;
 import bittech.lib.commands.ln.invoices.DecodeInvoiceResponse.RouteHint;
+import bittech.lib.commands.ln.invoices.PayInvoiceCommand;
+import bittech.lib.commands.ln.invoices.PayInvoiceResponse;
 import bittech.lib.commands.ln.invoices.PayInvoiceResponse.Hop;
 import bittech.lib.commands.ln.onchain.ListChainTxnsCommand;
 import bittech.lib.commands.ln.onchain.ListChainTxnsResponse;
+import bittech.lib.commands.ln.onchain.ListUnspentCommand;
+import bittech.lib.commands.ln.onchain.ListUnspentResponse;
+import bittech.lib.commands.ln.onchain.ListUnspentResponse.Utxo;
 import bittech.lib.commands.ln.onchain.NewAddressCommand;
 import bittech.lib.commands.ln.onchain.NewAddressResponse;
 import bittech.lib.commands.ln.onchain.SendOnChainCommand;
@@ -201,6 +204,27 @@ public class LndCommandsExecutor {
 				cmd.response = new SendOnChainResponse();
 				cmd.response.txId = response.getTxid();
 
+			} else if (command instanceof ListUnspentCommand) {
+
+				ListUnspentCommand cmd = (ListUnspentCommand) command;
+				Rpc.ListUnspentRequest.Builder builder = Rpc.ListUnspentRequest.newBuilder();
+
+				Rpc.ListUnspentResponse response = blockingStub.listUnspent(builder.build());
+
+				cmd.response = new ListUnspentResponse();
+				
+				cmd.response.list = new ArrayList<Utxo>(response.getUtxosCount());
+				
+				for(Rpc.Utxo rpcUtxo : response.getUtxosList()) {
+					Utxo utxo = new Utxo();
+					utxo.address = rpcUtxo.getAddress();
+					utxo.amount = Btc.fromSat(rpcUtxo.getAmountSat());
+					utxo.confirmations = rpcUtxo.getConfirmations();
+					utxo.scriptPubkey = rpcUtxo.getScriptPubkey();
+					utxo.type = rpcUtxo.getType().toString();
+					cmd.response.list.add(utxo);
+				}			
+				
 			} else if (command instanceof ListChannelsCommand) {
 
 				ListChannelsCommand cmd = (ListChannelsCommand) command;

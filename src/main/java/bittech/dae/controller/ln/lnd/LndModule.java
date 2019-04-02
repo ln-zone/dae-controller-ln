@@ -36,7 +36,7 @@ public class LndModule implements AutoCloseable {
 
 		mixListener = new MixListener();
 		infoListener = new InfoListener(executor);
-		onChainListener = new OnChainListener(lndRpc.getChannel(), executor);
+		onChainListener = new OnChainListener(node, lndRpc.getChannel(), executor);
 		peersListener = new PeersListener(executor);
 		channelsListener = new ChannelsListener(lndRpc.getChannel(), executor);
 		invoicesListener = new InvoicesListener(node, lndRpc.getChannel());

@@ -37,13 +37,13 @@ public class ChannelsListener implements Listener, ManagerDataProvider, AutoClos
 		this.executor = Require.notNull(executor, "executor");
 		subcribeChannels();
 	}
-	
+
 	public void start() {
 		grabChannelsData();
 	}
-	
+
 	private void subcribeChannels() {
-		
+
 		LightningGrpc.LightningStub blockingStub = LightningGrpc.newStub(channel);
 
 		Rpc.GraphTopologySubscription request = Rpc.GraphTopologySubscription.newBuilder().build();
@@ -70,7 +70,7 @@ public class ChannelsListener implements Listener, ManagerDataProvider, AutoClos
 
 		});
 
-}
+	}
 
 	public void registerObserver(ChannelChangedEvent observer) {
 		changeNotifier.register(observer);
@@ -88,7 +88,8 @@ public class ChannelsListener implements Listener, ManagerDataProvider, AutoClos
 
 	@Override
 	public Class<?>[] getListeningCommands() {
-		return new Class<?>[] {OpenChannelCommand.class, CloseChannelCommand.class, ListChannelsCommand.class, ListPendingChannelsCommand.class};
+		return new Class<?>[] { OpenChannelCommand.class, CloseChannelCommand.class, ListChannelsCommand.class,
+				ListPendingChannelsCommand.class };
 	}
 
 	@Override
@@ -104,7 +105,7 @@ public class ChannelsListener implements Listener, ManagerDataProvider, AutoClos
 //			grabWalletBalance();
 //			cmd.response = lastResponse;
 //		} else {
-			executor.execute(command);
+		executor.execute(command);
 //		}
 	}
 
@@ -120,13 +121,13 @@ public class ChannelsListener implements Listener, ManagerDataProvider, AutoClos
 
 	@Override
 	public void addCustomData(GetNodeDetailsResponse details) {
-		if(lastResponse != null) {
+		if (lastResponse != null) {
 			details.summary.put("channels", "" + lastResponse.channels.size());
-			
+
 			Btc inChannels = new Btc("0");
 			Btc toSpend = new Btc("0");
 			Btc toReceive = new Btc("0");
-			for(ActiveChannel channel : lastResponse.channels) {
+			for (ActiveChannel channel : lastResponse.channels) {
 				inChannels = inChannels.add(channel.capacity);
 				toSpend = toSpend.add(channel.local_balance);
 				toReceive = toReceive.add(channel.remote_balance);
@@ -134,14 +135,14 @@ public class ChannelsListener implements Listener, ManagerDataProvider, AutoClos
 			details.summary.put("in_channels__", inChannels.toString());
 			details.summary.put("to_spend_____", toSpend.toString());
 			details.summary.put("to_receive___", toReceive.toString());
-			
+
 			details.details.put("channels", lastResponse.channels);
 		} else {
 			details.summary.put("channels", "pending...");
 			details.summary.put("in_channels__", "pending...");
 			details.summary.put("to_spend_____", "pending...");
 			details.summary.put("to_receive___", "pending...");
-			
+
 			details.details.put("channels", "pending...");
 		}
 	}
