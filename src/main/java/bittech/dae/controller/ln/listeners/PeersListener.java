@@ -5,9 +5,9 @@ import java.util.List;
 
 import bittech.dae.controller.ln.lnd.LndCommandsExecutor;
 import bittech.lib.commands.ln.channels.ListChannelsCommand;
-import bittech.lib.commands.ln.channels.ListPendingChannelsCommand;
 import bittech.lib.commands.ln.channels.ListChannelsResponse.ActiveChannel;
 import bittech.lib.commands.ln.channels.ListChannelsResponse.Channel;
+import bittech.lib.commands.ln.channels.ListPendingChannelsCommand;
 import bittech.lib.commands.ln.channels.ListPendingChannelsResponse.ClosedChannel;
 import bittech.lib.commands.ln.channels.ListPendingChannelsResponse.ForceClosedChannel;
 import bittech.lib.commands.ln.channels.ListPendingChannelsResponse.PendingOpenChannel;

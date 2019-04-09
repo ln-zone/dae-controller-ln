@@ -1,6 +1,8 @@
 package bittech.dae.controller.ln;
 
 import bittech.dae.controller.ln.lnd.LndModule;
+import bittech.lib.utils.Config;
+import btcduke.dea.node.controller.zone.ZoneModule;
 
 public class App {
 
@@ -31,6 +33,12 @@ public class App {
 //		try (ControllerModule controllerModule = new ControllerModule(myName, rpcFilePath, controllerPort)) {
 //			LOGGER.info(myName + " started on port " + controllerPort);
 
+			ZoneModule.initIfEnabled(lndModule.getConfig().listeningPort);
+			
+//			if() {
+//				
+//			}
+//			
 //			Boolean zoneModuleEnabled = Config.getInstance().getEntry("zoneModule", Boolean.class, false);
 //			if (zoneModuleEnabled != null && zoneModuleEnabled.booleanValue() == true) {
 //				new ZoneModule(myName + "_zone", zonePort, controllerPort);

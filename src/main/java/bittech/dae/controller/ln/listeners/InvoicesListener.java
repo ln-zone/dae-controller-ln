@@ -1,6 +1,8 @@
 package bittech.dae.controller.ln.listeners;
 
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 import bittech.dae.controller.ln.lnd.LndCommandsExecutor;
 import bittech.lib.commands.ln.invoices.AddInvoiceCommand;
@@ -30,16 +32,19 @@ public class InvoicesListener implements Listener {
 
 	private final CommandBroadcaster commandPaymentRecaivedBroadcaster;
 
+	private final Map<Long, String> invoicesLabels = new HashMap<Long, String>();
+
 	public InvoicesListener(Node node, ManagedChannel channel) {
-		this.commandPaymentRecaivedBroadcaster = new CommandBroadcaster(Require.notNull(node, "node"), "paymentsRegisteredServices.json");
+		this.commandPaymentRecaivedBroadcaster = new CommandBroadcaster(Require.notNull(node, "node"),
+				"paymentsRegisteredServices.json");
 		this.channel = Require.notNull(channel, "channel");
 		this.executor = new LndCommandsExecutor(channel);
-		
+
 		subscribeInvoice();
 	}
 
 	private void subscribeInvoice() {
-		
+
 		LightningGrpc.LightningStub blockingStub = LightningGrpc.newStub(channel);
 
 		Rpc.InvoiceSubscription request = Rpc.InvoiceSubscription.newBuilder().build();
@@ -47,12 +52,13 @@ public class InvoicesListener implements Listener {
 
 			@Override
 			public void onNext(Invoice invoice) {
-				
-				if(invoice.getSettleIndex() == 0) {
+
+				if (invoice.getSettleIndex() == 0) {
 					return; // Not paid. Probably added invoice.
 				}
 
 				PaymentReceivedRequest req = new PaymentReceivedRequest();
+				req.label = invoicesLabels.get(invoice.getAddIndex());
 				req.index = invoice.getAddIndex();
 				req.amount = Btc.fromSat(invoice.getValue());
 				req.amount_received = Btc.fromMsat(invoice.getAmtPaidMsat());
@@ -61,7 +67,7 @@ public class InvoicesListener implements Listener {
 				req.status = "paid";
 
 				PaymentReceivedCommand paymentReceivedCommand = new PaymentReceivedCommand(req);
-				
+
 				commandPaymentRecaivedBroadcaster.broadcast(paymentReceivedCommand);
 			}
 
@@ -81,7 +87,8 @@ public class InvoicesListener implements Listener {
 
 	@Override
 	public Class<?>[] getListeningCommands() {
-		return new Class<?>[] {RegisterPaymentsListenerCommand.class, AddInvoiceCommand.class, DecodeInvoiceCommand.class, PayInvoiceCommand.class};
+		return new Class<?>[] { RegisterPaymentsListenerCommand.class, AddInvoiceCommand.class,
+				DecodeInvoiceCommand.class, PayInvoiceCommand.class };
 	}
 
 	@Override
@@ -91,10 +98,19 @@ public class InvoicesListener implements Listener {
 
 	@Override
 	public void commandReceived(String fromServiceName, Command<?, ?> command) throws StoredException {
-		if(command instanceof RegisterPaymentsListenerCommand) {
-			RegisterPaymentsListenerCommand cmd = (RegisterPaymentsListenerCommand)command;
+		if (command instanceof RegisterPaymentsListenerCommand) {
+			RegisterPaymentsListenerCommand cmd = (RegisterPaymentsListenerCommand) command;
 			commandPaymentRecaivedBroadcaster.addService(fromServiceName);
 			cmd.response = new NoDataResponse();
+
+		} else if (command instanceof AddInvoiceCommand) {
+			AddInvoiceCommand cmd = (AddInvoiceCommand) command;
+			String label = cmd.getRequest().label;
+			executor.execute(cmd);
+			if(cmd.getError() != null) {
+				invoicesLabels.put(cmd.getResponse().add_index, label);
+			}
+
 		} else {
 			executor.execute(command);
 		}

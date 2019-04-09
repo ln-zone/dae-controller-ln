@@ -67,6 +67,10 @@ public class LndModule implements AutoCloseable {
 	public void execute(Command<?, ?> command) {
 		executor.execute(command);
 	}
+	
+	public LndModuleConfig getConfig() {
+		return config;
+	}
 
 
 	
