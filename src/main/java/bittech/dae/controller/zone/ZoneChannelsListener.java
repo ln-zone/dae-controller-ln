@@ -1,8 +1,8 @@
 package bittech.dae.controller.zone;
 
 import bittech.dae.controller.zone.channels.ZoneChannels;
-import bittech.lib.commands.lnzone.commans.ListZoneChannelsCommand;
-import bittech.lib.commands.lnzone.commans.ListZoneChannelsResponse;
+import bittech.lib.commands.lnzone.internal.ListZoneChannelsCommand;
+import bittech.lib.commands.lnzone.internal.ListZoneChannelsResponse;
 import bittech.lib.protocol.Command;
 import bittech.lib.protocol.Listener;
 import bittech.lib.utils.Require;

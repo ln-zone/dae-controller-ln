@@ -7,10 +7,10 @@ import java.net.SocketException;
 import java.util.Enumeration;
 
 import bittech.dae.controller.zone.channels.ZoneChannels;
-import bittech.lib.commands.lnzone.commans.GetOfferCommand;
-import bittech.lib.commands.lnzone.commans.GetOfferResponse;
 import bittech.lib.commands.lnzone.commans.Offer;
-import bittech.lib.commands.lnzone.commans.SetOfferCommand;
+import bittech.lib.commands.lnzone.internal.GetOfferCommand;
+import bittech.lib.commands.lnzone.internal.GetOfferResponse;
+import bittech.lib.commands.lnzone.internal.SetOfferCommand;
 import bittech.lib.protocol.Command;
 import bittech.lib.protocol.Connection;
 import bittech.lib.protocol.ErrorResponse;
