@@ -40,7 +40,7 @@ public class ClientZoneListener implements Listener {
 
 	@Override
 	public Class<?>[] getListeningCommands() {
-		return new Class<?>[] { GetOfferCommand.class, OpenZoneChannelCommand.class };
+		return new Class<?>[] { /*GetOfferCommand.class,*/ /*OpenZoneChannelCommand.class*/ };
 	}
 
 	@Override

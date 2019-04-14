@@ -1,16 +1,22 @@
 package bittech.dae.controller.ln.listeners;
 
 import bittech.dae.controller.ln.lnd.LndCommandsExecutor;
+import bittech.lib.commands.ln.channels.ChannelChangedCommand;
+import bittech.lib.commands.ln.channels.ChannelChangedRequest;
 import bittech.lib.commands.ln.channels.CloseChannelCommand;
 import bittech.lib.commands.ln.channels.ListChannelsCommand;
 import bittech.lib.commands.ln.channels.ListChannelsResponse;
 import bittech.lib.commands.ln.channels.ListPendingChannelsCommand;
 import bittech.lib.commands.ln.channels.OpenChannelCommand;
+import bittech.lib.commands.ln.channels.RegisterChannelsListenerCommand;
 import bittech.lib.commands.ln.channels.ListChannelsResponse.ActiveChannel;
 import bittech.lib.manager.ManagerDataProvider;
 import bittech.lib.manager.commands.GetNodeDetailsResponse;
 import bittech.lib.protocol.Command;
 import bittech.lib.protocol.Listener;
+import bittech.lib.protocol.Node;
+import bittech.lib.protocol.common.NoDataResponse;
+import bittech.lib.protocol.helpers.CommandBroadcaster;
 import bittech.lib.utils.Btc;
 import bittech.lib.utils.Notificator;
 import bittech.lib.utils.Require;
@@ -23,18 +29,21 @@ import lnrpc.LightningGrpc;
 import lnrpc.Rpc;
 import lnrpc.Rpc.GraphTopologyUpdate;
 
-public class ChannelsListener implements Listener, ManagerDataProvider, AutoCloseable {
+public class ChannelsListener implements Listener, ManagerDataProvider, AutoCloseable, ChannelChangedEvent {
 
 	private final Notificator<ChannelChangedEvent> changeNotifier = new Notificator<ChannelChangedEvent>();
+	private final CommandBroadcaster channelChangedBroadcaster;
 
 	private final ManagedChannel channel;
 	private final LndCommandsExecutor executor;
 
 	private ListChannelsResponse lastResponse = null;
 
-	public ChannelsListener(ManagedChannel channel, LndCommandsExecutor executor) {
+	public ChannelsListener(Node node, ManagedChannel channel, LndCommandsExecutor executor) {
 		this.channel = Require.notNull(channel, "channel");
 		this.executor = Require.notNull(executor, "executor");
+		this.channelChangedBroadcaster = new CommandBroadcaster(node, "channelChangedBroadcaster.json");
+		changeNotifier.register(this);
 		subcribeChannels();
 	}
 
@@ -82,14 +91,14 @@ public class ChannelsListener implements Listener, ManagerDataProvider, AutoClos
 		if ((lastResponse == null) || Utils.deepEquals(lastResponse, cmd.getResponse()) == false) {
 			lastResponse = cmd.getResponse();
 			Log.build().event("Some channels changed");
-			changeNotifier.notifyThem((m) -> m.onChange(null));
+			changeNotifier.notifyThem((m) -> m.onChange(null)); //TODO: Build channel change
 		}
 	}
 
 	@Override
 	public Class<?>[] getListeningCommands() {
 		return new Class<?>[] { OpenChannelCommand.class, CloseChannelCommand.class, ListChannelsCommand.class,
-				ListPendingChannelsCommand.class };
+				ListPendingChannelsCommand.class, RegisterChannelsListenerCommand.class };
 	}
 
 	@Override
@@ -100,13 +109,13 @@ public class ChannelsListener implements Listener, ManagerDataProvider, AutoClos
 
 	@Override
 	public void commandReceived(String fromServiceName, Command<?, ?> command) throws StoredException {
-//		if (command instanceof WalletBalanceCommand) {
-//			WalletBalanceCommand cmd = (WalletBalanceCommand) command;
-//			grabWalletBalance();
-//			cmd.response = lastResponse;
-//		} else {
-		executor.execute(command);
-//		}
+		if (command instanceof RegisterChannelsListenerCommand) {
+			RegisterChannelsListenerCommand cmd = (RegisterChannelsListenerCommand) command;
+			channelChangedBroadcaster.addService(fromServiceName);
+			cmd.response = new NoDataResponse();
+		} else {
+			executor.execute(command);
+		}
 	}
 
 	@Override
@@ -145,6 +154,12 @@ public class ChannelsListener implements Listener, ManagerDataProvider, AutoClos
 
 			details.details.put("channels", "pending...");
 		}
+	}
+
+	@Override
+	public void onChange(ChannelChangedRequest channelChanged) {
+//		ChannelChangedCommand cmd = new ChannelChangedCommand(channelChanged);
+//		channelChangedBroadcaster.broadcast(cmd); //TODO: Broadcast
 	}
 
 }

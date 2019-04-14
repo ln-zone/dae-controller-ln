@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import bittech.lib.commands.lnzone.EstablishedChannel;
 import bittech.lib.commands.lnzone.commans.Offer;
 import bittech.lib.commands.lnzone.commans.OpenZoneChannelRequest;
+import bittech.lib.commans.general.PingCommand;
 import bittech.lib.manager.ManagerDataProvider;
 import bittech.lib.manager.ManagerModule;
 import bittech.lib.manager.commands.GetNodeDetailsResponse;
@@ -17,6 +18,7 @@ import bittech.lib.protocol.Node;
 import bittech.lib.utils.Config;
 import bittech.lib.utils.Require;
 import bittech.lib.utils.exceptions.StoredException;
+import bittech.lib.utils.json.JsonBuilder;
 import bittech.lib.utils.logs.Log;
 import btcduke.dea.node.controller.zone.channels.ChannelsListener;
 import btcduke.dea.node.controller.zone.channels.ClientZoneListener;
@@ -62,6 +64,7 @@ public class ZoneModule implements ManagerDataProvider, AutoCloseable {
 		if(conf.enabled == false) {
 			return null;
 		}
+		System.out.println("-------------- Starting zone module");
 		return new ZoneModule(conf.name, conf.listeningPort, controllerPort);
 	}
 		
@@ -74,9 +77,18 @@ public class ZoneModule implements ManagerDataProvider, AutoCloseable {
 	private void init(String myName, int controllerPort) {
 		try {
 			node = new Node(myName, getListeningPort());
-			this.controllerConnection = new Connection(node, "controller-abc");
-			node.connect("controller-abc", "localhost", controllerPort);
 
+			this.controllerConnection = node.connect("controller-abc", "localhost", controllerPort);
+			
+//			Thread.sleep(100); //TODO: Because of issue related with Introduce
+			
+			System.out.println("Zone connected to node on localhost to port " +  controllerPort);
+			System.out.println("Pinging ");
+			PingCommand pingCmd = new PingCommand("Ping");
+			this.controllerConnection.execute(pingCmd);
+			System.out.println(JsonBuilder.build().toJson(pingCmd));
+			System.out.println("Ping successfull");	
+			
 			this.zoneChannels = new ZoneChannels();
 			this.allChannels = new CompoundChannels();
 			this.zoneChannels.addChangeObserver(this.allChannels);

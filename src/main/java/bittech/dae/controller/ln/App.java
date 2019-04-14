@@ -29,10 +29,13 @@ public class App {
 		
 		try(LndModule lndModule = new LndModule("lnd")) {
 			
+			System.out.println("--------- LND module created");
 
+//			Thread.sleep(1000); //TODO: Remove this shit
+			
 //		try (ControllerModule controllerModule = new ControllerModule(myName, rpcFilePath, controllerPort)) {
 //			LOGGER.info(myName + " started on port " + controllerPort);
-
+			
 			ZoneModule.initIfEnabled(lndModule.getConfig().listeningPort);
 			
 //			if() {
