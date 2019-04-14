@@ -1,4 +1,4 @@
-package btcduke.dea.node.controller.zone;
+package bittech.dae.controller.zone;
 
 public class ZoneConfig {
 	

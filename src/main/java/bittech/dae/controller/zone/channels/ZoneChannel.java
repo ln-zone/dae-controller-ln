@@ -1,4 +1,4 @@
-package btcduke.dea.node.controller.zone.channels;
+package bittech.dae.controller.zone.channels;
 
 import org.apache.commons.codec.digest.DigestUtils;
 

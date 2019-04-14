@@ -1,8 +1,11 @@
-package btcduke.dea.node.controller.zone;
+package bittech.dae.controller.zone;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import bittech.dae.controller.zone.channels.ClientZoneListener;
+import bittech.dae.controller.zone.channels.ZoneChannel;
+import bittech.dae.controller.zone.channels.ZoneChannels;
 import bittech.lib.commands.ln.invoices.AddInvoiceCommand;
 import bittech.lib.commands.ln.invoices.PayInvoiceCommand;
 import bittech.lib.commands.ln.invoices.PaymentReceivedRequest;
@@ -19,9 +22,6 @@ import bittech.lib.utils.Require;
 import bittech.lib.utils.Utils;
 import bittech.lib.utils.exceptions.StoredException;
 import bittech.lib.utils.logs.Log;
-import btcduke.dea.node.controller.zone.channels.ClientZoneListener;
-import btcduke.dea.node.controller.zone.channels.ZoneChannel;
-import btcduke.dea.node.controller.zone.channels.ZoneChannels;
 
 public class FeeListener implements Listener, PaymentReceivedObserver {
 

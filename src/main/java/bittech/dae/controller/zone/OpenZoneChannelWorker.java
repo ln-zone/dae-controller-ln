@@ -1,5 +1,8 @@
-package btcduke.dea.node.controller.zone;
+package bittech.dae.controller.zone;
 
+import bittech.dae.controller.zone.channels.StandardChannelChangeObserver;
+import bittech.dae.controller.zone.channels.ZoneChannel;
+import bittech.dae.controller.zone.channels.ZoneChannels;
 import bittech.lib.commands.ln.channels.ChannelChangedRequest;
 import bittech.lib.commands.ln.channels.OpenChannelCommand;
 import bittech.lib.commands.ln.channels.OpenChannelResponse;
@@ -18,9 +21,6 @@ import bittech.lib.utils.Require;
 import bittech.lib.utils.Utils;
 import bittech.lib.utils.exceptions.StoredException;
 import bittech.lib.utils.logs.Log;
-import btcduke.dea.node.controller.zone.channels.StandardChannelChangeObserver;
-import btcduke.dea.node.controller.zone.channels.ZoneChannel;
-import btcduke.dea.node.controller.zone.channels.ZoneChannels;
 
 public class OpenZoneChannelWorker implements StandardChannelChangeObserver, PaymentReceivedObserver {
 

@@ -1,12 +1,12 @@
-package btcduke.dea.node.controller.zone;
+package bittech.dae.controller.zone;
 
+import bittech.dae.controller.zone.channels.ZoneChannels;
 import bittech.lib.commands.lnzone.commans.ListZoneChannelsCommand;
 import bittech.lib.commands.lnzone.commans.ListZoneChannelsResponse;
 import bittech.lib.protocol.Command;
 import bittech.lib.protocol.Listener;
 import bittech.lib.utils.Require;
 import bittech.lib.utils.exceptions.StoredException;
-import btcduke.dea.node.controller.zone.channels.ZoneChannels;
 
 public class ZoneChannelsListener implements Listener {
 

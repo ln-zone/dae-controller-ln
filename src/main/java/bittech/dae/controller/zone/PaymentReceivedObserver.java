@@ -1,4 +1,4 @@
-package btcduke.dea.node.controller.zone;
+package bittech.dae.controller.zone;
 
 import bittech.lib.commands.ln.invoices.PaymentReceivedRequest;
 

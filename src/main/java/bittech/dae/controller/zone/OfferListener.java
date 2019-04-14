@@ -1,4 +1,4 @@
-package btcduke.dea.node.controller.zone;
+package bittech.dae.controller.zone;
 
 import java.math.BigDecimal;
 import java.net.InetAddress;
@@ -6,6 +6,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 
+import bittech.dae.controller.zone.channels.ZoneChannels;
 import bittech.lib.commands.lnzone.commans.GetOfferCommand;
 import bittech.lib.commands.lnzone.commans.GetOfferResponse;
 import bittech.lib.commands.lnzone.commans.Offer;
@@ -18,7 +19,6 @@ import bittech.lib.protocol.common.NoDataResponse;
 import bittech.lib.utils.Btc;
 import bittech.lib.utils.Require;
 import bittech.lib.utils.exceptions.StoredException;
-import btcduke.dea.node.controller.zone.channels.ZoneChannels;
 
 public class OfferListener implements Listener {
 

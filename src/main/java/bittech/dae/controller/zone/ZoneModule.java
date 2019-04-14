@@ -1,10 +1,17 @@
-package btcduke.dea.node.controller.zone;
+package bittech.dae.controller.zone;
 
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import bittech.dae.controller.zone.channels.ChannelsListener;
+import bittech.dae.controller.zone.channels.ClientZoneListener;
+import bittech.dae.controller.zone.channels.CompoundChannels;
+import bittech.dae.controller.zone.channels.CompoundChannelsListener;
+import bittech.dae.controller.zone.channels.StandardChannelChangedListener;
+import bittech.dae.controller.zone.channels.ZoneChannel;
+import bittech.dae.controller.zone.channels.ZoneChannels;
 import bittech.lib.commands.lnzone.EstablishedChannel;
 import bittech.lib.commands.lnzone.commans.Offer;
 import bittech.lib.commands.lnzone.commans.OpenZoneChannelRequest;
@@ -20,13 +27,6 @@ import bittech.lib.utils.Require;
 import bittech.lib.utils.exceptions.StoredException;
 import bittech.lib.utils.json.JsonBuilder;
 import bittech.lib.utils.logs.Log;
-import btcduke.dea.node.controller.zone.channels.ChannelsListener;
-import btcduke.dea.node.controller.zone.channels.ClientZoneListener;
-import btcduke.dea.node.controller.zone.channels.CompoundChannels;
-import btcduke.dea.node.controller.zone.channels.CompoundChannelsListener;
-import btcduke.dea.node.controller.zone.channels.StandardChannelChangedListener;
-import btcduke.dea.node.controller.zone.channels.ZoneChannel;
-import btcduke.dea.node.controller.zone.channels.ZoneChannels;
 
 public class ZoneModule implements ManagerDataProvider, AutoCloseable {
 

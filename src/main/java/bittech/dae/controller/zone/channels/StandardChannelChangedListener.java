@@ -1,4 +1,4 @@
-package btcduke.dea.node.controller.zone.channels;
+package bittech.dae.controller.zone.channels;
 
 import bittech.lib.commands.ln.channels.ChannelChangedCommand;
 import bittech.lib.commands.ln.channels.RegisterChannelsListenerCommand;

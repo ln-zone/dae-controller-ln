@@ -1,4 +1,4 @@
-package btcduke.dea.node.controller.zone;
+package bittech.dae.controller.zone;
 
 import java.io.File;
 import java.io.FileReader;

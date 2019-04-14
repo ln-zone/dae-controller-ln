@@ -1,4 +1,4 @@
-package btcduke.dea.node.controller.zone;
+package bittech.dae.controller.zone;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -9,6 +9,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import bittech.dae.controller.zone.Invoices.Invoice;
+import bittech.dae.controller.zone.channels.ClientZoneListener;
+import bittech.dae.controller.zone.channels.CompoundChannels;
+import bittech.dae.controller.zone.channels.ZoneChannel;
+import bittech.dae.controller.zone.channels.ZoneChannels;
 import bittech.lib.commands.ln.invoices.AddInvoiceCommand;
 import bittech.lib.commands.ln.invoices.DecodeInvoiceCommand;
 import bittech.lib.commands.ln.invoices.GetPaymentStatusCommand;
@@ -36,11 +41,6 @@ import bittech.lib.utils.Require;
 import bittech.lib.utils.Utils;
 import bittech.lib.utils.exceptions.StoredException;
 import bittech.lib.utils.logs.Log;
-import btcduke.dea.node.controller.zone.Invoices.Invoice;
-import btcduke.dea.node.controller.zone.channels.ClientZoneListener;
-import btcduke.dea.node.controller.zone.channels.CompoundChannels;
-import btcduke.dea.node.controller.zone.channels.ZoneChannel;
-import btcduke.dea.node.controller.zone.channels.ZoneChannels;
 
 public class ToOnchainListener implements Listener, PaymentReceivedObserver {
 

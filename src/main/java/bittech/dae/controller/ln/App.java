@@ -1,8 +1,8 @@
 package bittech.dae.controller.ln;
 
 import bittech.dae.controller.ln.lnd.LndModule;
+import bittech.dae.controller.zone.ZoneModule;
 import bittech.lib.utils.Config;
-import btcduke.dea.node.controller.zone.ZoneModule;
 
 public class App {
 

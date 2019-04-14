@@ -1,4 +1,4 @@
-package btcduke.dea.node.controller.zone;
+package bittech.dae.controller.zone;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
