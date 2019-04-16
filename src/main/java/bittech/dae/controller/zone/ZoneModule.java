@@ -15,7 +15,6 @@ import bittech.dae.controller.zone.channels.ZoneChannels;
 import bittech.lib.commands.lnzone.EstablishedChannel;
 import bittech.lib.commands.lnzone.commans.Offer;
 import bittech.lib.commands.lnzone.commans.OpenZoneChannelRequest;
-import bittech.lib.commans.general.PingCommand;
 import bittech.lib.manager.ManagerDataProvider;
 import bittech.lib.manager.ManagerModule;
 import bittech.lib.manager.commands.GetNodeDetailsResponse;
@@ -25,7 +24,6 @@ import bittech.lib.protocol.Node;
 import bittech.lib.utils.Config;
 import bittech.lib.utils.Require;
 import bittech.lib.utils.exceptions.StoredException;
-import bittech.lib.utils.json.JsonBuilder;
 import bittech.lib.utils.logs.Log;
 
 public class ZoneModule implements ManagerDataProvider, AutoCloseable {
@@ -79,16 +77,7 @@ public class ZoneModule implements ManagerDataProvider, AutoCloseable {
 			node = new Node(myName, getListeningPort());
 
 			this.controllerConnection = node.connect("controller-abc", "localhost", controllerPort);
-			
-//			Thread.sleep(100); //TODO: Because of issue related with Introduce
-			
-			System.out.println("Zone connected to node on localhost to port " +  controllerPort);
-			System.out.println("Pinging ");
-			PingCommand pingCmd = new PingCommand("Ping");
-			this.controllerConnection.execute(pingCmd);
-			System.out.println(JsonBuilder.build().toJson(pingCmd));
-			System.out.println("Ping successfull");	
-			
+						
 			this.zoneChannels = new ZoneChannels();
 			this.allChannels = new CompoundChannels();
 			this.zoneChannels.addChangeObserver(this.allChannels);
