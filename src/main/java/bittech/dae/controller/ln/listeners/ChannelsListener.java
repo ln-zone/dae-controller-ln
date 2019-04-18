@@ -1,15 +1,15 @@
 package bittech.dae.controller.ln.listeners;
 
 import bittech.dae.controller.ln.lnd.LndCommandsExecutor;
-import bittech.lib.commands.ln.channels.ChannelChangedCommand;
 import bittech.lib.commands.ln.channels.ChannelChangedRequest;
 import bittech.lib.commands.ln.channels.CloseChannelCommand;
+import bittech.lib.commands.ln.channels.DescribeGraphCommand;
 import bittech.lib.commands.ln.channels.ListChannelsCommand;
 import bittech.lib.commands.ln.channels.ListChannelsResponse;
+import bittech.lib.commands.ln.channels.ListChannelsResponse.ActiveChannel;
 import bittech.lib.commands.ln.channels.ListPendingChannelsCommand;
 import bittech.lib.commands.ln.channels.OpenChannelCommand;
 import bittech.lib.commands.ln.channels.RegisterChannelsListenerCommand;
-import bittech.lib.commands.ln.channels.ListChannelsResponse.ActiveChannel;
 import bittech.lib.manager.ManagerDataProvider;
 import bittech.lib.manager.commands.GetNodeDetailsResponse;
 import bittech.lib.protocol.Command;
@@ -98,7 +98,7 @@ public class ChannelsListener implements Listener, ManagerDataProvider, AutoClos
 	@Override
 	public Class<?>[] getListeningCommands() {
 		return new Class<?>[] { OpenChannelCommand.class, CloseChannelCommand.class, ListChannelsCommand.class,
-				ListPendingChannelsCommand.class, RegisterChannelsListenerCommand.class };
+				ListPendingChannelsCommand.class, RegisterChannelsListenerCommand.class, DescribeGraphCommand.class };
 	}
 
 	@Override

@@ -8,6 +8,12 @@ import org.apache.commons.codec.binary.Base64;
 import bittech.lib.commands.ln.GetInfoCommand;
 import bittech.lib.commands.ln.GetInfoResponse;
 import bittech.lib.commands.ln.channels.CloseChannelCommand;
+import bittech.lib.commands.ln.channels.DescribeGraphCommand;
+import bittech.lib.commands.ln.channels.DescribeGraphResponse;
+import bittech.lib.commands.ln.channels.DescribeGraphResponse.ChannelInGraph;
+import bittech.lib.commands.ln.channels.DescribeGraphResponse.NodeAddress;
+import bittech.lib.commands.ln.channels.DescribeGraphResponse.NodeInGraph;
+import bittech.lib.commands.ln.channels.DescribeGraphResponse.RoutingPolicy;
 import bittech.lib.commands.ln.channels.ListChannelsCommand;
 import bittech.lib.commands.ln.channels.ListChannelsResponse;
 import bittech.lib.commands.ln.channels.ListChannelsResponse.ActiveChannel;
@@ -56,7 +62,9 @@ import lnrpc.LightningGrpc;
 import lnrpc.Rpc;
 import lnrpc.Rpc.AddressType;
 import lnrpc.Rpc.Chain;
+import lnrpc.Rpc.ChannelEdge;
 import lnrpc.Rpc.LightningAddress;
+import lnrpc.Rpc.LightningNode;
 import lnrpc.Rpc.Transaction;
 
 public class LndCommandsExecutor {
@@ -457,6 +465,59 @@ public class LndCommandsExecutor {
 					cmd.response.waiting_close_channels.add(channel);
 				}
 
+			} else if (command instanceof DescribeGraphCommand) {
+				
+				DescribeGraphCommand cmd = (DescribeGraphCommand) command;
+				Rpc.ChannelGraphRequest.Builder builder = Rpc.ChannelGraphRequest.newBuilder();
+
+				Rpc.ChannelGraph response = blockingStub.describeGraph(builder.build());
+				
+				cmd.response = new DescribeGraphResponse();
+				
+				cmd.response.nodes = new ArrayList<NodeInGraph>(response.getNodesCount());
+				for(LightningNode rpcNode : response.getNodesList()) {
+					NodeInGraph node = new NodeInGraph();
+					node.lastUpdate = rpcNode.getLastUpdate();
+					node.id = rpcNode.getPubKey();
+					node.alias = rpcNode.getAlias();
+					node.addresses = new ArrayList<NodeAddress>(rpcNode.getAddressesCount());
+					for(Rpc.NodeAddress rpcNodeAddress : rpcNode.getAddressesList()) {
+						NodeAddress nodeAddress = new NodeAddress();
+						nodeAddress.network = rpcNodeAddress.getNetwork();
+						nodeAddress.addr = rpcNodeAddress.getAddr();
+						node.addresses.add(nodeAddress);
+					}
+					node.color = rpcNode.getColor();
+					cmd.response.nodes.add(node);
+				}
+				
+				cmd.response.channels = new ArrayList<ChannelInGraph>(response.getEdgesCount());
+				for(ChannelEdge rpcChannel : response.getEdgesList()) {
+					ChannelInGraph channel = new ChannelInGraph();
+					channel.last_update = rpcChannel.getLastUpdate();
+					channel.id = rpcChannel.getChannelId();
+					channel.point = rpcChannel.getChanPoint();
+					channel.capacitySat = rpcChannel.getCapacity();
+					channel.node1Id = rpcChannel.getNode1Pub();
+					channel.node1_policy = new RoutingPolicy();
+					channel.node1_policy.time_lock_delta = rpcChannel.getNode1Policy().getTimeLockDelta();
+					channel.node1_policy.min_htlc = rpcChannel.getNode1Policy().getMinHtlc();
+					channel.node1_policy.max_htlc_msat = 0; // TODO: Use the newset rpc version
+					channel.node1_policy.fee_base_msat = rpcChannel.getNode1Policy().getFeeBaseMsat();
+					channel.node1_policy.fee_rate_milli_msat = rpcChannel.getNode1Policy().getFeeRateMilliMsat();
+					channel.node1_policy.disabled = rpcChannel.getNode1Policy().getDisabled();
+					channel.node2Id = rpcChannel.getNode2Pub();
+					channel.node2_policy = new RoutingPolicy();
+					channel.node2_policy.time_lock_delta = rpcChannel.getNode2Policy().getTimeLockDelta();
+					channel.node2_policy.min_htlc = rpcChannel.getNode2Policy().getMinHtlc();
+					channel.node2_policy.max_htlc_msat = 0; // TODO: Use the newset rpc version
+					channel.node2_policy.fee_base_msat = rpcChannel.getNode2Policy().getFeeBaseMsat();
+					channel.node2_policy.fee_rate_milli_msat = rpcChannel.getNode2Policy().getFeeRateMilliMsat();
+					channel.node2_policy.disabled = rpcChannel.getNode2Policy().getDisabled();
+					cmd.response.channels.add(channel);
+				}
+
+				
 			} else {
 
 				throw new StoredException("Command not supported by LndCommandsExecutor: " + command.type, null);

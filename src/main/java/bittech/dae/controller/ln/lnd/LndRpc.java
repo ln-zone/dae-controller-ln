@@ -22,7 +22,7 @@ public class LndRpc implements AutoCloseable {
 
 			SslContext sslContext = builder.build();
 
-			channel = NettyChannelBuilder.forAddress(host, port).negotiationType(NegotiationType.TLS)
+			channel = NettyChannelBuilder.forAddress(host, port).maxInboundMessageSize(Integer.MAX_VALUE).negotiationType(NegotiationType.TLS)
 					.sslContext(sslContext).build();
 		} catch (Exception ex) {
 			throw new StoredException("Cannot initialize gRPC SSL connection to lnd", ex);
