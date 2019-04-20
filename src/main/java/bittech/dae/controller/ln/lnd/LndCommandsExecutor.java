@@ -14,6 +14,8 @@ import bittech.lib.commands.ln.channels.DescribeGraphResponse.ChannelInGraph;
 import bittech.lib.commands.ln.channels.DescribeGraphResponse.NodeAddress;
 import bittech.lib.commands.ln.channels.DescribeGraphResponse.NodeInGraph;
 import bittech.lib.commands.ln.channels.DescribeGraphResponse.RoutingPolicy;
+import bittech.lib.commands.ln.channels.FindRouteCommand;
+import bittech.lib.commands.ln.channels.FindRouteResponse;
 import bittech.lib.commands.ln.channels.ListChannelsCommand;
 import bittech.lib.commands.ln.channels.ListChannelsResponse;
 import bittech.lib.commands.ln.channels.ListChannelsResponse.ActiveChannel;
@@ -517,6 +519,37 @@ public class LndCommandsExecutor {
 					cmd.response.channels.add(channel);
 				}
 
+			} else if (command instanceof FindRouteCommand) {
+				
+				FindRouteCommand cmd = (FindRouteCommand) command;
+				Rpc.QueryRoutesRequest.Builder builder = Rpc.QueryRoutesRequest.newBuilder();
+				builder.setAmt(cmd.getRequest().amount.toSatRoundFloor());
+				builder.setFinalCltvDelta(cmd.getRequest().finalCltvDelta);
+				builder.setNumRoutes(1);
+				builder.setPubKey(cmd.getRequest().destId);
+
+				Rpc.QueryRoutesResponse response = blockingStub.queryRoutes(builder.build());
+								
+				if(response.getRoutesCount() == 0) {
+					cmd.error = new ErrorResponse("No route found", 0L);
+				} else {
+					Rpc.Route rpcRoute = response.getRoutes(0);
+					cmd.response = new FindRouteResponse();
+					cmd.response.totalTimeLock = rpcRoute.getTotalTimeLock();
+					cmd.response.totalAmount = Btc.fromMsat(rpcRoute.getTotalAmtMsat());
+					cmd.response.totalFees = Btc.fromMsat(rpcRoute.getTotalFeesMsat());
+					cmd.response.hops = new ArrayList<Hop>(rpcRoute.getHopsCount());
+					for(Rpc.Hop rpcHop : rpcRoute.getHopsList()) {
+						Hop hop = new Hop();
+						hop.amountToForward = Btc.fromMsat(rpcHop.getAmtToForwardMsat());
+						hop.channelCapacity = Btc.fromSat(rpcHop.getChanCapacity());
+						hop.channelId = rpcHop.getChanId();
+						hop.expiry = rpcHop.getExpiry();
+						hop.fee = Btc.fromMsat(rpcHop.getFeeMsat());
+						hop.pubKey = rpcHop.getPubKey();
+						cmd.response.hops.add(hop);
+					}
+				}			
 				
 			} else {
 

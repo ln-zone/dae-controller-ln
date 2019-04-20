@@ -4,6 +4,7 @@ import bittech.dae.controller.ln.lnd.LndCommandsExecutor;
 import bittech.lib.commands.ln.channels.ChannelChangedRequest;
 import bittech.lib.commands.ln.channels.CloseChannelCommand;
 import bittech.lib.commands.ln.channels.DescribeGraphCommand;
+import bittech.lib.commands.ln.channels.FindRouteCommand;
 import bittech.lib.commands.ln.channels.ListChannelsCommand;
 import bittech.lib.commands.ln.channels.ListChannelsResponse;
 import bittech.lib.commands.ln.channels.ListChannelsResponse.ActiveChannel;
@@ -91,14 +92,15 @@ public class ChannelsListener implements Listener, ManagerDataProvider, AutoClos
 		if ((lastResponse == null) || Utils.deepEquals(lastResponse, cmd.getResponse()) == false) {
 			lastResponse = cmd.getResponse();
 			Log.build().event("Some channels changed");
-			changeNotifier.notifyThem((m) -> m.onChange(null)); //TODO: Build channel change
+			changeNotifier.notifyThem((m) -> m.onChange(null)); // TODO: Build channel change
 		}
 	}
 
 	@Override
 	public Class<?>[] getListeningCommands() {
 		return new Class<?>[] { OpenChannelCommand.class, CloseChannelCommand.class, ListChannelsCommand.class,
-				ListPendingChannelsCommand.class, RegisterChannelsListenerCommand.class, DescribeGraphCommand.class };
+				ListPendingChannelsCommand.class, RegisterChannelsListenerCommand.class, FindRouteCommand.class,
+				DescribeGraphCommand.class };
 	}
 
 	@Override
