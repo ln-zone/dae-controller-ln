@@ -16,6 +16,7 @@ import bittech.lib.commands.ln.channels.DescribeGraphResponse.NodeInGraph;
 import bittech.lib.commands.ln.channels.DescribeGraphResponse.RoutingPolicy;
 import bittech.lib.commands.ln.channels.FindRouteCommand;
 import bittech.lib.commands.ln.channels.FindRouteResponse;
+import bittech.lib.commands.ln.channels.Hop;
 import bittech.lib.commands.ln.channels.ListChannelsCommand;
 import bittech.lib.commands.ln.channels.ListChannelsResponse;
 import bittech.lib.commands.ln.channels.ListChannelsResponse.ActiveChannel;
@@ -28,6 +29,8 @@ import bittech.lib.commands.ln.channels.ListPendingChannelsResponse.PendingOpenC
 import bittech.lib.commands.ln.channels.ListPendingChannelsResponse.WaitingCloseChannel;
 import bittech.lib.commands.ln.channels.OpenChannelCommand;
 import bittech.lib.commands.ln.channels.OpenChannelResponse;
+import bittech.lib.commands.ln.channels.PayToRouteCommand;
+import bittech.lib.commands.ln.channels.Route;
 import bittech.lib.commands.ln.invoices.AddInvoiceCommand;
 import bittech.lib.commands.ln.invoices.AddInvoiceResponse;
 import bittech.lib.commands.ln.invoices.DecodeInvoiceCommand;
@@ -36,7 +39,6 @@ import bittech.lib.commands.ln.invoices.DecodeInvoiceResponse.HopHint;
 import bittech.lib.commands.ln.invoices.DecodeInvoiceResponse.RouteHint;
 import bittech.lib.commands.ln.invoices.PayInvoiceCommand;
 import bittech.lib.commands.ln.invoices.PayInvoiceResponse;
-import bittech.lib.commands.ln.invoices.PayInvoiceResponse.Hop;
 import bittech.lib.commands.ln.onchain.ListChainTxnsCommand;
 import bittech.lib.commands.ln.onchain.ListChainTxnsResponse;
 import bittech.lib.commands.ln.onchain.ListUnspentCommand;
@@ -222,19 +224,19 @@ public class LndCommandsExecutor {
 				Rpc.ListUnspentResponse response = blockingStub.listUnspent(builder.build());
 
 				cmd.response = new ListUnspentResponse();
-				
+
 				cmd.response.list = new ArrayList<Utxo>(response.getUtxosCount());
-				
-				for(Rpc.Utxo rpcUtxo : response.getUtxosList()) {
+
+				for (Rpc.Utxo rpcUtxo : response.getUtxosList()) {
 					Utxo utxo = new Utxo();
 					utxo.address = rpcUtxo.getAddress();
 					utxo.amount = Btc.fromSat(rpcUtxo.getAmountSat());
 					utxo.confirmations = rpcUtxo.getConfirmations();
-					utxo.scriptPubkey = rpcUtxo.getScriptPubkey();
+					utxo.scriptPubkey = rpcUtxo.getPkScript();
 					utxo.type = rpcUtxo.getType().toString();
 					cmd.response.list.add(utxo);
-				}			
-				
+				}
+
 			} else if (command instanceof ListChannelsCommand) {
 
 				ListChannelsCommand cmd = (ListChannelsCommand) command;
@@ -330,7 +332,7 @@ public class LndCommandsExecutor {
 					cmd.response = new PayInvoiceResponse();
 					cmd.response.paymentPreimage = Base64
 							.encodeBase64String(response.getPaymentPreimage().toByteArray());
-					cmd.response.route = new PayInvoiceResponse.Route();
+					cmd.response.route = new Route();
 					cmd.response.route.totalTimeLock = response.getPaymentRoute().getTotalTimeLock();
 					cmd.response.route.totalAmount = Btc.fromMsat(response.getPaymentRoute().getTotalAmtMsat());
 					cmd.response.route.totalFees = Btc.fromMsat(response.getPaymentRoute().getTotalFeesMsat());
@@ -468,22 +470,22 @@ public class LndCommandsExecutor {
 				}
 
 			} else if (command instanceof DescribeGraphCommand) {
-				
+
 				DescribeGraphCommand cmd = (DescribeGraphCommand) command;
 				Rpc.ChannelGraphRequest.Builder builder = Rpc.ChannelGraphRequest.newBuilder();
 
 				Rpc.ChannelGraph response = blockingStub.describeGraph(builder.build());
-				
+
 				cmd.response = new DescribeGraphResponse();
-				
+
 				cmd.response.nodes = new ArrayList<NodeInGraph>(response.getNodesCount());
-				for(LightningNode rpcNode : response.getNodesList()) {
+				for (LightningNode rpcNode : response.getNodesList()) {
 					NodeInGraph node = new NodeInGraph();
 					node.lastUpdate = rpcNode.getLastUpdate();
 					node.id = rpcNode.getPubKey();
 					node.alias = rpcNode.getAlias();
 					node.addresses = new ArrayList<NodeAddress>(rpcNode.getAddressesCount());
-					for(Rpc.NodeAddress rpcNodeAddress : rpcNode.getAddressesList()) {
+					for (Rpc.NodeAddress rpcNodeAddress : rpcNode.getAddressesList()) {
 						NodeAddress nodeAddress = new NodeAddress();
 						nodeAddress.network = rpcNodeAddress.getNetwork();
 						nodeAddress.addr = rpcNodeAddress.getAddr();
@@ -492,9 +494,9 @@ public class LndCommandsExecutor {
 					node.color = rpcNode.getColor();
 					cmd.response.nodes.add(node);
 				}
-				
+
 				cmd.response.channels = new ArrayList<ChannelInGraph>(response.getEdgesCount());
-				for(ChannelEdge rpcChannel : response.getEdgesList()) {
+				for (ChannelEdge rpcChannel : response.getEdgesList()) {
 					ChannelInGraph channel = new ChannelInGraph();
 					channel.last_update = rpcChannel.getLastUpdate();
 					channel.id = rpcChannel.getChannelId();
@@ -520,7 +522,7 @@ public class LndCommandsExecutor {
 				}
 
 			} else if (command instanceof FindRouteCommand) {
-				
+
 				FindRouteCommand cmd = (FindRouteCommand) command;
 				Rpc.QueryRoutesRequest.Builder builder = Rpc.QueryRoutesRequest.newBuilder();
 				builder.setAmt(cmd.getRequest().amount.toSatRoundFloor());
@@ -529,17 +531,18 @@ public class LndCommandsExecutor {
 				builder.setPubKey(cmd.getRequest().destId);
 
 				Rpc.QueryRoutesResponse response = blockingStub.queryRoutes(builder.build());
-								
-				if(response.getRoutesCount() == 0) {
+
+				if (response.getRoutesCount() == 0) {
 					cmd.error = new ErrorResponse("No route found", 0L);
 				} else {
 					Rpc.Route rpcRoute = response.getRoutes(0);
 					cmd.response = new FindRouteResponse();
-					cmd.response.totalTimeLock = rpcRoute.getTotalTimeLock();
-					cmd.response.totalAmount = Btc.fromMsat(rpcRoute.getTotalAmtMsat());
-					cmd.response.totalFees = Btc.fromMsat(rpcRoute.getTotalFeesMsat());
-					cmd.response.hops = new ArrayList<Hop>(rpcRoute.getHopsCount());
-					for(Rpc.Hop rpcHop : rpcRoute.getHopsList()) {
+					cmd.response.route = new Route();
+					cmd.response.route.totalTimeLock = rpcRoute.getTotalTimeLock();
+					cmd.response.route.totalAmount = Btc.fromMsat(rpcRoute.getTotalAmtMsat());
+					cmd.response.route.totalFees = Btc.fromMsat(rpcRoute.getTotalFeesMsat());
+					cmd.response.route.hops = new ArrayList<Hop>(rpcRoute.getHopsCount());
+					for (Rpc.Hop rpcHop : rpcRoute.getHopsList()) {
 						Hop hop = new Hop();
 						hop.amountToForward = Btc.fromMsat(rpcHop.getAmtToForwardMsat());
 						hop.channelCapacity = Btc.fromSat(rpcHop.getChanCapacity());
@@ -547,10 +550,45 @@ public class LndCommandsExecutor {
 						hop.expiry = rpcHop.getExpiry();
 						hop.fee = Btc.fromMsat(rpcHop.getFeeMsat());
 						hop.pubKey = rpcHop.getPubKey();
-						cmd.response.hops.add(hop);
+						cmd.response.route.hops.add(hop);
 					}
-				}			
+				}
+
+			} else if (command instanceof PayToRouteCommand) {
+
+				PayToRouteCommand cmd = (PayToRouteCommand) command;
+				Rpc.SendToRouteRequest.Builder builder = Rpc.SendToRouteRequest.newBuilder();
+				builder.setPaymentHashString("abcde");
 				
+				/*
+				builder.setFinalCltvDelta(cmd.getRequest().finalCltvDelta);
+				builder.setNumRoutes(1);
+				builder.setPubKey(cmd.getRequest().destId);
+*/
+//				Rpc.QueryRoutesResponse response = blockingStub.queryRoutes(builder.build());
+//
+//				if (response.getRoutesCount() == 0) {
+//					cmd.error = new ErrorResponse("No route found", 0L);
+//				} else {
+//					Rpc.Route rpcRoute = response.getRoutes(0);
+//					cmd.response = new FindRouteResponse();
+//					cmd.response.route = new Route();
+//					cmd.response.route.totalTimeLock = rpcRoute.getTotalTimeLock();
+//					cmd.response.route.totalAmount = Btc.fromMsat(rpcRoute.getTotalAmtMsat());
+//					cmd.response.route.totalFees = Btc.fromMsat(rpcRoute.getTotalFeesMsat());
+//					cmd.response.route.hops = new ArrayList<Hop>(rpcRoute.getHopsCount());
+//					for (Rpc.Hop rpcHop : rpcRoute.getHopsList()) {
+//						Hop hop = new Hop();
+//						hop.amountToForward = Btc.fromMsat(rpcHop.getAmtToForwardMsat());
+//						hop.channelCapacity = Btc.fromSat(rpcHop.getChanCapacity());
+//						hop.channelId = rpcHop.getChanId();
+//						hop.expiry = rpcHop.getExpiry();
+//						hop.fee = Btc.fromMsat(rpcHop.getFeeMsat());
+//						hop.pubKey = rpcHop.getPubKey();
+//						cmd.response.route.hops.add(hop);
+//					}
+//				}
+
 			} else {
 
 				throw new StoredException("Command not supported by LndCommandsExecutor: " + command.type, null);

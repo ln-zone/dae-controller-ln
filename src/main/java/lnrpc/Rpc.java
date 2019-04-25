@@ -34,6 +34,14 @@ public final class Rpc {
      * <code>NESTED_PUBKEY_HASH = 1;</code>
      */
     NESTED_PUBKEY_HASH(1),
+    /**
+     * <code>UNUSED_WITNESS_PUBKEY_HASH = 2;</code>
+     */
+    UNUSED_WITNESS_PUBKEY_HASH(2),
+    /**
+     * <code>UNUSED_NESTED_PUBKEY_HASH = 3;</code>
+     */
+    UNUSED_NESTED_PUBKEY_HASH(3),
     UNRECOGNIZED(-1),
     ;
 
@@ -45,6 +53,14 @@ public final class Rpc {
      * <code>NESTED_PUBKEY_HASH = 1;</code>
      */
     public static final int NESTED_PUBKEY_HASH_VALUE = 1;
+    /**
+     * <code>UNUSED_WITNESS_PUBKEY_HASH = 2;</code>
+     */
+    public static final int UNUSED_WITNESS_PUBKEY_HASH_VALUE = 2;
+    /**
+     * <code>UNUSED_NESTED_PUBKEY_HASH = 3;</code>
+     */
+    public static final int UNUSED_NESTED_PUBKEY_HASH_VALUE = 3;
 
 
     public final int getNumber() {
@@ -67,6 +83,8 @@ public final class Rpc {
       switch (value) {
         case 0: return WITNESS_PUBKEY_HASH;
         case 1: return NESTED_PUBKEY_HASH;
+        case 2: return UNUSED_WITNESS_PUBKEY_HASH;
+        case 3: return UNUSED_NESTED_PUBKEY_HASH;
         default: return null;
       }
     }
@@ -1609,7 +1627,7 @@ public final class Rpc {
      **
      *recovery_window is an optional argument specifying the address lookahead
      *when restoring a wallet seed. The recovery window applies to each
-     *invdividual branch of the BIP44 derivation paths. Supplying a recovery
+     *individual branch of the BIP44 derivation paths. Supplying a recovery
      *window of zero indicates that no addresses should be recovered, such after
      *the first initialization of the wallet.
      * </pre>
@@ -1617,6 +1635,49 @@ public final class Rpc {
      * <code>int32 recovery_window = 4;</code>
      */
     int getRecoveryWindow();
+
+    /**
+     * <pre>
+     **
+     *channel_backups is an optional argument that allows clients to recover the
+     *settled funds within a set of channels. This should be populated if the
+     *user was unable to close out all channels and sweep funds before partial or
+     *total data loss occurred. If specified, then after on-chain recovery of
+     *funds, lnd begin to carry out the data loss recovery protocol in order to
+     *recover the funds in each channel from a remote force closed transaction.
+     * </pre>
+     *
+     * <code>.lnrpc.ChanBackupSnapshot channel_backups = 5;</code>
+     */
+    boolean hasChannelBackups();
+    /**
+     * <pre>
+     **
+     *channel_backups is an optional argument that allows clients to recover the
+     *settled funds within a set of channels. This should be populated if the
+     *user was unable to close out all channels and sweep funds before partial or
+     *total data loss occurred. If specified, then after on-chain recovery of
+     *funds, lnd begin to carry out the data loss recovery protocol in order to
+     *recover the funds in each channel from a remote force closed transaction.
+     * </pre>
+     *
+     * <code>.lnrpc.ChanBackupSnapshot channel_backups = 5;</code>
+     */
+    lnrpc.Rpc.ChanBackupSnapshot getChannelBackups();
+    /**
+     * <pre>
+     **
+     *channel_backups is an optional argument that allows clients to recover the
+     *settled funds within a set of channels. This should be populated if the
+     *user was unable to close out all channels and sweep funds before partial or
+     *total data loss occurred. If specified, then after on-chain recovery of
+     *funds, lnd begin to carry out the data loss recovery protocol in order to
+     *recover the funds in each channel from a remote force closed transaction.
+     * </pre>
+     *
+     * <code>.lnrpc.ChanBackupSnapshot channel_backups = 5;</code>
+     */
+    lnrpc.Rpc.ChanBackupSnapshotOrBuilder getChannelBackupsOrBuilder();
   }
   /**
    * Protobuf type {@code lnrpc.InitWalletRequest}
@@ -1690,6 +1751,19 @@ public final class Rpc {
             case 32: {
 
               recoveryWindow_ = input.readInt32();
+              break;
+            }
+            case 42: {
+              lnrpc.Rpc.ChanBackupSnapshot.Builder subBuilder = null;
+              if (channelBackups_ != null) {
+                subBuilder = channelBackups_.toBuilder();
+              }
+              channelBackups_ = input.readMessage(lnrpc.Rpc.ChanBackupSnapshot.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(channelBackups_);
+                channelBackups_ = subBuilder.buildPartial();
+              }
+
               break;
             }
           }
@@ -1815,7 +1889,7 @@ public final class Rpc {
      **
      *recovery_window is an optional argument specifying the address lookahead
      *when restoring a wallet seed. The recovery window applies to each
-     *invdividual branch of the BIP44 derivation paths. Supplying a recovery
+     *individual branch of the BIP44 derivation paths. Supplying a recovery
      *window of zero indicates that no addresses should be recovered, such after
      *the first initialization of the wallet.
      * </pre>
@@ -1824,6 +1898,57 @@ public final class Rpc {
      */
     public int getRecoveryWindow() {
       return recoveryWindow_;
+    }
+
+    public static final int CHANNEL_BACKUPS_FIELD_NUMBER = 5;
+    private lnrpc.Rpc.ChanBackupSnapshot channelBackups_;
+    /**
+     * <pre>
+     **
+     *channel_backups is an optional argument that allows clients to recover the
+     *settled funds within a set of channels. This should be populated if the
+     *user was unable to close out all channels and sweep funds before partial or
+     *total data loss occurred. If specified, then after on-chain recovery of
+     *funds, lnd begin to carry out the data loss recovery protocol in order to
+     *recover the funds in each channel from a remote force closed transaction.
+     * </pre>
+     *
+     * <code>.lnrpc.ChanBackupSnapshot channel_backups = 5;</code>
+     */
+    public boolean hasChannelBackups() {
+      return channelBackups_ != null;
+    }
+    /**
+     * <pre>
+     **
+     *channel_backups is an optional argument that allows clients to recover the
+     *settled funds within a set of channels. This should be populated if the
+     *user was unable to close out all channels and sweep funds before partial or
+     *total data loss occurred. If specified, then after on-chain recovery of
+     *funds, lnd begin to carry out the data loss recovery protocol in order to
+     *recover the funds in each channel from a remote force closed transaction.
+     * </pre>
+     *
+     * <code>.lnrpc.ChanBackupSnapshot channel_backups = 5;</code>
+     */
+    public lnrpc.Rpc.ChanBackupSnapshot getChannelBackups() {
+      return channelBackups_ == null ? lnrpc.Rpc.ChanBackupSnapshot.getDefaultInstance() : channelBackups_;
+    }
+    /**
+     * <pre>
+     **
+     *channel_backups is an optional argument that allows clients to recover the
+     *settled funds within a set of channels. This should be populated if the
+     *user was unable to close out all channels and sweep funds before partial or
+     *total data loss occurred. If specified, then after on-chain recovery of
+     *funds, lnd begin to carry out the data loss recovery protocol in order to
+     *recover the funds in each channel from a remote force closed transaction.
+     * </pre>
+     *
+     * <code>.lnrpc.ChanBackupSnapshot channel_backups = 5;</code>
+     */
+    public lnrpc.Rpc.ChanBackupSnapshotOrBuilder getChannelBackupsOrBuilder() {
+      return getChannelBackups();
     }
 
     private byte memoizedIsInitialized = -1;
@@ -1849,6 +1974,9 @@ public final class Rpc {
       }
       if (recoveryWindow_ != 0) {
         output.writeInt32(4, recoveryWindow_);
+      }
+      if (channelBackups_ != null) {
+        output.writeMessage(5, getChannelBackups());
       }
       unknownFields.writeTo(output);
     }
@@ -1878,6 +2006,10 @@ public final class Rpc {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(4, recoveryWindow_);
       }
+      if (channelBackups_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(5, getChannelBackups());
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -1902,6 +2034,11 @@ public final class Rpc {
           .equals(other.getAezeedPassphrase());
       result = result && (getRecoveryWindow()
           == other.getRecoveryWindow());
+      result = result && (hasChannelBackups() == other.hasChannelBackups());
+      if (hasChannelBackups()) {
+        result = result && getChannelBackups()
+            .equals(other.getChannelBackups());
+      }
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -1923,6 +2060,10 @@ public final class Rpc {
       hash = (53 * hash) + getAezeedPassphrase().hashCode();
       hash = (37 * hash) + RECOVERY_WINDOW_FIELD_NUMBER;
       hash = (53 * hash) + getRecoveryWindow();
+      if (hasChannelBackups()) {
+        hash = (37 * hash) + CHANNEL_BACKUPS_FIELD_NUMBER;
+        hash = (53 * hash) + getChannelBackups().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2060,6 +2201,12 @@ public final class Rpc {
 
         recoveryWindow_ = 0;
 
+        if (channelBackupsBuilder_ == null) {
+          channelBackups_ = null;
+        } else {
+          channelBackups_ = null;
+          channelBackupsBuilder_ = null;
+        }
         return this;
       }
 
@@ -2092,6 +2239,11 @@ public final class Rpc {
         result.cipherSeedMnemonic_ = cipherSeedMnemonic_;
         result.aezeedPassphrase_ = aezeedPassphrase_;
         result.recoveryWindow_ = recoveryWindow_;
+        if (channelBackupsBuilder_ == null) {
+          result.channelBackups_ = channelBackups_;
+        } else {
+          result.channelBackups_ = channelBackupsBuilder_.build();
+        }
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -2152,6 +2304,9 @@ public final class Rpc {
         }
         if (other.getRecoveryWindow() != 0) {
           setRecoveryWindow(other.getRecoveryWindow());
+        }
+        if (other.hasChannelBackups()) {
+          mergeChannelBackups(other.getChannelBackups());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -2441,7 +2596,7 @@ public final class Rpc {
        **
        *recovery_window is an optional argument specifying the address lookahead
        *when restoring a wallet seed. The recovery window applies to each
-       *invdividual branch of the BIP44 derivation paths. Supplying a recovery
+       *individual branch of the BIP44 derivation paths. Supplying a recovery
        *window of zero indicates that no addresses should be recovered, such after
        *the first initialization of the wallet.
        * </pre>
@@ -2456,7 +2611,7 @@ public final class Rpc {
        **
        *recovery_window is an optional argument specifying the address lookahead
        *when restoring a wallet seed. The recovery window applies to each
-       *invdividual branch of the BIP44 derivation paths. Supplying a recovery
+       *individual branch of the BIP44 derivation paths. Supplying a recovery
        *window of zero indicates that no addresses should be recovered, such after
        *the first initialization of the wallet.
        * </pre>
@@ -2474,7 +2629,7 @@ public final class Rpc {
        **
        *recovery_window is an optional argument specifying the address lookahead
        *when restoring a wallet seed. The recovery window applies to each
-       *invdividual branch of the BIP44 derivation paths. Supplying a recovery
+       *individual branch of the BIP44 derivation paths. Supplying a recovery
        *window of zero indicates that no addresses should be recovered, such after
        *the first initialization of the wallet.
        * </pre>
@@ -2486,6 +2641,213 @@ public final class Rpc {
         recoveryWindow_ = 0;
         onChanged();
         return this;
+      }
+
+      private lnrpc.Rpc.ChanBackupSnapshot channelBackups_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.ChanBackupSnapshot, lnrpc.Rpc.ChanBackupSnapshot.Builder, lnrpc.Rpc.ChanBackupSnapshotOrBuilder> channelBackupsBuilder_;
+      /**
+       * <pre>
+       **
+       *channel_backups is an optional argument that allows clients to recover the
+       *settled funds within a set of channels. This should be populated if the
+       *user was unable to close out all channels and sweep funds before partial or
+       *total data loss occurred. If specified, then after on-chain recovery of
+       *funds, lnd begin to carry out the data loss recovery protocol in order to
+       *recover the funds in each channel from a remote force closed transaction.
+       * </pre>
+       *
+       * <code>.lnrpc.ChanBackupSnapshot channel_backups = 5;</code>
+       */
+      public boolean hasChannelBackups() {
+        return channelBackupsBuilder_ != null || channelBackups_ != null;
+      }
+      /**
+       * <pre>
+       **
+       *channel_backups is an optional argument that allows clients to recover the
+       *settled funds within a set of channels. This should be populated if the
+       *user was unable to close out all channels and sweep funds before partial or
+       *total data loss occurred. If specified, then after on-chain recovery of
+       *funds, lnd begin to carry out the data loss recovery protocol in order to
+       *recover the funds in each channel from a remote force closed transaction.
+       * </pre>
+       *
+       * <code>.lnrpc.ChanBackupSnapshot channel_backups = 5;</code>
+       */
+      public lnrpc.Rpc.ChanBackupSnapshot getChannelBackups() {
+        if (channelBackupsBuilder_ == null) {
+          return channelBackups_ == null ? lnrpc.Rpc.ChanBackupSnapshot.getDefaultInstance() : channelBackups_;
+        } else {
+          return channelBackupsBuilder_.getMessage();
+        }
+      }
+      /**
+       * <pre>
+       **
+       *channel_backups is an optional argument that allows clients to recover the
+       *settled funds within a set of channels. This should be populated if the
+       *user was unable to close out all channels and sweep funds before partial or
+       *total data loss occurred. If specified, then after on-chain recovery of
+       *funds, lnd begin to carry out the data loss recovery protocol in order to
+       *recover the funds in each channel from a remote force closed transaction.
+       * </pre>
+       *
+       * <code>.lnrpc.ChanBackupSnapshot channel_backups = 5;</code>
+       */
+      public Builder setChannelBackups(lnrpc.Rpc.ChanBackupSnapshot value) {
+        if (channelBackupsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          channelBackups_ = value;
+          onChanged();
+        } else {
+          channelBackupsBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *channel_backups is an optional argument that allows clients to recover the
+       *settled funds within a set of channels. This should be populated if the
+       *user was unable to close out all channels and sweep funds before partial or
+       *total data loss occurred. If specified, then after on-chain recovery of
+       *funds, lnd begin to carry out the data loss recovery protocol in order to
+       *recover the funds in each channel from a remote force closed transaction.
+       * </pre>
+       *
+       * <code>.lnrpc.ChanBackupSnapshot channel_backups = 5;</code>
+       */
+      public Builder setChannelBackups(
+          lnrpc.Rpc.ChanBackupSnapshot.Builder builderForValue) {
+        if (channelBackupsBuilder_ == null) {
+          channelBackups_ = builderForValue.build();
+          onChanged();
+        } else {
+          channelBackupsBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *channel_backups is an optional argument that allows clients to recover the
+       *settled funds within a set of channels. This should be populated if the
+       *user was unable to close out all channels and sweep funds before partial or
+       *total data loss occurred. If specified, then after on-chain recovery of
+       *funds, lnd begin to carry out the data loss recovery protocol in order to
+       *recover the funds in each channel from a remote force closed transaction.
+       * </pre>
+       *
+       * <code>.lnrpc.ChanBackupSnapshot channel_backups = 5;</code>
+       */
+      public Builder mergeChannelBackups(lnrpc.Rpc.ChanBackupSnapshot value) {
+        if (channelBackupsBuilder_ == null) {
+          if (channelBackups_ != null) {
+            channelBackups_ =
+              lnrpc.Rpc.ChanBackupSnapshot.newBuilder(channelBackups_).mergeFrom(value).buildPartial();
+          } else {
+            channelBackups_ = value;
+          }
+          onChanged();
+        } else {
+          channelBackupsBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *channel_backups is an optional argument that allows clients to recover the
+       *settled funds within a set of channels. This should be populated if the
+       *user was unable to close out all channels and sweep funds before partial or
+       *total data loss occurred. If specified, then after on-chain recovery of
+       *funds, lnd begin to carry out the data loss recovery protocol in order to
+       *recover the funds in each channel from a remote force closed transaction.
+       * </pre>
+       *
+       * <code>.lnrpc.ChanBackupSnapshot channel_backups = 5;</code>
+       */
+      public Builder clearChannelBackups() {
+        if (channelBackupsBuilder_ == null) {
+          channelBackups_ = null;
+          onChanged();
+        } else {
+          channelBackups_ = null;
+          channelBackupsBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *channel_backups is an optional argument that allows clients to recover the
+       *settled funds within a set of channels. This should be populated if the
+       *user was unable to close out all channels and sweep funds before partial or
+       *total data loss occurred. If specified, then after on-chain recovery of
+       *funds, lnd begin to carry out the data loss recovery protocol in order to
+       *recover the funds in each channel from a remote force closed transaction.
+       * </pre>
+       *
+       * <code>.lnrpc.ChanBackupSnapshot channel_backups = 5;</code>
+       */
+      public lnrpc.Rpc.ChanBackupSnapshot.Builder getChannelBackupsBuilder() {
+        
+        onChanged();
+        return getChannelBackupsFieldBuilder().getBuilder();
+      }
+      /**
+       * <pre>
+       **
+       *channel_backups is an optional argument that allows clients to recover the
+       *settled funds within a set of channels. This should be populated if the
+       *user was unable to close out all channels and sweep funds before partial or
+       *total data loss occurred. If specified, then after on-chain recovery of
+       *funds, lnd begin to carry out the data loss recovery protocol in order to
+       *recover the funds in each channel from a remote force closed transaction.
+       * </pre>
+       *
+       * <code>.lnrpc.ChanBackupSnapshot channel_backups = 5;</code>
+       */
+      public lnrpc.Rpc.ChanBackupSnapshotOrBuilder getChannelBackupsOrBuilder() {
+        if (channelBackupsBuilder_ != null) {
+          return channelBackupsBuilder_.getMessageOrBuilder();
+        } else {
+          return channelBackups_ == null ?
+              lnrpc.Rpc.ChanBackupSnapshot.getDefaultInstance() : channelBackups_;
+        }
+      }
+      /**
+       * <pre>
+       **
+       *channel_backups is an optional argument that allows clients to recover the
+       *settled funds within a set of channels. This should be populated if the
+       *user was unable to close out all channels and sweep funds before partial or
+       *total data loss occurred. If specified, then after on-chain recovery of
+       *funds, lnd begin to carry out the data loss recovery protocol in order to
+       *recover the funds in each channel from a remote force closed transaction.
+       * </pre>
+       *
+       * <code>.lnrpc.ChanBackupSnapshot channel_backups = 5;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.ChanBackupSnapshot, lnrpc.Rpc.ChanBackupSnapshot.Builder, lnrpc.Rpc.ChanBackupSnapshotOrBuilder> 
+          getChannelBackupsFieldBuilder() {
+        if (channelBackupsBuilder_ == null) {
+          channelBackupsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              lnrpc.Rpc.ChanBackupSnapshot, lnrpc.Rpc.ChanBackupSnapshot.Builder, lnrpc.Rpc.ChanBackupSnapshotOrBuilder>(
+                  getChannelBackups(),
+                  getParentForChildren(),
+                  isClean());
+          channelBackups_ = null;
+        }
+        return channelBackupsBuilder_;
       }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -2952,6 +3314,49 @@ public final class Rpc {
      * <code>int32 recovery_window = 2;</code>
      */
     int getRecoveryWindow();
+
+    /**
+     * <pre>
+     **
+     *channel_backups is an optional argument that allows clients to recover the
+     *settled funds within a set of channels. This should be populated if the
+     *user was unable to close out all channels and sweep funds before partial or
+     *total data loss occurred. If specified, then after on-chain recovery of
+     *funds, lnd begin to carry out the data loss recovery protocol in order to
+     *recover the funds in each channel from a remote force closed transaction.
+     * </pre>
+     *
+     * <code>.lnrpc.ChanBackupSnapshot channel_backups = 3;</code>
+     */
+    boolean hasChannelBackups();
+    /**
+     * <pre>
+     **
+     *channel_backups is an optional argument that allows clients to recover the
+     *settled funds within a set of channels. This should be populated if the
+     *user was unable to close out all channels and sweep funds before partial or
+     *total data loss occurred. If specified, then after on-chain recovery of
+     *funds, lnd begin to carry out the data loss recovery protocol in order to
+     *recover the funds in each channel from a remote force closed transaction.
+     * </pre>
+     *
+     * <code>.lnrpc.ChanBackupSnapshot channel_backups = 3;</code>
+     */
+    lnrpc.Rpc.ChanBackupSnapshot getChannelBackups();
+    /**
+     * <pre>
+     **
+     *channel_backups is an optional argument that allows clients to recover the
+     *settled funds within a set of channels. This should be populated if the
+     *user was unable to close out all channels and sweep funds before partial or
+     *total data loss occurred. If specified, then after on-chain recovery of
+     *funds, lnd begin to carry out the data loss recovery protocol in order to
+     *recover the funds in each channel from a remote force closed transaction.
+     * </pre>
+     *
+     * <code>.lnrpc.ChanBackupSnapshot channel_backups = 3;</code>
+     */
+    lnrpc.Rpc.ChanBackupSnapshotOrBuilder getChannelBackupsOrBuilder();
   }
   /**
    * Protobuf type {@code lnrpc.UnlockWalletRequest}
@@ -3009,6 +3414,19 @@ public final class Rpc {
             case 16: {
 
               recoveryWindow_ = input.readInt32();
+              break;
+            }
+            case 26: {
+              lnrpc.Rpc.ChanBackupSnapshot.Builder subBuilder = null;
+              if (channelBackups_ != null) {
+                subBuilder = channelBackups_.toBuilder();
+              }
+              channelBackups_ = input.readMessage(lnrpc.Rpc.ChanBackupSnapshot.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(channelBackups_);
+                channelBackups_ = subBuilder.buildPartial();
+              }
+
               break;
             }
           }
@@ -3069,6 +3487,57 @@ public final class Rpc {
       return recoveryWindow_;
     }
 
+    public static final int CHANNEL_BACKUPS_FIELD_NUMBER = 3;
+    private lnrpc.Rpc.ChanBackupSnapshot channelBackups_;
+    /**
+     * <pre>
+     **
+     *channel_backups is an optional argument that allows clients to recover the
+     *settled funds within a set of channels. This should be populated if the
+     *user was unable to close out all channels and sweep funds before partial or
+     *total data loss occurred. If specified, then after on-chain recovery of
+     *funds, lnd begin to carry out the data loss recovery protocol in order to
+     *recover the funds in each channel from a remote force closed transaction.
+     * </pre>
+     *
+     * <code>.lnrpc.ChanBackupSnapshot channel_backups = 3;</code>
+     */
+    public boolean hasChannelBackups() {
+      return channelBackups_ != null;
+    }
+    /**
+     * <pre>
+     **
+     *channel_backups is an optional argument that allows clients to recover the
+     *settled funds within a set of channels. This should be populated if the
+     *user was unable to close out all channels and sweep funds before partial or
+     *total data loss occurred. If specified, then after on-chain recovery of
+     *funds, lnd begin to carry out the data loss recovery protocol in order to
+     *recover the funds in each channel from a remote force closed transaction.
+     * </pre>
+     *
+     * <code>.lnrpc.ChanBackupSnapshot channel_backups = 3;</code>
+     */
+    public lnrpc.Rpc.ChanBackupSnapshot getChannelBackups() {
+      return channelBackups_ == null ? lnrpc.Rpc.ChanBackupSnapshot.getDefaultInstance() : channelBackups_;
+    }
+    /**
+     * <pre>
+     **
+     *channel_backups is an optional argument that allows clients to recover the
+     *settled funds within a set of channels. This should be populated if the
+     *user was unable to close out all channels and sweep funds before partial or
+     *total data loss occurred. If specified, then after on-chain recovery of
+     *funds, lnd begin to carry out the data loss recovery protocol in order to
+     *recover the funds in each channel from a remote force closed transaction.
+     * </pre>
+     *
+     * <code>.lnrpc.ChanBackupSnapshot channel_backups = 3;</code>
+     */
+    public lnrpc.Rpc.ChanBackupSnapshotOrBuilder getChannelBackupsOrBuilder() {
+      return getChannelBackups();
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -3087,6 +3556,9 @@ public final class Rpc {
       if (recoveryWindow_ != 0) {
         output.writeInt32(2, recoveryWindow_);
       }
+      if (channelBackups_ != null) {
+        output.writeMessage(3, getChannelBackups());
+      }
       unknownFields.writeTo(output);
     }
 
@@ -3102,6 +3574,10 @@ public final class Rpc {
       if (recoveryWindow_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(2, recoveryWindow_);
+      }
+      if (channelBackups_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, getChannelBackups());
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -3123,6 +3599,11 @@ public final class Rpc {
           .equals(other.getWalletPassword());
       result = result && (getRecoveryWindow()
           == other.getRecoveryWindow());
+      result = result && (hasChannelBackups() == other.hasChannelBackups());
+      if (hasChannelBackups()) {
+        result = result && getChannelBackups()
+            .equals(other.getChannelBackups());
+      }
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -3138,6 +3619,10 @@ public final class Rpc {
       hash = (53 * hash) + getWalletPassword().hashCode();
       hash = (37 * hash) + RECOVERY_WINDOW_FIELD_NUMBER;
       hash = (53 * hash) + getRecoveryWindow();
+      if (hasChannelBackups()) {
+        hash = (37 * hash) + CHANNEL_BACKUPS_FIELD_NUMBER;
+        hash = (53 * hash) + getChannelBackups().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -3271,6 +3756,12 @@ public final class Rpc {
 
         recoveryWindow_ = 0;
 
+        if (channelBackupsBuilder_ == null) {
+          channelBackups_ = null;
+        } else {
+          channelBackups_ = null;
+          channelBackupsBuilder_ = null;
+        }
         return this;
       }
 
@@ -3295,6 +3786,11 @@ public final class Rpc {
         lnrpc.Rpc.UnlockWalletRequest result = new lnrpc.Rpc.UnlockWalletRequest(this);
         result.walletPassword_ = walletPassword_;
         result.recoveryWindow_ = recoveryWindow_;
+        if (channelBackupsBuilder_ == null) {
+          result.channelBackups_ = channelBackups_;
+        } else {
+          result.channelBackups_ = channelBackupsBuilder_.build();
+        }
         onBuilt();
         return result;
       }
@@ -3341,6 +3837,9 @@ public final class Rpc {
         }
         if (other.getRecoveryWindow() != 0) {
           setRecoveryWindow(other.getRecoveryWindow());
+        }
+        if (other.hasChannelBackups()) {
+          mergeChannelBackups(other.getChannelBackups());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -3470,6 +3969,213 @@ public final class Rpc {
         recoveryWindow_ = 0;
         onChanged();
         return this;
+      }
+
+      private lnrpc.Rpc.ChanBackupSnapshot channelBackups_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.ChanBackupSnapshot, lnrpc.Rpc.ChanBackupSnapshot.Builder, lnrpc.Rpc.ChanBackupSnapshotOrBuilder> channelBackupsBuilder_;
+      /**
+       * <pre>
+       **
+       *channel_backups is an optional argument that allows clients to recover the
+       *settled funds within a set of channels. This should be populated if the
+       *user was unable to close out all channels and sweep funds before partial or
+       *total data loss occurred. If specified, then after on-chain recovery of
+       *funds, lnd begin to carry out the data loss recovery protocol in order to
+       *recover the funds in each channel from a remote force closed transaction.
+       * </pre>
+       *
+       * <code>.lnrpc.ChanBackupSnapshot channel_backups = 3;</code>
+       */
+      public boolean hasChannelBackups() {
+        return channelBackupsBuilder_ != null || channelBackups_ != null;
+      }
+      /**
+       * <pre>
+       **
+       *channel_backups is an optional argument that allows clients to recover the
+       *settled funds within a set of channels. This should be populated if the
+       *user was unable to close out all channels and sweep funds before partial or
+       *total data loss occurred. If specified, then after on-chain recovery of
+       *funds, lnd begin to carry out the data loss recovery protocol in order to
+       *recover the funds in each channel from a remote force closed transaction.
+       * </pre>
+       *
+       * <code>.lnrpc.ChanBackupSnapshot channel_backups = 3;</code>
+       */
+      public lnrpc.Rpc.ChanBackupSnapshot getChannelBackups() {
+        if (channelBackupsBuilder_ == null) {
+          return channelBackups_ == null ? lnrpc.Rpc.ChanBackupSnapshot.getDefaultInstance() : channelBackups_;
+        } else {
+          return channelBackupsBuilder_.getMessage();
+        }
+      }
+      /**
+       * <pre>
+       **
+       *channel_backups is an optional argument that allows clients to recover the
+       *settled funds within a set of channels. This should be populated if the
+       *user was unable to close out all channels and sweep funds before partial or
+       *total data loss occurred. If specified, then after on-chain recovery of
+       *funds, lnd begin to carry out the data loss recovery protocol in order to
+       *recover the funds in each channel from a remote force closed transaction.
+       * </pre>
+       *
+       * <code>.lnrpc.ChanBackupSnapshot channel_backups = 3;</code>
+       */
+      public Builder setChannelBackups(lnrpc.Rpc.ChanBackupSnapshot value) {
+        if (channelBackupsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          channelBackups_ = value;
+          onChanged();
+        } else {
+          channelBackupsBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *channel_backups is an optional argument that allows clients to recover the
+       *settled funds within a set of channels. This should be populated if the
+       *user was unable to close out all channels and sweep funds before partial or
+       *total data loss occurred. If specified, then after on-chain recovery of
+       *funds, lnd begin to carry out the data loss recovery protocol in order to
+       *recover the funds in each channel from a remote force closed transaction.
+       * </pre>
+       *
+       * <code>.lnrpc.ChanBackupSnapshot channel_backups = 3;</code>
+       */
+      public Builder setChannelBackups(
+          lnrpc.Rpc.ChanBackupSnapshot.Builder builderForValue) {
+        if (channelBackupsBuilder_ == null) {
+          channelBackups_ = builderForValue.build();
+          onChanged();
+        } else {
+          channelBackupsBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *channel_backups is an optional argument that allows clients to recover the
+       *settled funds within a set of channels. This should be populated if the
+       *user was unable to close out all channels and sweep funds before partial or
+       *total data loss occurred. If specified, then after on-chain recovery of
+       *funds, lnd begin to carry out the data loss recovery protocol in order to
+       *recover the funds in each channel from a remote force closed transaction.
+       * </pre>
+       *
+       * <code>.lnrpc.ChanBackupSnapshot channel_backups = 3;</code>
+       */
+      public Builder mergeChannelBackups(lnrpc.Rpc.ChanBackupSnapshot value) {
+        if (channelBackupsBuilder_ == null) {
+          if (channelBackups_ != null) {
+            channelBackups_ =
+              lnrpc.Rpc.ChanBackupSnapshot.newBuilder(channelBackups_).mergeFrom(value).buildPartial();
+          } else {
+            channelBackups_ = value;
+          }
+          onChanged();
+        } else {
+          channelBackupsBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *channel_backups is an optional argument that allows clients to recover the
+       *settled funds within a set of channels. This should be populated if the
+       *user was unable to close out all channels and sweep funds before partial or
+       *total data loss occurred. If specified, then after on-chain recovery of
+       *funds, lnd begin to carry out the data loss recovery protocol in order to
+       *recover the funds in each channel from a remote force closed transaction.
+       * </pre>
+       *
+       * <code>.lnrpc.ChanBackupSnapshot channel_backups = 3;</code>
+       */
+      public Builder clearChannelBackups() {
+        if (channelBackupsBuilder_ == null) {
+          channelBackups_ = null;
+          onChanged();
+        } else {
+          channelBackups_ = null;
+          channelBackupsBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *channel_backups is an optional argument that allows clients to recover the
+       *settled funds within a set of channels. This should be populated if the
+       *user was unable to close out all channels and sweep funds before partial or
+       *total data loss occurred. If specified, then after on-chain recovery of
+       *funds, lnd begin to carry out the data loss recovery protocol in order to
+       *recover the funds in each channel from a remote force closed transaction.
+       * </pre>
+       *
+       * <code>.lnrpc.ChanBackupSnapshot channel_backups = 3;</code>
+       */
+      public lnrpc.Rpc.ChanBackupSnapshot.Builder getChannelBackupsBuilder() {
+        
+        onChanged();
+        return getChannelBackupsFieldBuilder().getBuilder();
+      }
+      /**
+       * <pre>
+       **
+       *channel_backups is an optional argument that allows clients to recover the
+       *settled funds within a set of channels. This should be populated if the
+       *user was unable to close out all channels and sweep funds before partial or
+       *total data loss occurred. If specified, then after on-chain recovery of
+       *funds, lnd begin to carry out the data loss recovery protocol in order to
+       *recover the funds in each channel from a remote force closed transaction.
+       * </pre>
+       *
+       * <code>.lnrpc.ChanBackupSnapshot channel_backups = 3;</code>
+       */
+      public lnrpc.Rpc.ChanBackupSnapshotOrBuilder getChannelBackupsOrBuilder() {
+        if (channelBackupsBuilder_ != null) {
+          return channelBackupsBuilder_.getMessageOrBuilder();
+        } else {
+          return channelBackups_ == null ?
+              lnrpc.Rpc.ChanBackupSnapshot.getDefaultInstance() : channelBackups_;
+        }
+      }
+      /**
+       * <pre>
+       **
+       *channel_backups is an optional argument that allows clients to recover the
+       *settled funds within a set of channels. This should be populated if the
+       *user was unable to close out all channels and sweep funds before partial or
+       *total data loss occurred. If specified, then after on-chain recovery of
+       *funds, lnd begin to carry out the data loss recovery protocol in order to
+       *recover the funds in each channel from a remote force closed transaction.
+       * </pre>
+       *
+       * <code>.lnrpc.ChanBackupSnapshot channel_backups = 3;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.ChanBackupSnapshot, lnrpc.Rpc.ChanBackupSnapshot.Builder, lnrpc.Rpc.ChanBackupSnapshotOrBuilder> 
+          getChannelBackupsFieldBuilder() {
+        if (channelBackupsBuilder_ == null) {
+          channelBackupsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              lnrpc.Rpc.ChanBackupSnapshot, lnrpc.Rpc.ChanBackupSnapshot.Builder, lnrpc.Rpc.ChanBackupSnapshotOrBuilder>(
+                  getChannelBackups(),
+                  getParentForChildren(),
+                  isClean());
+          channelBackups_ = null;
+        }
+        return channelBackupsBuilder_;
       }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -4924,52 +5630,46 @@ public final class Rpc {
 
     /**
      * <pre>
-     *&#47; The scriptpubkey in hex
+     *&#47; The pkscript in hex
      * </pre>
      *
-     * <code>string script_pubkey = 4[json_name = "script_pubkey"];</code>
+     * <code>string pk_script = 4[json_name = "pk_script"];</code>
      */
-    java.lang.String getScriptPubkey();
+    java.lang.String getPkScript();
     /**
      * <pre>
-     *&#47; The scriptpubkey in hex
+     *&#47; The pkscript in hex
      * </pre>
      *
-     * <code>string script_pubkey = 4[json_name = "script_pubkey"];</code>
+     * <code>string pk_script = 4[json_name = "pk_script"];</code>
      */
     com.google.protobuf.ByteString
-        getScriptPubkeyBytes();
+        getPkScriptBytes();
 
     /**
      * <pre>
      *&#47; The outpoint in format txid:n
-     * / Note that this reuses the `ChannelPoint` message but
-     * / is not actually a channel related outpoint, of course
      * </pre>
      *
-     * <code>.lnrpc.ChannelPoint outpoint = 5[json_name = "outpoint"];</code>
+     * <code>.lnrpc.OutPoint outpoint = 5[json_name = "outpoint"];</code>
      */
     boolean hasOutpoint();
     /**
      * <pre>
      *&#47; The outpoint in format txid:n
-     * / Note that this reuses the `ChannelPoint` message but
-     * / is not actually a channel related outpoint, of course
      * </pre>
      *
-     * <code>.lnrpc.ChannelPoint outpoint = 5[json_name = "outpoint"];</code>
+     * <code>.lnrpc.OutPoint outpoint = 5[json_name = "outpoint"];</code>
      */
-    lnrpc.Rpc.ChannelPoint getOutpoint();
+    lnrpc.Rpc.OutPoint getOutpoint();
     /**
      * <pre>
      *&#47; The outpoint in format txid:n
-     * / Note that this reuses the `ChannelPoint` message but
-     * / is not actually a channel related outpoint, of course
      * </pre>
      *
-     * <code>.lnrpc.ChannelPoint outpoint = 5[json_name = "outpoint"];</code>
+     * <code>.lnrpc.OutPoint outpoint = 5[json_name = "outpoint"];</code>
      */
-    lnrpc.Rpc.ChannelPointOrBuilder getOutpointOrBuilder();
+    lnrpc.Rpc.OutPointOrBuilder getOutpointOrBuilder();
 
     /**
      * <pre>
@@ -4996,7 +5696,7 @@ public final class Rpc {
       type_ = 0;
       address_ = "";
       amountSat_ = 0L;
-      scriptPubkey_ = "";
+      pkScript_ = "";
       confirmations_ = 0L;
     }
 
@@ -5051,15 +5751,15 @@ public final class Rpc {
             case 34: {
               java.lang.String s = input.readStringRequireUtf8();
 
-              scriptPubkey_ = s;
+              pkScript_ = s;
               break;
             }
             case 42: {
-              lnrpc.Rpc.ChannelPoint.Builder subBuilder = null;
+              lnrpc.Rpc.OutPoint.Builder subBuilder = null;
               if (outpoint_ != null) {
                 subBuilder = outpoint_.toBuilder();
               }
-              outpoint_ = input.readMessage(lnrpc.Rpc.ChannelPoint.parser(), extensionRegistry);
+              outpoint_ = input.readMessage(lnrpc.Rpc.OutPoint.parser(), extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(outpoint_);
                 outpoint_ = subBuilder.buildPartial();
@@ -5175,42 +5875,42 @@ public final class Rpc {
       return amountSat_;
     }
 
-    public static final int SCRIPT_PUBKEY_FIELD_NUMBER = 4;
-    private volatile java.lang.Object scriptPubkey_;
+    public static final int PK_SCRIPT_FIELD_NUMBER = 4;
+    private volatile java.lang.Object pkScript_;
     /**
      * <pre>
-     *&#47; The scriptpubkey in hex
+     *&#47; The pkscript in hex
      * </pre>
      *
-     * <code>string script_pubkey = 4[json_name = "script_pubkey"];</code>
+     * <code>string pk_script = 4[json_name = "pk_script"];</code>
      */
-    public java.lang.String getScriptPubkey() {
-      java.lang.Object ref = scriptPubkey_;
+    public java.lang.String getPkScript() {
+      java.lang.Object ref = pkScript_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        scriptPubkey_ = s;
+        pkScript_ = s;
         return s;
       }
     }
     /**
      * <pre>
-     *&#47; The scriptpubkey in hex
+     *&#47; The pkscript in hex
      * </pre>
      *
-     * <code>string script_pubkey = 4[json_name = "script_pubkey"];</code>
+     * <code>string pk_script = 4[json_name = "pk_script"];</code>
      */
     public com.google.protobuf.ByteString
-        getScriptPubkeyBytes() {
-      java.lang.Object ref = scriptPubkey_;
+        getPkScriptBytes() {
+      java.lang.Object ref = pkScript_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        scriptPubkey_ = b;
+        pkScript_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -5218,15 +5918,13 @@ public final class Rpc {
     }
 
     public static final int OUTPOINT_FIELD_NUMBER = 5;
-    private lnrpc.Rpc.ChannelPoint outpoint_;
+    private lnrpc.Rpc.OutPoint outpoint_;
     /**
      * <pre>
      *&#47; The outpoint in format txid:n
-     * / Note that this reuses the `ChannelPoint` message but
-     * / is not actually a channel related outpoint, of course
      * </pre>
      *
-     * <code>.lnrpc.ChannelPoint outpoint = 5[json_name = "outpoint"];</code>
+     * <code>.lnrpc.OutPoint outpoint = 5[json_name = "outpoint"];</code>
      */
     public boolean hasOutpoint() {
       return outpoint_ != null;
@@ -5234,25 +5932,21 @@ public final class Rpc {
     /**
      * <pre>
      *&#47; The outpoint in format txid:n
-     * / Note that this reuses the `ChannelPoint` message but
-     * / is not actually a channel related outpoint, of course
      * </pre>
      *
-     * <code>.lnrpc.ChannelPoint outpoint = 5[json_name = "outpoint"];</code>
+     * <code>.lnrpc.OutPoint outpoint = 5[json_name = "outpoint"];</code>
      */
-    public lnrpc.Rpc.ChannelPoint getOutpoint() {
-      return outpoint_ == null ? lnrpc.Rpc.ChannelPoint.getDefaultInstance() : outpoint_;
+    public lnrpc.Rpc.OutPoint getOutpoint() {
+      return outpoint_ == null ? lnrpc.Rpc.OutPoint.getDefaultInstance() : outpoint_;
     }
     /**
      * <pre>
      *&#47; The outpoint in format txid:n
-     * / Note that this reuses the `ChannelPoint` message but
-     * / is not actually a channel related outpoint, of course
      * </pre>
      *
-     * <code>.lnrpc.ChannelPoint outpoint = 5[json_name = "outpoint"];</code>
+     * <code>.lnrpc.OutPoint outpoint = 5[json_name = "outpoint"];</code>
      */
-    public lnrpc.Rpc.ChannelPointOrBuilder getOutpointOrBuilder() {
+    public lnrpc.Rpc.OutPointOrBuilder getOutpointOrBuilder() {
       return getOutpoint();
     }
 
@@ -5290,8 +5984,8 @@ public final class Rpc {
       if (amountSat_ != 0L) {
         output.writeInt64(3, amountSat_);
       }
-      if (!getScriptPubkeyBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, scriptPubkey_);
+      if (!getPkScriptBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, pkScript_);
       }
       if (outpoint_ != null) {
         output.writeMessage(5, getOutpoint());
@@ -5318,8 +6012,8 @@ public final class Rpc {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(3, amountSat_);
       }
-      if (!getScriptPubkeyBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, scriptPubkey_);
+      if (!getPkScriptBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, pkScript_);
       }
       if (outpoint_ != null) {
         size += com.google.protobuf.CodedOutputStream
@@ -5350,8 +6044,8 @@ public final class Rpc {
           .equals(other.getAddress());
       result = result && (getAmountSat()
           == other.getAmountSat());
-      result = result && getScriptPubkey()
-          .equals(other.getScriptPubkey());
+      result = result && getPkScript()
+          .equals(other.getPkScript());
       result = result && (hasOutpoint() == other.hasOutpoint());
       if (hasOutpoint()) {
         result = result && getOutpoint()
@@ -5377,8 +6071,8 @@ public final class Rpc {
       hash = (37 * hash) + AMOUNT_SAT_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getAmountSat());
-      hash = (37 * hash) + SCRIPT_PUBKEY_FIELD_NUMBER;
-      hash = (53 * hash) + getScriptPubkey().hashCode();
+      hash = (37 * hash) + PK_SCRIPT_FIELD_NUMBER;
+      hash = (53 * hash) + getPkScript().hashCode();
       if (hasOutpoint()) {
         hash = (37 * hash) + OUTPOINT_FIELD_NUMBER;
         hash = (53 * hash) + getOutpoint().hashCode();
@@ -5521,7 +6215,7 @@ public final class Rpc {
 
         amountSat_ = 0L;
 
-        scriptPubkey_ = "";
+        pkScript_ = "";
 
         if (outpointBuilder_ == null) {
           outpoint_ = null;
@@ -5556,7 +6250,7 @@ public final class Rpc {
         result.type_ = type_;
         result.address_ = address_;
         result.amountSat_ = amountSat_;
-        result.scriptPubkey_ = scriptPubkey_;
+        result.pkScript_ = pkScript_;
         if (outpointBuilder_ == null) {
           result.outpoint_ = outpoint_;
         } else {
@@ -5614,8 +6308,8 @@ public final class Rpc {
         if (other.getAmountSat() != 0L) {
           setAmountSat(other.getAmountSat());
         }
-        if (!other.getScriptPubkey().isEmpty()) {
-          scriptPubkey_ = other.scriptPubkey_;
+        if (!other.getPkScript().isEmpty()) {
+          pkScript_ = other.pkScript_;
           onChanged();
         }
         if (other.hasOutpoint()) {
@@ -5842,21 +6536,21 @@ public final class Rpc {
         return this;
       }
 
-      private java.lang.Object scriptPubkey_ = "";
+      private java.lang.Object pkScript_ = "";
       /**
        * <pre>
-       *&#47; The scriptpubkey in hex
+       *&#47; The pkscript in hex
        * </pre>
        *
-       * <code>string script_pubkey = 4[json_name = "script_pubkey"];</code>
+       * <code>string pk_script = 4[json_name = "pk_script"];</code>
        */
-      public java.lang.String getScriptPubkey() {
-        java.lang.Object ref = scriptPubkey_;
+      public java.lang.String getPkScript() {
+        java.lang.Object ref = pkScript_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          scriptPubkey_ = s;
+          pkScript_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
@@ -5864,19 +6558,19 @@ public final class Rpc {
       }
       /**
        * <pre>
-       *&#47; The scriptpubkey in hex
+       *&#47; The pkscript in hex
        * </pre>
        *
-       * <code>string script_pubkey = 4[json_name = "script_pubkey"];</code>
+       * <code>string pk_script = 4[json_name = "pk_script"];</code>
        */
       public com.google.protobuf.ByteString
-          getScriptPubkeyBytes() {
-        java.lang.Object ref = scriptPubkey_;
+          getPkScriptBytes() {
+        java.lang.Object ref = pkScript_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
-          scriptPubkey_ = b;
+          pkScript_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
@@ -5884,64 +6578,62 @@ public final class Rpc {
       }
       /**
        * <pre>
-       *&#47; The scriptpubkey in hex
+       *&#47; The pkscript in hex
        * </pre>
        *
-       * <code>string script_pubkey = 4[json_name = "script_pubkey"];</code>
+       * <code>string pk_script = 4[json_name = "pk_script"];</code>
        */
-      public Builder setScriptPubkey(
+      public Builder setPkScript(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
   
-        scriptPubkey_ = value;
+        pkScript_ = value;
         onChanged();
         return this;
       }
       /**
        * <pre>
-       *&#47; The scriptpubkey in hex
+       *&#47; The pkscript in hex
        * </pre>
        *
-       * <code>string script_pubkey = 4[json_name = "script_pubkey"];</code>
+       * <code>string pk_script = 4[json_name = "pk_script"];</code>
        */
-      public Builder clearScriptPubkey() {
+      public Builder clearPkScript() {
         
-        scriptPubkey_ = getDefaultInstance().getScriptPubkey();
+        pkScript_ = getDefaultInstance().getPkScript();
         onChanged();
         return this;
       }
       /**
        * <pre>
-       *&#47; The scriptpubkey in hex
+       *&#47; The pkscript in hex
        * </pre>
        *
-       * <code>string script_pubkey = 4[json_name = "script_pubkey"];</code>
+       * <code>string pk_script = 4[json_name = "pk_script"];</code>
        */
-      public Builder setScriptPubkeyBytes(
+      public Builder setPkScriptBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
         
-        scriptPubkey_ = value;
+        pkScript_ = value;
         onChanged();
         return this;
       }
 
-      private lnrpc.Rpc.ChannelPoint outpoint_ = null;
+      private lnrpc.Rpc.OutPoint outpoint_ = null;
       private com.google.protobuf.SingleFieldBuilderV3<
-          lnrpc.Rpc.ChannelPoint, lnrpc.Rpc.ChannelPoint.Builder, lnrpc.Rpc.ChannelPointOrBuilder> outpointBuilder_;
+          lnrpc.Rpc.OutPoint, lnrpc.Rpc.OutPoint.Builder, lnrpc.Rpc.OutPointOrBuilder> outpointBuilder_;
       /**
        * <pre>
        *&#47; The outpoint in format txid:n
-       * / Note that this reuses the `ChannelPoint` message but
-       * / is not actually a channel related outpoint, of course
        * </pre>
        *
-       * <code>.lnrpc.ChannelPoint outpoint = 5[json_name = "outpoint"];</code>
+       * <code>.lnrpc.OutPoint outpoint = 5[json_name = "outpoint"];</code>
        */
       public boolean hasOutpoint() {
         return outpointBuilder_ != null || outpoint_ != null;
@@ -5949,15 +6641,13 @@ public final class Rpc {
       /**
        * <pre>
        *&#47; The outpoint in format txid:n
-       * / Note that this reuses the `ChannelPoint` message but
-       * / is not actually a channel related outpoint, of course
        * </pre>
        *
-       * <code>.lnrpc.ChannelPoint outpoint = 5[json_name = "outpoint"];</code>
+       * <code>.lnrpc.OutPoint outpoint = 5[json_name = "outpoint"];</code>
        */
-      public lnrpc.Rpc.ChannelPoint getOutpoint() {
+      public lnrpc.Rpc.OutPoint getOutpoint() {
         if (outpointBuilder_ == null) {
-          return outpoint_ == null ? lnrpc.Rpc.ChannelPoint.getDefaultInstance() : outpoint_;
+          return outpoint_ == null ? lnrpc.Rpc.OutPoint.getDefaultInstance() : outpoint_;
         } else {
           return outpointBuilder_.getMessage();
         }
@@ -5965,13 +6655,11 @@ public final class Rpc {
       /**
        * <pre>
        *&#47; The outpoint in format txid:n
-       * / Note that this reuses the `ChannelPoint` message but
-       * / is not actually a channel related outpoint, of course
        * </pre>
        *
-       * <code>.lnrpc.ChannelPoint outpoint = 5[json_name = "outpoint"];</code>
+       * <code>.lnrpc.OutPoint outpoint = 5[json_name = "outpoint"];</code>
        */
-      public Builder setOutpoint(lnrpc.Rpc.ChannelPoint value) {
+      public Builder setOutpoint(lnrpc.Rpc.OutPoint value) {
         if (outpointBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -5987,14 +6675,12 @@ public final class Rpc {
       /**
        * <pre>
        *&#47; The outpoint in format txid:n
-       * / Note that this reuses the `ChannelPoint` message but
-       * / is not actually a channel related outpoint, of course
        * </pre>
        *
-       * <code>.lnrpc.ChannelPoint outpoint = 5[json_name = "outpoint"];</code>
+       * <code>.lnrpc.OutPoint outpoint = 5[json_name = "outpoint"];</code>
        */
       public Builder setOutpoint(
-          lnrpc.Rpc.ChannelPoint.Builder builderForValue) {
+          lnrpc.Rpc.OutPoint.Builder builderForValue) {
         if (outpointBuilder_ == null) {
           outpoint_ = builderForValue.build();
           onChanged();
@@ -6007,17 +6693,15 @@ public final class Rpc {
       /**
        * <pre>
        *&#47; The outpoint in format txid:n
-       * / Note that this reuses the `ChannelPoint` message but
-       * / is not actually a channel related outpoint, of course
        * </pre>
        *
-       * <code>.lnrpc.ChannelPoint outpoint = 5[json_name = "outpoint"];</code>
+       * <code>.lnrpc.OutPoint outpoint = 5[json_name = "outpoint"];</code>
        */
-      public Builder mergeOutpoint(lnrpc.Rpc.ChannelPoint value) {
+      public Builder mergeOutpoint(lnrpc.Rpc.OutPoint value) {
         if (outpointBuilder_ == null) {
           if (outpoint_ != null) {
             outpoint_ =
-              lnrpc.Rpc.ChannelPoint.newBuilder(outpoint_).mergeFrom(value).buildPartial();
+              lnrpc.Rpc.OutPoint.newBuilder(outpoint_).mergeFrom(value).buildPartial();
           } else {
             outpoint_ = value;
           }
@@ -6031,11 +6715,9 @@ public final class Rpc {
       /**
        * <pre>
        *&#47; The outpoint in format txid:n
-       * / Note that this reuses the `ChannelPoint` message but
-       * / is not actually a channel related outpoint, of course
        * </pre>
        *
-       * <code>.lnrpc.ChannelPoint outpoint = 5[json_name = "outpoint"];</code>
+       * <code>.lnrpc.OutPoint outpoint = 5[json_name = "outpoint"];</code>
        */
       public Builder clearOutpoint() {
         if (outpointBuilder_ == null) {
@@ -6051,13 +6733,11 @@ public final class Rpc {
       /**
        * <pre>
        *&#47; The outpoint in format txid:n
-       * / Note that this reuses the `ChannelPoint` message but
-       * / is not actually a channel related outpoint, of course
        * </pre>
        *
-       * <code>.lnrpc.ChannelPoint outpoint = 5[json_name = "outpoint"];</code>
+       * <code>.lnrpc.OutPoint outpoint = 5[json_name = "outpoint"];</code>
        */
-      public lnrpc.Rpc.ChannelPoint.Builder getOutpointBuilder() {
+      public lnrpc.Rpc.OutPoint.Builder getOutpointBuilder() {
         
         onChanged();
         return getOutpointFieldBuilder().getBuilder();
@@ -6065,35 +6745,31 @@ public final class Rpc {
       /**
        * <pre>
        *&#47; The outpoint in format txid:n
-       * / Note that this reuses the `ChannelPoint` message but
-       * / is not actually a channel related outpoint, of course
        * </pre>
        *
-       * <code>.lnrpc.ChannelPoint outpoint = 5[json_name = "outpoint"];</code>
+       * <code>.lnrpc.OutPoint outpoint = 5[json_name = "outpoint"];</code>
        */
-      public lnrpc.Rpc.ChannelPointOrBuilder getOutpointOrBuilder() {
+      public lnrpc.Rpc.OutPointOrBuilder getOutpointOrBuilder() {
         if (outpointBuilder_ != null) {
           return outpointBuilder_.getMessageOrBuilder();
         } else {
           return outpoint_ == null ?
-              lnrpc.Rpc.ChannelPoint.getDefaultInstance() : outpoint_;
+              lnrpc.Rpc.OutPoint.getDefaultInstance() : outpoint_;
         }
       }
       /**
        * <pre>
        *&#47; The outpoint in format txid:n
-       * / Note that this reuses the `ChannelPoint` message but
-       * / is not actually a channel related outpoint, of course
        * </pre>
        *
-       * <code>.lnrpc.ChannelPoint outpoint = 5[json_name = "outpoint"];</code>
+       * <code>.lnrpc.OutPoint outpoint = 5[json_name = "outpoint"];</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          lnrpc.Rpc.ChannelPoint, lnrpc.Rpc.ChannelPoint.Builder, lnrpc.Rpc.ChannelPointOrBuilder> 
+          lnrpc.Rpc.OutPoint, lnrpc.Rpc.OutPoint.Builder, lnrpc.Rpc.OutPointOrBuilder> 
           getOutpointFieldBuilder() {
         if (outpointBuilder_ == null) {
           outpointBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              lnrpc.Rpc.ChannelPoint, lnrpc.Rpc.ChannelPoint.Builder, lnrpc.Rpc.ChannelPointOrBuilder>(
+              lnrpc.Rpc.OutPoint, lnrpc.Rpc.OutPoint.Builder, lnrpc.Rpc.OutPointOrBuilder>(
                   getOutpoint(),
                   getParentForChildren(),
                   isClean());
@@ -9650,6 +10326,28 @@ public final class Rpc {
      * <code>.lnrpc.FeeLimit fee_limit = 8;</code>
      */
     lnrpc.Rpc.FeeLimitOrBuilder getFeeLimitOrBuilder();
+
+    /**
+     * <pre>
+     **
+     *The channel id of the channel that must be taken to the first hop. If zero,
+     *any channel may be used.
+     * </pre>
+     *
+     * <code>uint64 outgoing_chan_id = 9;</code>
+     */
+    long getOutgoingChanId();
+
+    /**
+     * <pre>
+     ** 
+     *An optional maximum total time lock for the route. If zero, there is no
+     *maximum enforced.
+     * </pre>
+     *
+     * <code>uint32 cltv_limit = 10;</code>
+     */
+    int getCltvLimit();
   }
   /**
    * Protobuf type {@code lnrpc.SendRequest}
@@ -9671,6 +10369,8 @@ public final class Rpc {
       paymentHashString_ = "";
       paymentRequest_ = "";
       finalCltvDelta_ = 0;
+      outgoingChanId_ = 0L;
+      cltvLimit_ = 0;
     }
 
     @java.lang.Override
@@ -9753,6 +10453,16 @@ public final class Rpc {
                 feeLimit_ = subBuilder.buildPartial();
               }
 
+              break;
+            }
+            case 72: {
+
+              outgoingChanId_ = input.readUInt64();
+              break;
+            }
+            case 80: {
+
+              cltvLimit_ = input.readUInt32();
               break;
             }
           }
@@ -10010,6 +10720,36 @@ public final class Rpc {
       return getFeeLimit();
     }
 
+    public static final int OUTGOING_CHAN_ID_FIELD_NUMBER = 9;
+    private long outgoingChanId_;
+    /**
+     * <pre>
+     **
+     *The channel id of the channel that must be taken to the first hop. If zero,
+     *any channel may be used.
+     * </pre>
+     *
+     * <code>uint64 outgoing_chan_id = 9;</code>
+     */
+    public long getOutgoingChanId() {
+      return outgoingChanId_;
+    }
+
+    public static final int CLTV_LIMIT_FIELD_NUMBER = 10;
+    private int cltvLimit_;
+    /**
+     * <pre>
+     ** 
+     *An optional maximum total time lock for the route. If zero, there is no
+     *maximum enforced.
+     * </pre>
+     *
+     * <code>uint32 cltv_limit = 10;</code>
+     */
+    public int getCltvLimit() {
+      return cltvLimit_;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -10045,6 +10785,12 @@ public final class Rpc {
       }
       if (feeLimit_ != null) {
         output.writeMessage(8, getFeeLimit());
+      }
+      if (outgoingChanId_ != 0L) {
+        output.writeUInt64(9, outgoingChanId_);
+      }
+      if (cltvLimit_ != 0) {
+        output.writeUInt32(10, cltvLimit_);
       }
       unknownFields.writeTo(output);
     }
@@ -10083,6 +10829,14 @@ public final class Rpc {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(8, getFeeLimit());
       }
+      if (outgoingChanId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(9, outgoingChanId_);
+      }
+      if (cltvLimit_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(10, cltvLimit_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -10118,6 +10872,10 @@ public final class Rpc {
         result = result && getFeeLimit()
             .equals(other.getFeeLimit());
       }
+      result = result && (getOutgoingChanId()
+          == other.getOutgoingChanId());
+      result = result && (getCltvLimit()
+          == other.getCltvLimit());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -10148,6 +10906,11 @@ public final class Rpc {
         hash = (37 * hash) + FEE_LIMIT_FIELD_NUMBER;
         hash = (53 * hash) + getFeeLimit().hashCode();
       }
+      hash = (37 * hash) + OUTGOING_CHAN_ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getOutgoingChanId());
+      hash = (37 * hash) + CLTV_LIMIT_FIELD_NUMBER;
+      hash = (53 * hash) + getCltvLimit();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -10297,6 +11060,10 @@ public final class Rpc {
           feeLimit_ = null;
           feeLimitBuilder_ = null;
         }
+        outgoingChanId_ = 0L;
+
+        cltvLimit_ = 0;
+
         return this;
       }
 
@@ -10331,6 +11098,8 @@ public final class Rpc {
         } else {
           result.feeLimit_ = feeLimitBuilder_.build();
         }
+        result.outgoingChanId_ = outgoingChanId_;
+        result.cltvLimit_ = cltvLimit_;
         onBuilt();
         return result;
       }
@@ -10398,6 +11167,12 @@ public final class Rpc {
         }
         if (other.hasFeeLimit()) {
           mergeFeeLimit(other.getFeeLimit());
+        }
+        if (other.getOutgoingChanId() != 0L) {
+          setOutgoingChanId(other.getOutgoingChanId());
+        }
+        if (other.getCltvLimit() != 0) {
+          setCltvLimit(other.getCltvLimit());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -11059,6 +11834,94 @@ public final class Rpc {
           feeLimit_ = null;
         }
         return feeLimitBuilder_;
+      }
+
+      private long outgoingChanId_ ;
+      /**
+       * <pre>
+       **
+       *The channel id of the channel that must be taken to the first hop. If zero,
+       *any channel may be used.
+       * </pre>
+       *
+       * <code>uint64 outgoing_chan_id = 9;</code>
+       */
+      public long getOutgoingChanId() {
+        return outgoingChanId_;
+      }
+      /**
+       * <pre>
+       **
+       *The channel id of the channel that must be taken to the first hop. If zero,
+       *any channel may be used.
+       * </pre>
+       *
+       * <code>uint64 outgoing_chan_id = 9;</code>
+       */
+      public Builder setOutgoingChanId(long value) {
+        
+        outgoingChanId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *The channel id of the channel that must be taken to the first hop. If zero,
+       *any channel may be used.
+       * </pre>
+       *
+       * <code>uint64 outgoing_chan_id = 9;</code>
+       */
+      public Builder clearOutgoingChanId() {
+        
+        outgoingChanId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private int cltvLimit_ ;
+      /**
+       * <pre>
+       ** 
+       *An optional maximum total time lock for the route. If zero, there is no
+       *maximum enforced.
+       * </pre>
+       *
+       * <code>uint32 cltv_limit = 10;</code>
+       */
+      public int getCltvLimit() {
+        return cltvLimit_;
+      }
+      /**
+       * <pre>
+       ** 
+       *An optional maximum total time lock for the route. If zero, there is no
+       *maximum enforced.
+       * </pre>
+       *
+       * <code>uint32 cltv_limit = 10;</code>
+       */
+      public Builder setCltvLimit(int value) {
+        
+        cltvLimit_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       ** 
+       *An optional maximum total time lock for the route. If zero, there is no
+       *maximum enforced.
+       * </pre>
+       *
+       * <code>uint32 cltv_limit = 10;</code>
+       */
+      public Builder clearCltvLimit() {
+        
+        cltvLimit_ = 0;
+        onChanged();
+        return this;
       }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -11993,47 +12856,92 @@ public final class Rpc {
 
     /**
      * <pre>
-     *&#47; The set of routes that should be used to attempt to complete the payment.
+     **
+     *Deprecated. The set of routes that should be used to attempt to complete the
+     *payment. The possibility to pass in multiple routes is deprecated and 
+     *instead the single route field below should be used in combination with the 
+     *streaming variant of SendToRoute.
      * </pre>
      *
-     * <code>repeated .lnrpc.Route routes = 3;</code>
+     * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
      */
-    java.util.List<lnrpc.Rpc.Route> 
+    @java.lang.Deprecated java.util.List<lnrpc.Rpc.Route> 
         getRoutesList();
     /**
      * <pre>
-     *&#47; The set of routes that should be used to attempt to complete the payment.
+     **
+     *Deprecated. The set of routes that should be used to attempt to complete the
+     *payment. The possibility to pass in multiple routes is deprecated and 
+     *instead the single route field below should be used in combination with the 
+     *streaming variant of SendToRoute.
      * </pre>
      *
-     * <code>repeated .lnrpc.Route routes = 3;</code>
+     * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
      */
-    lnrpc.Rpc.Route getRoutes(int index);
+    @java.lang.Deprecated lnrpc.Rpc.Route getRoutes(int index);
     /**
      * <pre>
-     *&#47; The set of routes that should be used to attempt to complete the payment.
+     **
+     *Deprecated. The set of routes that should be used to attempt to complete the
+     *payment. The possibility to pass in multiple routes is deprecated and 
+     *instead the single route field below should be used in combination with the 
+     *streaming variant of SendToRoute.
      * </pre>
      *
-     * <code>repeated .lnrpc.Route routes = 3;</code>
+     * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
      */
-    int getRoutesCount();
+    @java.lang.Deprecated int getRoutesCount();
     /**
      * <pre>
-     *&#47; The set of routes that should be used to attempt to complete the payment.
+     **
+     *Deprecated. The set of routes that should be used to attempt to complete the
+     *payment. The possibility to pass in multiple routes is deprecated and 
+     *instead the single route field below should be used in combination with the 
+     *streaming variant of SendToRoute.
      * </pre>
      *
-     * <code>repeated .lnrpc.Route routes = 3;</code>
+     * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
      */
-    java.util.List<? extends lnrpc.Rpc.RouteOrBuilder> 
+    @java.lang.Deprecated java.util.List<? extends lnrpc.Rpc.RouteOrBuilder> 
         getRoutesOrBuilderList();
     /**
      * <pre>
-     *&#47; The set of routes that should be used to attempt to complete the payment.
+     **
+     *Deprecated. The set of routes that should be used to attempt to complete the
+     *payment. The possibility to pass in multiple routes is deprecated and 
+     *instead the single route field below should be used in combination with the 
+     *streaming variant of SendToRoute.
      * </pre>
      *
-     * <code>repeated .lnrpc.Route routes = 3;</code>
+     * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
      */
-    lnrpc.Rpc.RouteOrBuilder getRoutesOrBuilder(
+    @java.lang.Deprecated lnrpc.Rpc.RouteOrBuilder getRoutesOrBuilder(
         int index);
+
+    /**
+     * <pre>
+     *&#47; Route that should be used to attempt to complete the payment.
+     * </pre>
+     *
+     * <code>.lnrpc.Route route = 4;</code>
+     */
+    boolean hasRoute();
+    /**
+     * <pre>
+     *&#47; Route that should be used to attempt to complete the payment.
+     * </pre>
+     *
+     * <code>.lnrpc.Route route = 4;</code>
+     */
+    lnrpc.Rpc.Route getRoute();
+    /**
+     * <pre>
+     *&#47; Route that should be used to attempt to complete the payment.
+     * </pre>
+     *
+     * <code>.lnrpc.Route route = 4;</code>
+     */
+    lnrpc.Rpc.RouteOrBuilder getRouteOrBuilder();
   }
   /**
    * Protobuf type {@code lnrpc.SendToRouteRequest}
@@ -12102,6 +13010,19 @@ public final class Rpc {
               }
               routes_.add(
                   input.readMessage(lnrpc.Rpc.Route.parser(), extensionRegistry));
+              break;
+            }
+            case 34: {
+              lnrpc.Rpc.Route.Builder subBuilder = null;
+              if (route_ != null) {
+                subBuilder = route_.toBuilder();
+              }
+              route_ = input.readMessage(lnrpc.Rpc.Route.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(route_);
+                route_ = subBuilder.buildPartial();
+              }
+
               break;
             }
           }
@@ -12191,55 +13112,108 @@ public final class Rpc {
     private java.util.List<lnrpc.Rpc.Route> routes_;
     /**
      * <pre>
-     *&#47; The set of routes that should be used to attempt to complete the payment.
+     **
+     *Deprecated. The set of routes that should be used to attempt to complete the
+     *payment. The possibility to pass in multiple routes is deprecated and 
+     *instead the single route field below should be used in combination with the 
+     *streaming variant of SendToRoute.
      * </pre>
      *
-     * <code>repeated .lnrpc.Route routes = 3;</code>
+     * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
      */
-    public java.util.List<lnrpc.Rpc.Route> getRoutesList() {
+    @java.lang.Deprecated public java.util.List<lnrpc.Rpc.Route> getRoutesList() {
       return routes_;
     }
     /**
      * <pre>
-     *&#47; The set of routes that should be used to attempt to complete the payment.
+     **
+     *Deprecated. The set of routes that should be used to attempt to complete the
+     *payment. The possibility to pass in multiple routes is deprecated and 
+     *instead the single route field below should be used in combination with the 
+     *streaming variant of SendToRoute.
      * </pre>
      *
-     * <code>repeated .lnrpc.Route routes = 3;</code>
+     * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
      */
-    public java.util.List<? extends lnrpc.Rpc.RouteOrBuilder> 
+    @java.lang.Deprecated public java.util.List<? extends lnrpc.Rpc.RouteOrBuilder> 
         getRoutesOrBuilderList() {
       return routes_;
     }
     /**
      * <pre>
-     *&#47; The set of routes that should be used to attempt to complete the payment.
+     **
+     *Deprecated. The set of routes that should be used to attempt to complete the
+     *payment. The possibility to pass in multiple routes is deprecated and 
+     *instead the single route field below should be used in combination with the 
+     *streaming variant of SendToRoute.
      * </pre>
      *
-     * <code>repeated .lnrpc.Route routes = 3;</code>
+     * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
      */
-    public int getRoutesCount() {
+    @java.lang.Deprecated public int getRoutesCount() {
       return routes_.size();
     }
     /**
      * <pre>
-     *&#47; The set of routes that should be used to attempt to complete the payment.
+     **
+     *Deprecated. The set of routes that should be used to attempt to complete the
+     *payment. The possibility to pass in multiple routes is deprecated and 
+     *instead the single route field below should be used in combination with the 
+     *streaming variant of SendToRoute.
      * </pre>
      *
-     * <code>repeated .lnrpc.Route routes = 3;</code>
+     * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
      */
-    public lnrpc.Rpc.Route getRoutes(int index) {
+    @java.lang.Deprecated public lnrpc.Rpc.Route getRoutes(int index) {
       return routes_.get(index);
     }
     /**
      * <pre>
-     *&#47; The set of routes that should be used to attempt to complete the payment.
+     **
+     *Deprecated. The set of routes that should be used to attempt to complete the
+     *payment. The possibility to pass in multiple routes is deprecated and 
+     *instead the single route field below should be used in combination with the 
+     *streaming variant of SendToRoute.
      * </pre>
      *
-     * <code>repeated .lnrpc.Route routes = 3;</code>
+     * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
      */
-    public lnrpc.Rpc.RouteOrBuilder getRoutesOrBuilder(
+    @java.lang.Deprecated public lnrpc.Rpc.RouteOrBuilder getRoutesOrBuilder(
         int index) {
       return routes_.get(index);
+    }
+
+    public static final int ROUTE_FIELD_NUMBER = 4;
+    private lnrpc.Rpc.Route route_;
+    /**
+     * <pre>
+     *&#47; Route that should be used to attempt to complete the payment.
+     * </pre>
+     *
+     * <code>.lnrpc.Route route = 4;</code>
+     */
+    public boolean hasRoute() {
+      return route_ != null;
+    }
+    /**
+     * <pre>
+     *&#47; Route that should be used to attempt to complete the payment.
+     * </pre>
+     *
+     * <code>.lnrpc.Route route = 4;</code>
+     */
+    public lnrpc.Rpc.Route getRoute() {
+      return route_ == null ? lnrpc.Rpc.Route.getDefaultInstance() : route_;
+    }
+    /**
+     * <pre>
+     *&#47; Route that should be used to attempt to complete the payment.
+     * </pre>
+     *
+     * <code>.lnrpc.Route route = 4;</code>
+     */
+    public lnrpc.Rpc.RouteOrBuilder getRouteOrBuilder() {
+      return getRoute();
     }
 
     private byte memoizedIsInitialized = -1;
@@ -12263,6 +13237,9 @@ public final class Rpc {
       for (int i = 0; i < routes_.size(); i++) {
         output.writeMessage(3, routes_.get(i));
       }
+      if (route_ != null) {
+        output.writeMessage(4, getRoute());
+      }
       unknownFields.writeTo(output);
     }
 
@@ -12281,6 +13258,10 @@ public final class Rpc {
       for (int i = 0; i < routes_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(3, routes_.get(i));
+      }
+      if (route_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(4, getRoute());
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -12304,6 +13285,11 @@ public final class Rpc {
           .equals(other.getPaymentHashString());
       result = result && getRoutesList()
           .equals(other.getRoutesList());
+      result = result && (hasRoute() == other.hasRoute());
+      if (hasRoute()) {
+        result = result && getRoute()
+            .equals(other.getRoute());
+      }
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -12322,6 +13308,10 @@ public final class Rpc {
       if (getRoutesCount() > 0) {
         hash = (37 * hash) + ROUTES_FIELD_NUMBER;
         hash = (53 * hash) + getRoutesList().hashCode();
+      }
+      if (hasRoute()) {
+        hash = (37 * hash) + ROUTE_FIELD_NUMBER;
+        hash = (53 * hash) + getRoute().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -12463,6 +13453,12 @@ public final class Rpc {
         } else {
           routesBuilder_.clear();
         }
+        if (routeBuilder_ == null) {
+          route_ = null;
+        } else {
+          route_ = null;
+          routeBuilder_ = null;
+        }
         return this;
       }
 
@@ -12497,6 +13493,11 @@ public final class Rpc {
           result.routes_ = routes_;
         } else {
           result.routes_ = routesBuilder_.build();
+        }
+        if (routeBuilder_ == null) {
+          result.route_ = route_;
+        } else {
+          result.route_ = routeBuilder_.build();
         }
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -12572,6 +13573,9 @@ public final class Rpc {
               routesBuilder_.addAllMessages(other.routes_);
             }
           }
+        }
+        if (other.hasRoute()) {
+          mergeRoute(other.getRoute());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -12745,12 +13749,16 @@ public final class Rpc {
 
       /**
        * <pre>
-       *&#47; The set of routes that should be used to attempt to complete the payment.
+       **
+       *Deprecated. The set of routes that should be used to attempt to complete the
+       *payment. The possibility to pass in multiple routes is deprecated and 
+       *instead the single route field below should be used in combination with the 
+       *streaming variant of SendToRoute.
        * </pre>
        *
-       * <code>repeated .lnrpc.Route routes = 3;</code>
+       * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
        */
-      public java.util.List<lnrpc.Rpc.Route> getRoutesList() {
+      @java.lang.Deprecated public java.util.List<lnrpc.Rpc.Route> getRoutesList() {
         if (routesBuilder_ == null) {
           return java.util.Collections.unmodifiableList(routes_);
         } else {
@@ -12759,12 +13767,16 @@ public final class Rpc {
       }
       /**
        * <pre>
-       *&#47; The set of routes that should be used to attempt to complete the payment.
+       **
+       *Deprecated. The set of routes that should be used to attempt to complete the
+       *payment. The possibility to pass in multiple routes is deprecated and 
+       *instead the single route field below should be used in combination with the 
+       *streaming variant of SendToRoute.
        * </pre>
        *
-       * <code>repeated .lnrpc.Route routes = 3;</code>
+       * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
        */
-      public int getRoutesCount() {
+      @java.lang.Deprecated public int getRoutesCount() {
         if (routesBuilder_ == null) {
           return routes_.size();
         } else {
@@ -12773,12 +13785,16 @@ public final class Rpc {
       }
       /**
        * <pre>
-       *&#47; The set of routes that should be used to attempt to complete the payment.
+       **
+       *Deprecated. The set of routes that should be used to attempt to complete the
+       *payment. The possibility to pass in multiple routes is deprecated and 
+       *instead the single route field below should be used in combination with the 
+       *streaming variant of SendToRoute.
        * </pre>
        *
-       * <code>repeated .lnrpc.Route routes = 3;</code>
+       * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
        */
-      public lnrpc.Rpc.Route getRoutes(int index) {
+      @java.lang.Deprecated public lnrpc.Rpc.Route getRoutes(int index) {
         if (routesBuilder_ == null) {
           return routes_.get(index);
         } else {
@@ -12787,12 +13803,16 @@ public final class Rpc {
       }
       /**
        * <pre>
-       *&#47; The set of routes that should be used to attempt to complete the payment.
+       **
+       *Deprecated. The set of routes that should be used to attempt to complete the
+       *payment. The possibility to pass in multiple routes is deprecated and 
+       *instead the single route field below should be used in combination with the 
+       *streaming variant of SendToRoute.
        * </pre>
        *
-       * <code>repeated .lnrpc.Route routes = 3;</code>
+       * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
        */
-      public Builder setRoutes(
+      @java.lang.Deprecated public Builder setRoutes(
           int index, lnrpc.Rpc.Route value) {
         if (routesBuilder_ == null) {
           if (value == null) {
@@ -12808,12 +13828,16 @@ public final class Rpc {
       }
       /**
        * <pre>
-       *&#47; The set of routes that should be used to attempt to complete the payment.
+       **
+       *Deprecated. The set of routes that should be used to attempt to complete the
+       *payment. The possibility to pass in multiple routes is deprecated and 
+       *instead the single route field below should be used in combination with the 
+       *streaming variant of SendToRoute.
        * </pre>
        *
-       * <code>repeated .lnrpc.Route routes = 3;</code>
+       * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
        */
-      public Builder setRoutes(
+      @java.lang.Deprecated public Builder setRoutes(
           int index, lnrpc.Rpc.Route.Builder builderForValue) {
         if (routesBuilder_ == null) {
           ensureRoutesIsMutable();
@@ -12826,12 +13850,16 @@ public final class Rpc {
       }
       /**
        * <pre>
-       *&#47; The set of routes that should be used to attempt to complete the payment.
+       **
+       *Deprecated. The set of routes that should be used to attempt to complete the
+       *payment. The possibility to pass in multiple routes is deprecated and 
+       *instead the single route field below should be used in combination with the 
+       *streaming variant of SendToRoute.
        * </pre>
        *
-       * <code>repeated .lnrpc.Route routes = 3;</code>
+       * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
        */
-      public Builder addRoutes(lnrpc.Rpc.Route value) {
+      @java.lang.Deprecated public Builder addRoutes(lnrpc.Rpc.Route value) {
         if (routesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -12846,12 +13874,16 @@ public final class Rpc {
       }
       /**
        * <pre>
-       *&#47; The set of routes that should be used to attempt to complete the payment.
+       **
+       *Deprecated. The set of routes that should be used to attempt to complete the
+       *payment. The possibility to pass in multiple routes is deprecated and 
+       *instead the single route field below should be used in combination with the 
+       *streaming variant of SendToRoute.
        * </pre>
        *
-       * <code>repeated .lnrpc.Route routes = 3;</code>
+       * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
        */
-      public Builder addRoutes(
+      @java.lang.Deprecated public Builder addRoutes(
           int index, lnrpc.Rpc.Route value) {
         if (routesBuilder_ == null) {
           if (value == null) {
@@ -12867,12 +13899,16 @@ public final class Rpc {
       }
       /**
        * <pre>
-       *&#47; The set of routes that should be used to attempt to complete the payment.
+       **
+       *Deprecated. The set of routes that should be used to attempt to complete the
+       *payment. The possibility to pass in multiple routes is deprecated and 
+       *instead the single route field below should be used in combination with the 
+       *streaming variant of SendToRoute.
        * </pre>
        *
-       * <code>repeated .lnrpc.Route routes = 3;</code>
+       * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
        */
-      public Builder addRoutes(
+      @java.lang.Deprecated public Builder addRoutes(
           lnrpc.Rpc.Route.Builder builderForValue) {
         if (routesBuilder_ == null) {
           ensureRoutesIsMutable();
@@ -12885,12 +13921,16 @@ public final class Rpc {
       }
       /**
        * <pre>
-       *&#47; The set of routes that should be used to attempt to complete the payment.
+       **
+       *Deprecated. The set of routes that should be used to attempt to complete the
+       *payment. The possibility to pass in multiple routes is deprecated and 
+       *instead the single route field below should be used in combination with the 
+       *streaming variant of SendToRoute.
        * </pre>
        *
-       * <code>repeated .lnrpc.Route routes = 3;</code>
+       * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
        */
-      public Builder addRoutes(
+      @java.lang.Deprecated public Builder addRoutes(
           int index, lnrpc.Rpc.Route.Builder builderForValue) {
         if (routesBuilder_ == null) {
           ensureRoutesIsMutable();
@@ -12903,12 +13943,16 @@ public final class Rpc {
       }
       /**
        * <pre>
-       *&#47; The set of routes that should be used to attempt to complete the payment.
+       **
+       *Deprecated. The set of routes that should be used to attempt to complete the
+       *payment. The possibility to pass in multiple routes is deprecated and 
+       *instead the single route field below should be used in combination with the 
+       *streaming variant of SendToRoute.
        * </pre>
        *
-       * <code>repeated .lnrpc.Route routes = 3;</code>
+       * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
        */
-      public Builder addAllRoutes(
+      @java.lang.Deprecated public Builder addAllRoutes(
           java.lang.Iterable<? extends lnrpc.Rpc.Route> values) {
         if (routesBuilder_ == null) {
           ensureRoutesIsMutable();
@@ -12922,12 +13966,16 @@ public final class Rpc {
       }
       /**
        * <pre>
-       *&#47; The set of routes that should be used to attempt to complete the payment.
+       **
+       *Deprecated. The set of routes that should be used to attempt to complete the
+       *payment. The possibility to pass in multiple routes is deprecated and 
+       *instead the single route field below should be used in combination with the 
+       *streaming variant of SendToRoute.
        * </pre>
        *
-       * <code>repeated .lnrpc.Route routes = 3;</code>
+       * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
        */
-      public Builder clearRoutes() {
+      @java.lang.Deprecated public Builder clearRoutes() {
         if (routesBuilder_ == null) {
           routes_ = java.util.Collections.emptyList();
           bitField0_ = (bitField0_ & ~0x00000004);
@@ -12939,12 +13987,16 @@ public final class Rpc {
       }
       /**
        * <pre>
-       *&#47; The set of routes that should be used to attempt to complete the payment.
+       **
+       *Deprecated. The set of routes that should be used to attempt to complete the
+       *payment. The possibility to pass in multiple routes is deprecated and 
+       *instead the single route field below should be used in combination with the 
+       *streaming variant of SendToRoute.
        * </pre>
        *
-       * <code>repeated .lnrpc.Route routes = 3;</code>
+       * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
        */
-      public Builder removeRoutes(int index) {
+      @java.lang.Deprecated public Builder removeRoutes(int index) {
         if (routesBuilder_ == null) {
           ensureRoutesIsMutable();
           routes_.remove(index);
@@ -12956,23 +14008,31 @@ public final class Rpc {
       }
       /**
        * <pre>
-       *&#47; The set of routes that should be used to attempt to complete the payment.
+       **
+       *Deprecated. The set of routes that should be used to attempt to complete the
+       *payment. The possibility to pass in multiple routes is deprecated and 
+       *instead the single route field below should be used in combination with the 
+       *streaming variant of SendToRoute.
        * </pre>
        *
-       * <code>repeated .lnrpc.Route routes = 3;</code>
+       * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
        */
-      public lnrpc.Rpc.Route.Builder getRoutesBuilder(
+      @java.lang.Deprecated public lnrpc.Rpc.Route.Builder getRoutesBuilder(
           int index) {
         return getRoutesFieldBuilder().getBuilder(index);
       }
       /**
        * <pre>
-       *&#47; The set of routes that should be used to attempt to complete the payment.
+       **
+       *Deprecated. The set of routes that should be used to attempt to complete the
+       *payment. The possibility to pass in multiple routes is deprecated and 
+       *instead the single route field below should be used in combination with the 
+       *streaming variant of SendToRoute.
        * </pre>
        *
-       * <code>repeated .lnrpc.Route routes = 3;</code>
+       * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
        */
-      public lnrpc.Rpc.RouteOrBuilder getRoutesOrBuilder(
+      @java.lang.Deprecated public lnrpc.Rpc.RouteOrBuilder getRoutesOrBuilder(
           int index) {
         if (routesBuilder_ == null) {
           return routes_.get(index);  } else {
@@ -12981,12 +14041,16 @@ public final class Rpc {
       }
       /**
        * <pre>
-       *&#47; The set of routes that should be used to attempt to complete the payment.
+       **
+       *Deprecated. The set of routes that should be used to attempt to complete the
+       *payment. The possibility to pass in multiple routes is deprecated and 
+       *instead the single route field below should be used in combination with the 
+       *streaming variant of SendToRoute.
        * </pre>
        *
-       * <code>repeated .lnrpc.Route routes = 3;</code>
+       * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
        */
-      public java.util.List<? extends lnrpc.Rpc.RouteOrBuilder> 
+      @java.lang.Deprecated public java.util.List<? extends lnrpc.Rpc.RouteOrBuilder> 
            getRoutesOrBuilderList() {
         if (routesBuilder_ != null) {
           return routesBuilder_.getMessageOrBuilderList();
@@ -12996,35 +14060,47 @@ public final class Rpc {
       }
       /**
        * <pre>
-       *&#47; The set of routes that should be used to attempt to complete the payment.
+       **
+       *Deprecated. The set of routes that should be used to attempt to complete the
+       *payment. The possibility to pass in multiple routes is deprecated and 
+       *instead the single route field below should be used in combination with the 
+       *streaming variant of SendToRoute.
        * </pre>
        *
-       * <code>repeated .lnrpc.Route routes = 3;</code>
+       * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
        */
-      public lnrpc.Rpc.Route.Builder addRoutesBuilder() {
+      @java.lang.Deprecated public lnrpc.Rpc.Route.Builder addRoutesBuilder() {
         return getRoutesFieldBuilder().addBuilder(
             lnrpc.Rpc.Route.getDefaultInstance());
       }
       /**
        * <pre>
-       *&#47; The set of routes that should be used to attempt to complete the payment.
+       **
+       *Deprecated. The set of routes that should be used to attempt to complete the
+       *payment. The possibility to pass in multiple routes is deprecated and 
+       *instead the single route field below should be used in combination with the 
+       *streaming variant of SendToRoute.
        * </pre>
        *
-       * <code>repeated .lnrpc.Route routes = 3;</code>
+       * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
        */
-      public lnrpc.Rpc.Route.Builder addRoutesBuilder(
+      @java.lang.Deprecated public lnrpc.Rpc.Route.Builder addRoutesBuilder(
           int index) {
         return getRoutesFieldBuilder().addBuilder(
             index, lnrpc.Rpc.Route.getDefaultInstance());
       }
       /**
        * <pre>
-       *&#47; The set of routes that should be used to attempt to complete the payment.
+       **
+       *Deprecated. The set of routes that should be used to attempt to complete the
+       *payment. The possibility to pass in multiple routes is deprecated and 
+       *instead the single route field below should be used in combination with the 
+       *streaming variant of SendToRoute.
        * </pre>
        *
-       * <code>repeated .lnrpc.Route routes = 3;</code>
+       * <code>repeated .lnrpc.Route routes = 3 [deprecated = true];</code>
        */
-      public java.util.List<lnrpc.Rpc.Route.Builder> 
+      @java.lang.Deprecated public java.util.List<lnrpc.Rpc.Route.Builder> 
            getRoutesBuilderList() {
         return getRoutesFieldBuilder().getBuilderList();
       }
@@ -13041,6 +14117,159 @@ public final class Rpc {
           routes_ = null;
         }
         return routesBuilder_;
+      }
+
+      private lnrpc.Rpc.Route route_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.Route, lnrpc.Rpc.Route.Builder, lnrpc.Rpc.RouteOrBuilder> routeBuilder_;
+      /**
+       * <pre>
+       *&#47; Route that should be used to attempt to complete the payment.
+       * </pre>
+       *
+       * <code>.lnrpc.Route route = 4;</code>
+       */
+      public boolean hasRoute() {
+        return routeBuilder_ != null || route_ != null;
+      }
+      /**
+       * <pre>
+       *&#47; Route that should be used to attempt to complete the payment.
+       * </pre>
+       *
+       * <code>.lnrpc.Route route = 4;</code>
+       */
+      public lnrpc.Rpc.Route getRoute() {
+        if (routeBuilder_ == null) {
+          return route_ == null ? lnrpc.Rpc.Route.getDefaultInstance() : route_;
+        } else {
+          return routeBuilder_.getMessage();
+        }
+      }
+      /**
+       * <pre>
+       *&#47; Route that should be used to attempt to complete the payment.
+       * </pre>
+       *
+       * <code>.lnrpc.Route route = 4;</code>
+       */
+      public Builder setRoute(lnrpc.Rpc.Route value) {
+        if (routeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          route_ = value;
+          onChanged();
+        } else {
+          routeBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       *&#47; Route that should be used to attempt to complete the payment.
+       * </pre>
+       *
+       * <code>.lnrpc.Route route = 4;</code>
+       */
+      public Builder setRoute(
+          lnrpc.Rpc.Route.Builder builderForValue) {
+        if (routeBuilder_ == null) {
+          route_ = builderForValue.build();
+          onChanged();
+        } else {
+          routeBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       *&#47; Route that should be used to attempt to complete the payment.
+       * </pre>
+       *
+       * <code>.lnrpc.Route route = 4;</code>
+       */
+      public Builder mergeRoute(lnrpc.Rpc.Route value) {
+        if (routeBuilder_ == null) {
+          if (route_ != null) {
+            route_ =
+              lnrpc.Rpc.Route.newBuilder(route_).mergeFrom(value).buildPartial();
+          } else {
+            route_ = value;
+          }
+          onChanged();
+        } else {
+          routeBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       *&#47; Route that should be used to attempt to complete the payment.
+       * </pre>
+       *
+       * <code>.lnrpc.Route route = 4;</code>
+       */
+      public Builder clearRoute() {
+        if (routeBuilder_ == null) {
+          route_ = null;
+          onChanged();
+        } else {
+          route_ = null;
+          routeBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       *&#47; Route that should be used to attempt to complete the payment.
+       * </pre>
+       *
+       * <code>.lnrpc.Route route = 4;</code>
+       */
+      public lnrpc.Rpc.Route.Builder getRouteBuilder() {
+        
+        onChanged();
+        return getRouteFieldBuilder().getBuilder();
+      }
+      /**
+       * <pre>
+       *&#47; Route that should be used to attempt to complete the payment.
+       * </pre>
+       *
+       * <code>.lnrpc.Route route = 4;</code>
+       */
+      public lnrpc.Rpc.RouteOrBuilder getRouteOrBuilder() {
+        if (routeBuilder_ != null) {
+          return routeBuilder_.getMessageOrBuilder();
+        } else {
+          return route_ == null ?
+              lnrpc.Rpc.Route.getDefaultInstance() : route_;
+        }
+      }
+      /**
+       * <pre>
+       *&#47; Route that should be used to attempt to complete the payment.
+       * </pre>
+       *
+       * <code>.lnrpc.Route route = 4;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.Route, lnrpc.Rpc.Route.Builder, lnrpc.Rpc.RouteOrBuilder> 
+          getRouteFieldBuilder() {
+        if (routeBuilder_ == null) {
+          routeBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              lnrpc.Rpc.Route, lnrpc.Rpc.Route.Builder, lnrpc.Rpc.RouteOrBuilder>(
+                  getRoute(),
+                  getParentForChildren(),
+                  isClean());
+          route_ = null;
+        }
+        return routeBuilder_;
       }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -13932,6 +15161,736 @@ public final class Rpc {
 
   }
 
+  public interface OutPointOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:lnrpc.OutPoint)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     *&#47; Raw bytes representing the transaction id.
+     * </pre>
+     *
+     * <code>bytes txid_bytes = 1[json_name = "txid_bytes"];</code>
+     */
+    com.google.protobuf.ByteString getTxidBytes();
+
+    /**
+     * <pre>
+     *&#47; Reversed, hex-encoded string representing the transaction id.
+     * </pre>
+     *
+     * <code>string txid_str = 2[json_name = "txid_str"];</code>
+     */
+    java.lang.String getTxidStr();
+    /**
+     * <pre>
+     *&#47; Reversed, hex-encoded string representing the transaction id.
+     * </pre>
+     *
+     * <code>string txid_str = 2[json_name = "txid_str"];</code>
+     */
+    com.google.protobuf.ByteString
+        getTxidStrBytes();
+
+    /**
+     * <pre>
+     *&#47; The index of the output on the transaction.
+     * </pre>
+     *
+     * <code>uint32 output_index = 3[json_name = "output_index"];</code>
+     */
+    int getOutputIndex();
+  }
+  /**
+   * Protobuf type {@code lnrpc.OutPoint}
+   */
+  public  static final class OutPoint extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:lnrpc.OutPoint)
+      OutPointOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use OutPoint.newBuilder() to construct.
+    private OutPoint(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private OutPoint() {
+      txidBytes_ = com.google.protobuf.ByteString.EMPTY;
+      txidStr_ = "";
+      outputIndex_ = 0;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private OutPoint(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+
+              txidBytes_ = input.readBytes();
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              txidStr_ = s;
+              break;
+            }
+            case 24: {
+
+              outputIndex_ = input.readUInt32();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return lnrpc.Rpc.internal_static_lnrpc_OutPoint_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return lnrpc.Rpc.internal_static_lnrpc_OutPoint_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              lnrpc.Rpc.OutPoint.class, lnrpc.Rpc.OutPoint.Builder.class);
+    }
+
+    public static final int TXID_BYTES_FIELD_NUMBER = 1;
+    private com.google.protobuf.ByteString txidBytes_;
+    /**
+     * <pre>
+     *&#47; Raw bytes representing the transaction id.
+     * </pre>
+     *
+     * <code>bytes txid_bytes = 1[json_name = "txid_bytes"];</code>
+     */
+    public com.google.protobuf.ByteString getTxidBytes() {
+      return txidBytes_;
+    }
+
+    public static final int TXID_STR_FIELD_NUMBER = 2;
+    private volatile java.lang.Object txidStr_;
+    /**
+     * <pre>
+     *&#47; Reversed, hex-encoded string representing the transaction id.
+     * </pre>
+     *
+     * <code>string txid_str = 2[json_name = "txid_str"];</code>
+     */
+    public java.lang.String getTxidStr() {
+      java.lang.Object ref = txidStr_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        txidStr_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     *&#47; Reversed, hex-encoded string representing the transaction id.
+     * </pre>
+     *
+     * <code>string txid_str = 2[json_name = "txid_str"];</code>
+     */
+    public com.google.protobuf.ByteString
+        getTxidStrBytes() {
+      java.lang.Object ref = txidStr_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        txidStr_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int OUTPUT_INDEX_FIELD_NUMBER = 3;
+    private int outputIndex_;
+    /**
+     * <pre>
+     *&#47; The index of the output on the transaction.
+     * </pre>
+     *
+     * <code>uint32 output_index = 3[json_name = "output_index"];</code>
+     */
+    public int getOutputIndex() {
+      return outputIndex_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!txidBytes_.isEmpty()) {
+        output.writeBytes(1, txidBytes_);
+      }
+      if (!getTxidStrBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, txidStr_);
+      }
+      if (outputIndex_ != 0) {
+        output.writeUInt32(3, outputIndex_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!txidBytes_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, txidBytes_);
+      }
+      if (!getTxidStrBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, txidStr_);
+      }
+      if (outputIndex_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(3, outputIndex_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof lnrpc.Rpc.OutPoint)) {
+        return super.equals(obj);
+      }
+      lnrpc.Rpc.OutPoint other = (lnrpc.Rpc.OutPoint) obj;
+
+      boolean result = true;
+      result = result && getTxidBytes()
+          .equals(other.getTxidBytes());
+      result = result && getTxidStr()
+          .equals(other.getTxidStr());
+      result = result && (getOutputIndex()
+          == other.getOutputIndex());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + TXID_BYTES_FIELD_NUMBER;
+      hash = (53 * hash) + getTxidBytes().hashCode();
+      hash = (37 * hash) + TXID_STR_FIELD_NUMBER;
+      hash = (53 * hash) + getTxidStr().hashCode();
+      hash = (37 * hash) + OUTPUT_INDEX_FIELD_NUMBER;
+      hash = (53 * hash) + getOutputIndex();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static lnrpc.Rpc.OutPoint parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.OutPoint parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.OutPoint parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.OutPoint parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.OutPoint parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.OutPoint parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.OutPoint parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.OutPoint parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.OutPoint parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.OutPoint parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.OutPoint parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.OutPoint parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(lnrpc.Rpc.OutPoint prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code lnrpc.OutPoint}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:lnrpc.OutPoint)
+        lnrpc.Rpc.OutPointOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return lnrpc.Rpc.internal_static_lnrpc_OutPoint_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return lnrpc.Rpc.internal_static_lnrpc_OutPoint_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                lnrpc.Rpc.OutPoint.class, lnrpc.Rpc.OutPoint.Builder.class);
+      }
+
+      // Construct using lnrpc.Rpc.OutPoint.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        txidBytes_ = com.google.protobuf.ByteString.EMPTY;
+
+        txidStr_ = "";
+
+        outputIndex_ = 0;
+
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return lnrpc.Rpc.internal_static_lnrpc_OutPoint_descriptor;
+      }
+
+      public lnrpc.Rpc.OutPoint getDefaultInstanceForType() {
+        return lnrpc.Rpc.OutPoint.getDefaultInstance();
+      }
+
+      public lnrpc.Rpc.OutPoint build() {
+        lnrpc.Rpc.OutPoint result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public lnrpc.Rpc.OutPoint buildPartial() {
+        lnrpc.Rpc.OutPoint result = new lnrpc.Rpc.OutPoint(this);
+        result.txidBytes_ = txidBytes_;
+        result.txidStr_ = txidStr_;
+        result.outputIndex_ = outputIndex_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof lnrpc.Rpc.OutPoint) {
+          return mergeFrom((lnrpc.Rpc.OutPoint)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(lnrpc.Rpc.OutPoint other) {
+        if (other == lnrpc.Rpc.OutPoint.getDefaultInstance()) return this;
+        if (other.getTxidBytes() != com.google.protobuf.ByteString.EMPTY) {
+          setTxidBytes(other.getTxidBytes());
+        }
+        if (!other.getTxidStr().isEmpty()) {
+          txidStr_ = other.txidStr_;
+          onChanged();
+        }
+        if (other.getOutputIndex() != 0) {
+          setOutputIndex(other.getOutputIndex());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        lnrpc.Rpc.OutPoint parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (lnrpc.Rpc.OutPoint) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private com.google.protobuf.ByteString txidBytes_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <pre>
+       *&#47; Raw bytes representing the transaction id.
+       * </pre>
+       *
+       * <code>bytes txid_bytes = 1[json_name = "txid_bytes"];</code>
+       */
+      public com.google.protobuf.ByteString getTxidBytes() {
+        return txidBytes_;
+      }
+      /**
+       * <pre>
+       *&#47; Raw bytes representing the transaction id.
+       * </pre>
+       *
+       * <code>bytes txid_bytes = 1[json_name = "txid_bytes"];</code>
+       */
+      public Builder setTxidBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        txidBytes_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *&#47; Raw bytes representing the transaction id.
+       * </pre>
+       *
+       * <code>bytes txid_bytes = 1[json_name = "txid_bytes"];</code>
+       */
+      public Builder clearTxidBytes() {
+        
+        txidBytes_ = getDefaultInstance().getTxidBytes();
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object txidStr_ = "";
+      /**
+       * <pre>
+       *&#47; Reversed, hex-encoded string representing the transaction id.
+       * </pre>
+       *
+       * <code>string txid_str = 2[json_name = "txid_str"];</code>
+       */
+      public java.lang.String getTxidStr() {
+        java.lang.Object ref = txidStr_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          txidStr_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       *&#47; Reversed, hex-encoded string representing the transaction id.
+       * </pre>
+       *
+       * <code>string txid_str = 2[json_name = "txid_str"];</code>
+       */
+      public com.google.protobuf.ByteString
+          getTxidStrBytes() {
+        java.lang.Object ref = txidStr_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          txidStr_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       *&#47; Reversed, hex-encoded string representing the transaction id.
+       * </pre>
+       *
+       * <code>string txid_str = 2[json_name = "txid_str"];</code>
+       */
+      public Builder setTxidStr(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        txidStr_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *&#47; Reversed, hex-encoded string representing the transaction id.
+       * </pre>
+       *
+       * <code>string txid_str = 2[json_name = "txid_str"];</code>
+       */
+      public Builder clearTxidStr() {
+        
+        txidStr_ = getDefaultInstance().getTxidStr();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *&#47; Reversed, hex-encoded string representing the transaction id.
+       * </pre>
+       *
+       * <code>string txid_str = 2[json_name = "txid_str"];</code>
+       */
+      public Builder setTxidStrBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        txidStr_ = value;
+        onChanged();
+        return this;
+      }
+
+      private int outputIndex_ ;
+      /**
+       * <pre>
+       *&#47; The index of the output on the transaction.
+       * </pre>
+       *
+       * <code>uint32 output_index = 3[json_name = "output_index"];</code>
+       */
+      public int getOutputIndex() {
+        return outputIndex_;
+      }
+      /**
+       * <pre>
+       *&#47; The index of the output on the transaction.
+       * </pre>
+       *
+       * <code>uint32 output_index = 3[json_name = "output_index"];</code>
+       */
+      public Builder setOutputIndex(int value) {
+        
+        outputIndex_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *&#47; The index of the output on the transaction.
+       * </pre>
+       *
+       * <code>uint32 output_index = 3[json_name = "output_index"];</code>
+       */
+      public Builder clearOutputIndex() {
+        
+        outputIndex_ = 0;
+        onChanged();
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:lnrpc.OutPoint)
+    }
+
+    // @@protoc_insertion_point(class_scope:lnrpc.OutPoint)
+    private static final lnrpc.Rpc.OutPoint DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new lnrpc.Rpc.OutPoint();
+    }
+
+    public static lnrpc.Rpc.OutPoint getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<OutPoint>
+        PARSER = new com.google.protobuf.AbstractParser<OutPoint>() {
+      public OutPoint parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new OutPoint(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<OutPoint> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<OutPoint> getParserForType() {
+      return PARSER;
+    }
+
+    public lnrpc.Rpc.OutPoint getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface LightningAddressOrBuilder extends
       // @@protoc_insertion_point(interface_extends:lnrpc.LightningAddress)
       com.google.protobuf.MessageOrBuilder {
@@ -14661,6 +16620,1408 @@ public final class Rpc {
     }
 
     public lnrpc.Rpc.LightningAddress getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface EstimateFeeRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:lnrpc.EstimateFeeRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     *&#47; The map from addresses to amounts for the transaction.
+     * </pre>
+     *
+     * <code>map&lt;string, int64&gt; AddrToAmount = 1;</code>
+     */
+    int getAddrToAmountCount();
+    /**
+     * <pre>
+     *&#47; The map from addresses to amounts for the transaction.
+     * </pre>
+     *
+     * <code>map&lt;string, int64&gt; AddrToAmount = 1;</code>
+     */
+    boolean containsAddrToAmount(
+        java.lang.String key);
+    /**
+     * Use {@link #getAddrToAmountMap()} instead.
+     */
+    @java.lang.Deprecated
+    java.util.Map<java.lang.String, java.lang.Long>
+    getAddrToAmount();
+    /**
+     * <pre>
+     *&#47; The map from addresses to amounts for the transaction.
+     * </pre>
+     *
+     * <code>map&lt;string, int64&gt; AddrToAmount = 1;</code>
+     */
+    java.util.Map<java.lang.String, java.lang.Long>
+    getAddrToAmountMap();
+    /**
+     * <pre>
+     *&#47; The map from addresses to amounts for the transaction.
+     * </pre>
+     *
+     * <code>map&lt;string, int64&gt; AddrToAmount = 1;</code>
+     */
+
+    long getAddrToAmountOrDefault(
+        java.lang.String key,
+        long defaultValue);
+    /**
+     * <pre>
+     *&#47; The map from addresses to amounts for the transaction.
+     * </pre>
+     *
+     * <code>map&lt;string, int64&gt; AddrToAmount = 1;</code>
+     */
+
+    long getAddrToAmountOrThrow(
+        java.lang.String key);
+
+    /**
+     * <pre>
+     *&#47; The target number of blocks that this transaction should be confirmed by.
+     * </pre>
+     *
+     * <code>int32 target_conf = 2;</code>
+     */
+    int getTargetConf();
+  }
+  /**
+   * Protobuf type {@code lnrpc.EstimateFeeRequest}
+   */
+  public  static final class EstimateFeeRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:lnrpc.EstimateFeeRequest)
+      EstimateFeeRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use EstimateFeeRequest.newBuilder() to construct.
+    private EstimateFeeRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private EstimateFeeRequest() {
+      targetConf_ = 0;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private EstimateFeeRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                addrToAmount_ = com.google.protobuf.MapField.newMapField(
+                    AddrToAmountDefaultEntryHolder.defaultEntry);
+                mutable_bitField0_ |= 0x00000001;
+              }
+              com.google.protobuf.MapEntry<java.lang.String, java.lang.Long>
+              addrToAmount__ = input.readMessage(
+                  AddrToAmountDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+              addrToAmount_.getMutableMap().put(
+                  addrToAmount__.getKey(), addrToAmount__.getValue());
+              break;
+            }
+            case 16: {
+
+              targetConf_ = input.readInt32();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return lnrpc.Rpc.internal_static_lnrpc_EstimateFeeRequest_descriptor;
+    }
+
+    @SuppressWarnings({"rawtypes"})
+    protected com.google.protobuf.MapField internalGetMapField(
+        int number) {
+      switch (number) {
+        case 1:
+          return internalGetAddrToAmount();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return lnrpc.Rpc.internal_static_lnrpc_EstimateFeeRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              lnrpc.Rpc.EstimateFeeRequest.class, lnrpc.Rpc.EstimateFeeRequest.Builder.class);
+    }
+
+    private int bitField0_;
+    public static final int ADDRTOAMOUNT_FIELD_NUMBER = 1;
+    private static final class AddrToAmountDefaultEntryHolder {
+      static final com.google.protobuf.MapEntry<
+          java.lang.String, java.lang.Long> defaultEntry =
+              com.google.protobuf.MapEntry
+              .<java.lang.String, java.lang.Long>newDefaultInstance(
+                  lnrpc.Rpc.internal_static_lnrpc_EstimateFeeRequest_AddrToAmountEntry_descriptor, 
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "",
+                  com.google.protobuf.WireFormat.FieldType.INT64,
+                  0L);
+    }
+    private com.google.protobuf.MapField<
+        java.lang.String, java.lang.Long> addrToAmount_;
+    private com.google.protobuf.MapField<java.lang.String, java.lang.Long>
+    internalGetAddrToAmount() {
+      if (addrToAmount_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            AddrToAmountDefaultEntryHolder.defaultEntry);
+      }
+      return addrToAmount_;
+    }
+
+    public int getAddrToAmountCount() {
+      return internalGetAddrToAmount().getMap().size();
+    }
+    /**
+     * <pre>
+     *&#47; The map from addresses to amounts for the transaction.
+     * </pre>
+     *
+     * <code>map&lt;string, int64&gt; AddrToAmount = 1;</code>
+     */
+
+    public boolean containsAddrToAmount(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      return internalGetAddrToAmount().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getAddrToAmountMap()} instead.
+     */
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, java.lang.Long> getAddrToAmount() {
+      return getAddrToAmountMap();
+    }
+    /**
+     * <pre>
+     *&#47; The map from addresses to amounts for the transaction.
+     * </pre>
+     *
+     * <code>map&lt;string, int64&gt; AddrToAmount = 1;</code>
+     */
+
+    public java.util.Map<java.lang.String, java.lang.Long> getAddrToAmountMap() {
+      return internalGetAddrToAmount().getMap();
+    }
+    /**
+     * <pre>
+     *&#47; The map from addresses to amounts for the transaction.
+     * </pre>
+     *
+     * <code>map&lt;string, int64&gt; AddrToAmount = 1;</code>
+     */
+
+    public long getAddrToAmountOrDefault(
+        java.lang.String key,
+        long defaultValue) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, java.lang.Long> map =
+          internalGetAddrToAmount().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <pre>
+     *&#47; The map from addresses to amounts for the transaction.
+     * </pre>
+     *
+     * <code>map&lt;string, int64&gt; AddrToAmount = 1;</code>
+     */
+
+    public long getAddrToAmountOrThrow(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, java.lang.Long> map =
+          internalGetAddrToAmount().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
+    public static final int TARGET_CONF_FIELD_NUMBER = 2;
+    private int targetConf_;
+    /**
+     * <pre>
+     *&#47; The target number of blocks that this transaction should be confirmed by.
+     * </pre>
+     *
+     * <code>int32 target_conf = 2;</code>
+     */
+    public int getTargetConf() {
+      return targetConf_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      com.google.protobuf.GeneratedMessageV3
+        .serializeStringMapTo(
+          output,
+          internalGetAddrToAmount(),
+          AddrToAmountDefaultEntryHolder.defaultEntry,
+          1);
+      if (targetConf_ != 0) {
+        output.writeInt32(2, targetConf_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      for (java.util.Map.Entry<java.lang.String, java.lang.Long> entry
+           : internalGetAddrToAmount().getMap().entrySet()) {
+        com.google.protobuf.MapEntry<java.lang.String, java.lang.Long>
+        addrToAmount__ = AddrToAmountDefaultEntryHolder.defaultEntry.newBuilderForType()
+            .setKey(entry.getKey())
+            .setValue(entry.getValue())
+            .build();
+        size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(1, addrToAmount__);
+      }
+      if (targetConf_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, targetConf_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof lnrpc.Rpc.EstimateFeeRequest)) {
+        return super.equals(obj);
+      }
+      lnrpc.Rpc.EstimateFeeRequest other = (lnrpc.Rpc.EstimateFeeRequest) obj;
+
+      boolean result = true;
+      result = result && internalGetAddrToAmount().equals(
+          other.internalGetAddrToAmount());
+      result = result && (getTargetConf()
+          == other.getTargetConf());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (!internalGetAddrToAmount().getMap().isEmpty()) {
+        hash = (37 * hash) + ADDRTOAMOUNT_FIELD_NUMBER;
+        hash = (53 * hash) + internalGetAddrToAmount().hashCode();
+      }
+      hash = (37 * hash) + TARGET_CONF_FIELD_NUMBER;
+      hash = (53 * hash) + getTargetConf();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static lnrpc.Rpc.EstimateFeeRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.EstimateFeeRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.EstimateFeeRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.EstimateFeeRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.EstimateFeeRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.EstimateFeeRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.EstimateFeeRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.EstimateFeeRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.EstimateFeeRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.EstimateFeeRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.EstimateFeeRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.EstimateFeeRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(lnrpc.Rpc.EstimateFeeRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code lnrpc.EstimateFeeRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:lnrpc.EstimateFeeRequest)
+        lnrpc.Rpc.EstimateFeeRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return lnrpc.Rpc.internal_static_lnrpc_EstimateFeeRequest_descriptor;
+      }
+
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMapField(
+          int number) {
+        switch (number) {
+          case 1:
+            return internalGetAddrToAmount();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMutableMapField(
+          int number) {
+        switch (number) {
+          case 1:
+            return internalGetMutableAddrToAmount();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return lnrpc.Rpc.internal_static_lnrpc_EstimateFeeRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                lnrpc.Rpc.EstimateFeeRequest.class, lnrpc.Rpc.EstimateFeeRequest.Builder.class);
+      }
+
+      // Construct using lnrpc.Rpc.EstimateFeeRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        internalGetMutableAddrToAmount().clear();
+        targetConf_ = 0;
+
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return lnrpc.Rpc.internal_static_lnrpc_EstimateFeeRequest_descriptor;
+      }
+
+      public lnrpc.Rpc.EstimateFeeRequest getDefaultInstanceForType() {
+        return lnrpc.Rpc.EstimateFeeRequest.getDefaultInstance();
+      }
+
+      public lnrpc.Rpc.EstimateFeeRequest build() {
+        lnrpc.Rpc.EstimateFeeRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public lnrpc.Rpc.EstimateFeeRequest buildPartial() {
+        lnrpc.Rpc.EstimateFeeRequest result = new lnrpc.Rpc.EstimateFeeRequest(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        result.addrToAmount_ = internalGetAddrToAmount();
+        result.addrToAmount_.makeImmutable();
+        result.targetConf_ = targetConf_;
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof lnrpc.Rpc.EstimateFeeRequest) {
+          return mergeFrom((lnrpc.Rpc.EstimateFeeRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(lnrpc.Rpc.EstimateFeeRequest other) {
+        if (other == lnrpc.Rpc.EstimateFeeRequest.getDefaultInstance()) return this;
+        internalGetMutableAddrToAmount().mergeFrom(
+            other.internalGetAddrToAmount());
+        if (other.getTargetConf() != 0) {
+          setTargetConf(other.getTargetConf());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        lnrpc.Rpc.EstimateFeeRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (lnrpc.Rpc.EstimateFeeRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private com.google.protobuf.MapField<
+          java.lang.String, java.lang.Long> addrToAmount_;
+      private com.google.protobuf.MapField<java.lang.String, java.lang.Long>
+      internalGetAddrToAmount() {
+        if (addrToAmount_ == null) {
+          return com.google.protobuf.MapField.emptyMapField(
+              AddrToAmountDefaultEntryHolder.defaultEntry);
+        }
+        return addrToAmount_;
+      }
+      private com.google.protobuf.MapField<java.lang.String, java.lang.Long>
+      internalGetMutableAddrToAmount() {
+        onChanged();;
+        if (addrToAmount_ == null) {
+          addrToAmount_ = com.google.protobuf.MapField.newMapField(
+              AddrToAmountDefaultEntryHolder.defaultEntry);
+        }
+        if (!addrToAmount_.isMutable()) {
+          addrToAmount_ = addrToAmount_.copy();
+        }
+        return addrToAmount_;
+      }
+
+      public int getAddrToAmountCount() {
+        return internalGetAddrToAmount().getMap().size();
+      }
+      /**
+       * <pre>
+       *&#47; The map from addresses to amounts for the transaction.
+       * </pre>
+       *
+       * <code>map&lt;string, int64&gt; AddrToAmount = 1;</code>
+       */
+
+      public boolean containsAddrToAmount(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        return internalGetAddrToAmount().getMap().containsKey(key);
+      }
+      /**
+       * Use {@link #getAddrToAmountMap()} instead.
+       */
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, java.lang.Long> getAddrToAmount() {
+        return getAddrToAmountMap();
+      }
+      /**
+       * <pre>
+       *&#47; The map from addresses to amounts for the transaction.
+       * </pre>
+       *
+       * <code>map&lt;string, int64&gt; AddrToAmount = 1;</code>
+       */
+
+      public java.util.Map<java.lang.String, java.lang.Long> getAddrToAmountMap() {
+        return internalGetAddrToAmount().getMap();
+      }
+      /**
+       * <pre>
+       *&#47; The map from addresses to amounts for the transaction.
+       * </pre>
+       *
+       * <code>map&lt;string, int64&gt; AddrToAmount = 1;</code>
+       */
+
+      public long getAddrToAmountOrDefault(
+          java.lang.String key,
+          long defaultValue) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        java.util.Map<java.lang.String, java.lang.Long> map =
+            internalGetAddrToAmount().getMap();
+        return map.containsKey(key) ? map.get(key) : defaultValue;
+      }
+      /**
+       * <pre>
+       *&#47; The map from addresses to amounts for the transaction.
+       * </pre>
+       *
+       * <code>map&lt;string, int64&gt; AddrToAmount = 1;</code>
+       */
+
+      public long getAddrToAmountOrThrow(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        java.util.Map<java.lang.String, java.lang.Long> map =
+            internalGetAddrToAmount().getMap();
+        if (!map.containsKey(key)) {
+          throw new java.lang.IllegalArgumentException();
+        }
+        return map.get(key);
+      }
+
+      public Builder clearAddrToAmount() {
+        internalGetMutableAddrToAmount().getMutableMap()
+            .clear();
+        return this;
+      }
+      /**
+       * <pre>
+       *&#47; The map from addresses to amounts for the transaction.
+       * </pre>
+       *
+       * <code>map&lt;string, int64&gt; AddrToAmount = 1;</code>
+       */
+
+      public Builder removeAddrToAmount(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        internalGetMutableAddrToAmount().getMutableMap()
+            .remove(key);
+        return this;
+      }
+      /**
+       * Use alternate mutation accessors instead.
+       */
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, java.lang.Long>
+      getMutableAddrToAmount() {
+        return internalGetMutableAddrToAmount().getMutableMap();
+      }
+      /**
+       * <pre>
+       *&#47; The map from addresses to amounts for the transaction.
+       * </pre>
+       *
+       * <code>map&lt;string, int64&gt; AddrToAmount = 1;</code>
+       */
+      public Builder putAddrToAmount(
+          java.lang.String key,
+          long value) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        
+        internalGetMutableAddrToAmount().getMutableMap()
+            .put(key, value);
+        return this;
+      }
+      /**
+       * <pre>
+       *&#47; The map from addresses to amounts for the transaction.
+       * </pre>
+       *
+       * <code>map&lt;string, int64&gt; AddrToAmount = 1;</code>
+       */
+
+      public Builder putAllAddrToAmount(
+          java.util.Map<java.lang.String, java.lang.Long> values) {
+        internalGetMutableAddrToAmount().getMutableMap()
+            .putAll(values);
+        return this;
+      }
+
+      private int targetConf_ ;
+      /**
+       * <pre>
+       *&#47; The target number of blocks that this transaction should be confirmed by.
+       * </pre>
+       *
+       * <code>int32 target_conf = 2;</code>
+       */
+      public int getTargetConf() {
+        return targetConf_;
+      }
+      /**
+       * <pre>
+       *&#47; The target number of blocks that this transaction should be confirmed by.
+       * </pre>
+       *
+       * <code>int32 target_conf = 2;</code>
+       */
+      public Builder setTargetConf(int value) {
+        
+        targetConf_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *&#47; The target number of blocks that this transaction should be confirmed by.
+       * </pre>
+       *
+       * <code>int32 target_conf = 2;</code>
+       */
+      public Builder clearTargetConf() {
+        
+        targetConf_ = 0;
+        onChanged();
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:lnrpc.EstimateFeeRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:lnrpc.EstimateFeeRequest)
+    private static final lnrpc.Rpc.EstimateFeeRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new lnrpc.Rpc.EstimateFeeRequest();
+    }
+
+    public static lnrpc.Rpc.EstimateFeeRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<EstimateFeeRequest>
+        PARSER = new com.google.protobuf.AbstractParser<EstimateFeeRequest>() {
+      public EstimateFeeRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new EstimateFeeRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<EstimateFeeRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<EstimateFeeRequest> getParserForType() {
+      return PARSER;
+    }
+
+    public lnrpc.Rpc.EstimateFeeRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface EstimateFeeResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:lnrpc.EstimateFeeResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     *&#47; The total fee in satoshis.
+     * </pre>
+     *
+     * <code>int64 fee_sat = 1[json_name = "fee_sat"];</code>
+     */
+    long getFeeSat();
+
+    /**
+     * <pre>
+     *&#47; The fee rate in satoshi/byte.
+     * </pre>
+     *
+     * <code>int64 feerate_sat_per_byte = 2[json_name = "feerate_sat_per_byte"];</code>
+     */
+    long getFeerateSatPerByte();
+  }
+  /**
+   * Protobuf type {@code lnrpc.EstimateFeeResponse}
+   */
+  public  static final class EstimateFeeResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:lnrpc.EstimateFeeResponse)
+      EstimateFeeResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use EstimateFeeResponse.newBuilder() to construct.
+    private EstimateFeeResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private EstimateFeeResponse() {
+      feeSat_ = 0L;
+      feerateSatPerByte_ = 0L;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private EstimateFeeResponse(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+
+              feeSat_ = input.readInt64();
+              break;
+            }
+            case 16: {
+
+              feerateSatPerByte_ = input.readInt64();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return lnrpc.Rpc.internal_static_lnrpc_EstimateFeeResponse_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return lnrpc.Rpc.internal_static_lnrpc_EstimateFeeResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              lnrpc.Rpc.EstimateFeeResponse.class, lnrpc.Rpc.EstimateFeeResponse.Builder.class);
+    }
+
+    public static final int FEE_SAT_FIELD_NUMBER = 1;
+    private long feeSat_;
+    /**
+     * <pre>
+     *&#47; The total fee in satoshis.
+     * </pre>
+     *
+     * <code>int64 fee_sat = 1[json_name = "fee_sat"];</code>
+     */
+    public long getFeeSat() {
+      return feeSat_;
+    }
+
+    public static final int FEERATE_SAT_PER_BYTE_FIELD_NUMBER = 2;
+    private long feerateSatPerByte_;
+    /**
+     * <pre>
+     *&#47; The fee rate in satoshi/byte.
+     * </pre>
+     *
+     * <code>int64 feerate_sat_per_byte = 2[json_name = "feerate_sat_per_byte"];</code>
+     */
+    public long getFeerateSatPerByte() {
+      return feerateSatPerByte_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (feeSat_ != 0L) {
+        output.writeInt64(1, feeSat_);
+      }
+      if (feerateSatPerByte_ != 0L) {
+        output.writeInt64(2, feerateSatPerByte_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (feeSat_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(1, feeSat_);
+      }
+      if (feerateSatPerByte_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(2, feerateSatPerByte_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof lnrpc.Rpc.EstimateFeeResponse)) {
+        return super.equals(obj);
+      }
+      lnrpc.Rpc.EstimateFeeResponse other = (lnrpc.Rpc.EstimateFeeResponse) obj;
+
+      boolean result = true;
+      result = result && (getFeeSat()
+          == other.getFeeSat());
+      result = result && (getFeerateSatPerByte()
+          == other.getFeerateSatPerByte());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + FEE_SAT_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getFeeSat());
+      hash = (37 * hash) + FEERATE_SAT_PER_BYTE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getFeerateSatPerByte());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static lnrpc.Rpc.EstimateFeeResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.EstimateFeeResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.EstimateFeeResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.EstimateFeeResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.EstimateFeeResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.EstimateFeeResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.EstimateFeeResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.EstimateFeeResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.EstimateFeeResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.EstimateFeeResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.EstimateFeeResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.EstimateFeeResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(lnrpc.Rpc.EstimateFeeResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code lnrpc.EstimateFeeResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:lnrpc.EstimateFeeResponse)
+        lnrpc.Rpc.EstimateFeeResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return lnrpc.Rpc.internal_static_lnrpc_EstimateFeeResponse_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return lnrpc.Rpc.internal_static_lnrpc_EstimateFeeResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                lnrpc.Rpc.EstimateFeeResponse.class, lnrpc.Rpc.EstimateFeeResponse.Builder.class);
+      }
+
+      // Construct using lnrpc.Rpc.EstimateFeeResponse.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        feeSat_ = 0L;
+
+        feerateSatPerByte_ = 0L;
+
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return lnrpc.Rpc.internal_static_lnrpc_EstimateFeeResponse_descriptor;
+      }
+
+      public lnrpc.Rpc.EstimateFeeResponse getDefaultInstanceForType() {
+        return lnrpc.Rpc.EstimateFeeResponse.getDefaultInstance();
+      }
+
+      public lnrpc.Rpc.EstimateFeeResponse build() {
+        lnrpc.Rpc.EstimateFeeResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public lnrpc.Rpc.EstimateFeeResponse buildPartial() {
+        lnrpc.Rpc.EstimateFeeResponse result = new lnrpc.Rpc.EstimateFeeResponse(this);
+        result.feeSat_ = feeSat_;
+        result.feerateSatPerByte_ = feerateSatPerByte_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof lnrpc.Rpc.EstimateFeeResponse) {
+          return mergeFrom((lnrpc.Rpc.EstimateFeeResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(lnrpc.Rpc.EstimateFeeResponse other) {
+        if (other == lnrpc.Rpc.EstimateFeeResponse.getDefaultInstance()) return this;
+        if (other.getFeeSat() != 0L) {
+          setFeeSat(other.getFeeSat());
+        }
+        if (other.getFeerateSatPerByte() != 0L) {
+          setFeerateSatPerByte(other.getFeerateSatPerByte());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        lnrpc.Rpc.EstimateFeeResponse parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (lnrpc.Rpc.EstimateFeeResponse) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long feeSat_ ;
+      /**
+       * <pre>
+       *&#47; The total fee in satoshis.
+       * </pre>
+       *
+       * <code>int64 fee_sat = 1[json_name = "fee_sat"];</code>
+       */
+      public long getFeeSat() {
+        return feeSat_;
+      }
+      /**
+       * <pre>
+       *&#47; The total fee in satoshis.
+       * </pre>
+       *
+       * <code>int64 fee_sat = 1[json_name = "fee_sat"];</code>
+       */
+      public Builder setFeeSat(long value) {
+        
+        feeSat_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *&#47; The total fee in satoshis.
+       * </pre>
+       *
+       * <code>int64 fee_sat = 1[json_name = "fee_sat"];</code>
+       */
+      public Builder clearFeeSat() {
+        
+        feeSat_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long feerateSatPerByte_ ;
+      /**
+       * <pre>
+       *&#47; The fee rate in satoshi/byte.
+       * </pre>
+       *
+       * <code>int64 feerate_sat_per_byte = 2[json_name = "feerate_sat_per_byte"];</code>
+       */
+      public long getFeerateSatPerByte() {
+        return feerateSatPerByte_;
+      }
+      /**
+       * <pre>
+       *&#47; The fee rate in satoshi/byte.
+       * </pre>
+       *
+       * <code>int64 feerate_sat_per_byte = 2[json_name = "feerate_sat_per_byte"];</code>
+       */
+      public Builder setFeerateSatPerByte(long value) {
+        
+        feerateSatPerByte_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *&#47; The fee rate in satoshi/byte.
+       * </pre>
+       *
+       * <code>int64 feerate_sat_per_byte = 2[json_name = "feerate_sat_per_byte"];</code>
+       */
+      public Builder clearFeerateSatPerByte() {
+        
+        feerateSatPerByte_ = 0L;
+        onChanged();
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:lnrpc.EstimateFeeResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:lnrpc.EstimateFeeResponse)
+    private static final lnrpc.Rpc.EstimateFeeResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new lnrpc.Rpc.EstimateFeeResponse();
+    }
+
+    public static lnrpc.Rpc.EstimateFeeResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<EstimateFeeResponse>
+        PARSER = new com.google.protobuf.AbstractParser<EstimateFeeResponse>() {
+      public EstimateFeeResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new EstimateFeeResponse(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<EstimateFeeResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<EstimateFeeResponse> getParserForType() {
+      return PARSER;
+    }
+
+    public lnrpc.Rpc.EstimateFeeResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -25386,9 +28747,8 @@ public final class Rpc {
     /**
      * <pre>
      **
-     *The CSV delay expressed in relative blocks. If the channel is force
-     *closed, we'll need to wait for this many blocks before we can regain our
-     *funds.
+     *The CSV delay expressed in relative blocks. If the channel is force closed,
+     *we will need to wait for this many blocks before we can regain our funds.
      * </pre>
      *
      * <code>uint32 csv_delay = 16[json_name = "csv_delay"];</code>
@@ -25406,12 +28766,30 @@ public final class Rpc {
 
     /**
      * <pre>
-     *&#47; True if we were the ones that creted the channel.
+     *&#47; True if we were the ones that created the channel.
      * </pre>
      *
      * <code>bool initiator = 18[json_name = "initiator"];</code>
      */
     boolean getInitiator();
+
+    /**
+     * <pre>
+     *&#47; A set of flags showing the current state of the cahnnel.
+     * </pre>
+     *
+     * <code>string chan_status_flags = 19[json_name = "chan_status_flags"];</code>
+     */
+    java.lang.String getChanStatusFlags();
+    /**
+     * <pre>
+     *&#47; A set of flags showing the current state of the cahnnel.
+     * </pre>
+     *
+     * <code>string chan_status_flags = 19[json_name = "chan_status_flags"];</code>
+     */
+    com.google.protobuf.ByteString
+        getChanStatusFlagsBytes();
   }
   /**
    * Protobuf type {@code lnrpc.Channel}
@@ -25444,6 +28822,7 @@ public final class Rpc {
       csvDelay_ = 0;
       private_ = false;
       initiator_ = false;
+      chanStatusFlags_ = "";
     }
 
     @java.lang.Override
@@ -25571,6 +28950,12 @@ public final class Rpc {
             case 144: {
 
               initiator_ = input.readBool();
+              break;
+            }
+            case 154: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              chanStatusFlags_ = s;
               break;
             }
           }
@@ -25925,9 +29310,8 @@ public final class Rpc {
     /**
      * <pre>
      **
-     *The CSV delay expressed in relative blocks. If the channel is force
-     *closed, we'll need to wait for this many blocks before we can regain our
-     *funds.
+     *The CSV delay expressed in relative blocks. If the channel is force closed,
+     *we will need to wait for this many blocks before we can regain our funds.
      * </pre>
      *
      * <code>uint32 csv_delay = 16[json_name = "csv_delay"];</code>
@@ -25953,13 +29337,55 @@ public final class Rpc {
     private boolean initiator_;
     /**
      * <pre>
-     *&#47; True if we were the ones that creted the channel.
+     *&#47; True if we were the ones that created the channel.
      * </pre>
      *
      * <code>bool initiator = 18[json_name = "initiator"];</code>
      */
     public boolean getInitiator() {
       return initiator_;
+    }
+
+    public static final int CHAN_STATUS_FLAGS_FIELD_NUMBER = 19;
+    private volatile java.lang.Object chanStatusFlags_;
+    /**
+     * <pre>
+     *&#47; A set of flags showing the current state of the cahnnel.
+     * </pre>
+     *
+     * <code>string chan_status_flags = 19[json_name = "chan_status_flags"];</code>
+     */
+    public java.lang.String getChanStatusFlags() {
+      java.lang.Object ref = chanStatusFlags_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        chanStatusFlags_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     *&#47; A set of flags showing the current state of the cahnnel.
+     * </pre>
+     *
+     * <code>string chan_status_flags = 19[json_name = "chan_status_flags"];</code>
+     */
+    public com.google.protobuf.ByteString
+        getChanStatusFlagsBytes() {
+      java.lang.Object ref = chanStatusFlags_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        chanStatusFlags_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private byte memoizedIsInitialized = -1;
@@ -26027,6 +29453,9 @@ public final class Rpc {
       }
       if (initiator_ != false) {
         output.writeBool(18, initiator_);
+      }
+      if (!getChanStatusFlagsBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 19, chanStatusFlags_);
       }
       unknownFields.writeTo(output);
     }
@@ -26106,6 +29535,9 @@ public final class Rpc {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(18, initiator_);
       }
+      if (!getChanStatusFlagsBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(19, chanStatusFlags_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -26158,6 +29590,8 @@ public final class Rpc {
           == other.getPrivate());
       result = result && (getInitiator()
           == other.getInitiator());
+      result = result && getChanStatusFlags()
+          .equals(other.getChanStatusFlags());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -26221,6 +29655,8 @@ public final class Rpc {
       hash = (37 * hash) + INITIATOR_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
           getInitiator());
+      hash = (37 * hash) + CHAN_STATUS_FLAGS_FIELD_NUMBER;
+      hash = (53 * hash) + getChanStatusFlags().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -26391,6 +29827,8 @@ public final class Rpc {
 
         initiator_ = false;
 
+        chanStatusFlags_ = "";
+
         return this;
       }
 
@@ -26441,6 +29879,7 @@ public final class Rpc {
         result.csvDelay_ = csvDelay_;
         result.private_ = private_;
         result.initiator_ = initiator_;
+        result.chanStatusFlags_ = chanStatusFlags_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -26561,6 +30000,10 @@ public final class Rpc {
         }
         if (other.getInitiator() != false) {
           setInitiator(other.getInitiator());
+        }
+        if (!other.getChanStatusFlags().isEmpty()) {
+          chanStatusFlags_ = other.chanStatusFlags_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -27612,9 +31055,8 @@ public final class Rpc {
       /**
        * <pre>
        **
-       *The CSV delay expressed in relative blocks. If the channel is force
-       *closed, we'll need to wait for this many blocks before we can regain our
-       *funds.
+       *The CSV delay expressed in relative blocks. If the channel is force closed,
+       *we will need to wait for this many blocks before we can regain our funds.
        * </pre>
        *
        * <code>uint32 csv_delay = 16[json_name = "csv_delay"];</code>
@@ -27625,9 +31067,8 @@ public final class Rpc {
       /**
        * <pre>
        **
-       *The CSV delay expressed in relative blocks. If the channel is force
-       *closed, we'll need to wait for this many blocks before we can regain our
-       *funds.
+       *The CSV delay expressed in relative blocks. If the channel is force closed,
+       *we will need to wait for this many blocks before we can regain our funds.
        * </pre>
        *
        * <code>uint32 csv_delay = 16[json_name = "csv_delay"];</code>
@@ -27641,9 +31082,8 @@ public final class Rpc {
       /**
        * <pre>
        **
-       *The CSV delay expressed in relative blocks. If the channel is force
-       *closed, we'll need to wait for this many blocks before we can regain our
-       *funds.
+       *The CSV delay expressed in relative blocks. If the channel is force closed,
+       *we will need to wait for this many blocks before we can regain our funds.
        * </pre>
        *
        * <code>uint32 csv_delay = 16[json_name = "csv_delay"];</code>
@@ -27696,7 +31136,7 @@ public final class Rpc {
       private boolean initiator_ ;
       /**
        * <pre>
-       *&#47; True if we were the ones that creted the channel.
+       *&#47; True if we were the ones that created the channel.
        * </pre>
        *
        * <code>bool initiator = 18[json_name = "initiator"];</code>
@@ -27706,7 +31146,7 @@ public final class Rpc {
       }
       /**
        * <pre>
-       *&#47; True if we were the ones that creted the channel.
+       *&#47; True if we were the ones that created the channel.
        * </pre>
        *
        * <code>bool initiator = 18[json_name = "initiator"];</code>
@@ -27719,7 +31159,7 @@ public final class Rpc {
       }
       /**
        * <pre>
-       *&#47; True if we were the ones that creted the channel.
+       *&#47; True if we were the ones that created the channel.
        * </pre>
        *
        * <code>bool initiator = 18[json_name = "initiator"];</code>
@@ -27727,6 +31167,95 @@ public final class Rpc {
       public Builder clearInitiator() {
         
         initiator_ = false;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object chanStatusFlags_ = "";
+      /**
+       * <pre>
+       *&#47; A set of flags showing the current state of the cahnnel.
+       * </pre>
+       *
+       * <code>string chan_status_flags = 19[json_name = "chan_status_flags"];</code>
+       */
+      public java.lang.String getChanStatusFlags() {
+        java.lang.Object ref = chanStatusFlags_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          chanStatusFlags_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       *&#47; A set of flags showing the current state of the cahnnel.
+       * </pre>
+       *
+       * <code>string chan_status_flags = 19[json_name = "chan_status_flags"];</code>
+       */
+      public com.google.protobuf.ByteString
+          getChanStatusFlagsBytes() {
+        java.lang.Object ref = chanStatusFlags_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          chanStatusFlags_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       *&#47; A set of flags showing the current state of the cahnnel.
+       * </pre>
+       *
+       * <code>string chan_status_flags = 19[json_name = "chan_status_flags"];</code>
+       */
+      public Builder setChanStatusFlags(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        chanStatusFlags_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *&#47; A set of flags showing the current state of the cahnnel.
+       * </pre>
+       *
+       * <code>string chan_status_flags = 19[json_name = "chan_status_flags"];</code>
+       */
+      public Builder clearChanStatusFlags() {
+        
+        chanStatusFlags_ = getDefaultInstance().getChanStatusFlags();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *&#47; A set of flags showing the current state of the cahnnel.
+       * </pre>
+       *
+       * <code>string chan_status_flags = 19[json_name = "chan_status_flags"];</code>
+       */
+      public Builder setChanStatusFlagsBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        chanStatusFlags_ = value;
         onChanged();
         return this;
       }
@@ -32675,6 +36204,23 @@ public final class Rpc {
      * <code>int64 ping_time = 9[json_name = "ping_time"];</code>
      */
     long getPingTime();
+
+    /**
+     * <pre>
+     * The type of sync we are currently performing with this peer.
+     * </pre>
+     *
+     * <code>.lnrpc.Peer.SyncType sync_type = 10[json_name = "sync_type"];</code>
+     */
+    int getSyncTypeValue();
+    /**
+     * <pre>
+     * The type of sync we are currently performing with this peer.
+     * </pre>
+     *
+     * <code>.lnrpc.Peer.SyncType sync_type = 10[json_name = "sync_type"];</code>
+     */
+    lnrpc.Rpc.Peer.SyncType getSyncType();
   }
   /**
    * Protobuf type {@code lnrpc.Peer}
@@ -32697,6 +36243,7 @@ public final class Rpc {
       satRecv_ = 0L;
       inbound_ = false;
       pingTime_ = 0L;
+      syncType_ = 0;
     }
 
     @java.lang.Override
@@ -32772,6 +36319,12 @@ public final class Rpc {
               pingTime_ = input.readInt64();
               break;
             }
+            case 80: {
+              int rawValue = input.readEnum();
+
+              syncType_ = rawValue;
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -32794,6 +36347,143 @@ public final class Rpc {
       return lnrpc.Rpc.internal_static_lnrpc_Peer_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               lnrpc.Rpc.Peer.class, lnrpc.Rpc.Peer.Builder.class);
+    }
+
+    /**
+     * Protobuf enum {@code lnrpc.Peer.SyncType}
+     */
+    public enum SyncType
+        implements com.google.protobuf.ProtocolMessageEnum {
+      /**
+       * <pre>
+       **
+       *Denotes that we cannot determine the peer's current sync type.
+       * </pre>
+       *
+       * <code>UNKNOWN_SYNC = 0;</code>
+       */
+      UNKNOWN_SYNC(0),
+      /**
+       * <pre>
+       **
+       *Denotes that we are actively receiving new graph updates from the peer.
+       * </pre>
+       *
+       * <code>ACTIVE_SYNC = 1;</code>
+       */
+      ACTIVE_SYNC(1),
+      /**
+       * <pre>
+       **
+       *Denotes that we are not receiving new graph updates from the peer.
+       * </pre>
+       *
+       * <code>PASSIVE_SYNC = 2;</code>
+       */
+      PASSIVE_SYNC(2),
+      UNRECOGNIZED(-1),
+      ;
+
+      /**
+       * <pre>
+       **
+       *Denotes that we cannot determine the peer's current sync type.
+       * </pre>
+       *
+       * <code>UNKNOWN_SYNC = 0;</code>
+       */
+      public static final int UNKNOWN_SYNC_VALUE = 0;
+      /**
+       * <pre>
+       **
+       *Denotes that we are actively receiving new graph updates from the peer.
+       * </pre>
+       *
+       * <code>ACTIVE_SYNC = 1;</code>
+       */
+      public static final int ACTIVE_SYNC_VALUE = 1;
+      /**
+       * <pre>
+       **
+       *Denotes that we are not receiving new graph updates from the peer.
+       * </pre>
+       *
+       * <code>PASSIVE_SYNC = 2;</code>
+       */
+      public static final int PASSIVE_SYNC_VALUE = 2;
+
+
+      public final int getNumber() {
+        if (this == UNRECOGNIZED) {
+          throw new java.lang.IllegalArgumentException(
+              "Can't get the number of an unknown enum value.");
+        }
+        return value;
+      }
+
+      /**
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
+      public static SyncType valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static SyncType forNumber(int value) {
+        switch (value) {
+          case 0: return UNKNOWN_SYNC;
+          case 1: return ACTIVE_SYNC;
+          case 2: return PASSIVE_SYNC;
+          default: return null;
+        }
+      }
+
+      public static com.google.protobuf.Internal.EnumLiteMap<SyncType>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static final com.google.protobuf.Internal.EnumLiteMap<
+          SyncType> internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<SyncType>() {
+              public SyncType findValueByNumber(int number) {
+                return SyncType.forNumber(number);
+              }
+            };
+
+      public final com.google.protobuf.Descriptors.EnumValueDescriptor
+          getValueDescriptor() {
+        return getDescriptor().getValues().get(ordinal());
+      }
+      public final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptorForType() {
+        return getDescriptor();
+      }
+      public static final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptor() {
+        return lnrpc.Rpc.Peer.getDescriptor().getEnumTypes().get(0);
+      }
+
+      private static final SyncType[] VALUES = values();
+
+      public static SyncType valueOf(
+          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+          throw new java.lang.IllegalArgumentException(
+            "EnumValueDescriptor is not for this type.");
+        }
+        if (desc.getIndex() == -1) {
+          return UNRECOGNIZED;
+        }
+        return VALUES[desc.getIndex()];
+      }
+
+      private final int value;
+
+      private SyncType(int value) {
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:lnrpc.Peer.SyncType)
     }
 
     public static final int PUB_KEY_FIELD_NUMBER = 1;
@@ -32958,6 +36648,30 @@ public final class Rpc {
       return pingTime_;
     }
 
+    public static final int SYNC_TYPE_FIELD_NUMBER = 10;
+    private int syncType_;
+    /**
+     * <pre>
+     * The type of sync we are currently performing with this peer.
+     * </pre>
+     *
+     * <code>.lnrpc.Peer.SyncType sync_type = 10[json_name = "sync_type"];</code>
+     */
+    public int getSyncTypeValue() {
+      return syncType_;
+    }
+    /**
+     * <pre>
+     * The type of sync we are currently performing with this peer.
+     * </pre>
+     *
+     * <code>.lnrpc.Peer.SyncType sync_type = 10[json_name = "sync_type"];</code>
+     */
+    public lnrpc.Rpc.Peer.SyncType getSyncType() {
+      lnrpc.Rpc.Peer.SyncType result = lnrpc.Rpc.Peer.SyncType.valueOf(syncType_);
+      return result == null ? lnrpc.Rpc.Peer.SyncType.UNRECOGNIZED : result;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -32993,6 +36707,9 @@ public final class Rpc {
       }
       if (pingTime_ != 0L) {
         output.writeInt64(9, pingTime_);
+      }
+      if (syncType_ != lnrpc.Rpc.Peer.SyncType.UNKNOWN_SYNC.getNumber()) {
+        output.writeEnum(10, syncType_);
       }
       unknownFields.writeTo(output);
     }
@@ -33032,6 +36749,10 @@ public final class Rpc {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(9, pingTime_);
       }
+      if (syncType_ != lnrpc.Rpc.Peer.SyncType.UNKNOWN_SYNC.getNumber()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(10, syncType_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -33064,6 +36785,7 @@ public final class Rpc {
           == other.getInbound());
       result = result && (getPingTime()
           == other.getPingTime());
+      result = result && syncType_ == other.syncType_;
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -33097,6 +36819,8 @@ public final class Rpc {
       hash = (37 * hash) + PING_TIME_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getPingTime());
+      hash = (37 * hash) + SYNC_TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + syncType_;
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -33242,6 +36966,8 @@ public final class Rpc {
 
         pingTime_ = 0L;
 
+        syncType_ = 0;
+
         return this;
       }
 
@@ -33272,6 +36998,7 @@ public final class Rpc {
         result.satRecv_ = satRecv_;
         result.inbound_ = inbound_;
         result.pingTime_ = pingTime_;
+        result.syncType_ = syncType_;
         onBuilt();
         return result;
       }
@@ -33338,6 +37065,9 @@ public final class Rpc {
         }
         if (other.getPingTime() != 0L) {
           setPingTime(other.getPingTime());
+        }
+        if (other.syncType_ != 0) {
+          setSyncTypeValue(other.getSyncTypeValue());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -33768,6 +37498,70 @@ public final class Rpc {
       public Builder clearPingTime() {
         
         pingTime_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private int syncType_ = 0;
+      /**
+       * <pre>
+       * The type of sync we are currently performing with this peer.
+       * </pre>
+       *
+       * <code>.lnrpc.Peer.SyncType sync_type = 10[json_name = "sync_type"];</code>
+       */
+      public int getSyncTypeValue() {
+        return syncType_;
+      }
+      /**
+       * <pre>
+       * The type of sync we are currently performing with this peer.
+       * </pre>
+       *
+       * <code>.lnrpc.Peer.SyncType sync_type = 10[json_name = "sync_type"];</code>
+       */
+      public Builder setSyncTypeValue(int value) {
+        syncType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The type of sync we are currently performing with this peer.
+       * </pre>
+       *
+       * <code>.lnrpc.Peer.SyncType sync_type = 10[json_name = "sync_type"];</code>
+       */
+      public lnrpc.Rpc.Peer.SyncType getSyncType() {
+        lnrpc.Rpc.Peer.SyncType result = lnrpc.Rpc.Peer.SyncType.valueOf(syncType_);
+        return result == null ? lnrpc.Rpc.Peer.SyncType.UNRECOGNIZED : result;
+      }
+      /**
+       * <pre>
+       * The type of sync we are currently performing with this peer.
+       * </pre>
+       *
+       * <code>.lnrpc.Peer.SyncType sync_type = 10[json_name = "sync_type"];</code>
+       */
+      public Builder setSyncType(lnrpc.Rpc.Peer.SyncType value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        
+        syncType_ = value.getNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The type of sync we are currently performing with this peer.
+       * </pre>
+       *
+       * <code>.lnrpc.Peer.SyncType sync_type = 10[json_name = "sync_type"];</code>
+       */
+      public Builder clearSyncType() {
+        
+        syncType_ = 0;
         onChanged();
         return this;
       }
@@ -53730,6 +57524,1927 @@ public final class Rpc {
 
   }
 
+  public interface ChannelEventSubscriptionOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:lnrpc.ChannelEventSubscription)
+      com.google.protobuf.MessageOrBuilder {
+  }
+  /**
+   * Protobuf type {@code lnrpc.ChannelEventSubscription}
+   */
+  public  static final class ChannelEventSubscription extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:lnrpc.ChannelEventSubscription)
+      ChannelEventSubscriptionOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ChannelEventSubscription.newBuilder() to construct.
+    private ChannelEventSubscription(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ChannelEventSubscription() {
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ChannelEventSubscription(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return lnrpc.Rpc.internal_static_lnrpc_ChannelEventSubscription_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return lnrpc.Rpc.internal_static_lnrpc_ChannelEventSubscription_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              lnrpc.Rpc.ChannelEventSubscription.class, lnrpc.Rpc.ChannelEventSubscription.Builder.class);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof lnrpc.Rpc.ChannelEventSubscription)) {
+        return super.equals(obj);
+      }
+      lnrpc.Rpc.ChannelEventSubscription other = (lnrpc.Rpc.ChannelEventSubscription) obj;
+
+      boolean result = true;
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static lnrpc.Rpc.ChannelEventSubscription parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChannelEventSubscription parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelEventSubscription parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChannelEventSubscription parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelEventSubscription parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChannelEventSubscription parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelEventSubscription parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChannelEventSubscription parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelEventSubscription parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChannelEventSubscription parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelEventSubscription parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChannelEventSubscription parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(lnrpc.Rpc.ChannelEventSubscription prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code lnrpc.ChannelEventSubscription}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:lnrpc.ChannelEventSubscription)
+        lnrpc.Rpc.ChannelEventSubscriptionOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChannelEventSubscription_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChannelEventSubscription_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                lnrpc.Rpc.ChannelEventSubscription.class, lnrpc.Rpc.ChannelEventSubscription.Builder.class);
+      }
+
+      // Construct using lnrpc.Rpc.ChannelEventSubscription.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChannelEventSubscription_descriptor;
+      }
+
+      public lnrpc.Rpc.ChannelEventSubscription getDefaultInstanceForType() {
+        return lnrpc.Rpc.ChannelEventSubscription.getDefaultInstance();
+      }
+
+      public lnrpc.Rpc.ChannelEventSubscription build() {
+        lnrpc.Rpc.ChannelEventSubscription result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public lnrpc.Rpc.ChannelEventSubscription buildPartial() {
+        lnrpc.Rpc.ChannelEventSubscription result = new lnrpc.Rpc.ChannelEventSubscription(this);
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof lnrpc.Rpc.ChannelEventSubscription) {
+          return mergeFrom((lnrpc.Rpc.ChannelEventSubscription)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(lnrpc.Rpc.ChannelEventSubscription other) {
+        if (other == lnrpc.Rpc.ChannelEventSubscription.getDefaultInstance()) return this;
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        lnrpc.Rpc.ChannelEventSubscription parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (lnrpc.Rpc.ChannelEventSubscription) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:lnrpc.ChannelEventSubscription)
+    }
+
+    // @@protoc_insertion_point(class_scope:lnrpc.ChannelEventSubscription)
+    private static final lnrpc.Rpc.ChannelEventSubscription DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new lnrpc.Rpc.ChannelEventSubscription();
+    }
+
+    public static lnrpc.Rpc.ChannelEventSubscription getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ChannelEventSubscription>
+        PARSER = new com.google.protobuf.AbstractParser<ChannelEventSubscription>() {
+      public ChannelEventSubscription parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ChannelEventSubscription(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ChannelEventSubscription> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ChannelEventSubscription> getParserForType() {
+      return PARSER;
+    }
+
+    public lnrpc.Rpc.ChannelEventSubscription getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ChannelEventUpdateOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:lnrpc.ChannelEventUpdate)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.lnrpc.Channel open_channel = 1[json_name = "open_channel"];</code>
+     */
+    boolean hasOpenChannel();
+    /**
+     * <code>.lnrpc.Channel open_channel = 1[json_name = "open_channel"];</code>
+     */
+    lnrpc.Rpc.Channel getOpenChannel();
+    /**
+     * <code>.lnrpc.Channel open_channel = 1[json_name = "open_channel"];</code>
+     */
+    lnrpc.Rpc.ChannelOrBuilder getOpenChannelOrBuilder();
+
+    /**
+     * <code>.lnrpc.ChannelCloseSummary closed_channel = 2[json_name = "closed_channel"];</code>
+     */
+    boolean hasClosedChannel();
+    /**
+     * <code>.lnrpc.ChannelCloseSummary closed_channel = 2[json_name = "closed_channel"];</code>
+     */
+    lnrpc.Rpc.ChannelCloseSummary getClosedChannel();
+    /**
+     * <code>.lnrpc.ChannelCloseSummary closed_channel = 2[json_name = "closed_channel"];</code>
+     */
+    lnrpc.Rpc.ChannelCloseSummaryOrBuilder getClosedChannelOrBuilder();
+
+    /**
+     * <code>.lnrpc.ChannelPoint active_channel = 3[json_name = "active_channel"];</code>
+     */
+    boolean hasActiveChannel();
+    /**
+     * <code>.lnrpc.ChannelPoint active_channel = 3[json_name = "active_channel"];</code>
+     */
+    lnrpc.Rpc.ChannelPoint getActiveChannel();
+    /**
+     * <code>.lnrpc.ChannelPoint active_channel = 3[json_name = "active_channel"];</code>
+     */
+    lnrpc.Rpc.ChannelPointOrBuilder getActiveChannelOrBuilder();
+
+    /**
+     * <code>.lnrpc.ChannelPoint inactive_channel = 4[json_name = "inactive_channel"];</code>
+     */
+    boolean hasInactiveChannel();
+    /**
+     * <code>.lnrpc.ChannelPoint inactive_channel = 4[json_name = "inactive_channel"];</code>
+     */
+    lnrpc.Rpc.ChannelPoint getInactiveChannel();
+    /**
+     * <code>.lnrpc.ChannelPoint inactive_channel = 4[json_name = "inactive_channel"];</code>
+     */
+    lnrpc.Rpc.ChannelPointOrBuilder getInactiveChannelOrBuilder();
+
+    /**
+     * <code>.lnrpc.ChannelEventUpdate.UpdateType type = 5[json_name = "type"];</code>
+     */
+    int getTypeValue();
+    /**
+     * <code>.lnrpc.ChannelEventUpdate.UpdateType type = 5[json_name = "type"];</code>
+     */
+    lnrpc.Rpc.ChannelEventUpdate.UpdateType getType();
+
+    public lnrpc.Rpc.ChannelEventUpdate.ChannelCase getChannelCase();
+  }
+  /**
+   * Protobuf type {@code lnrpc.ChannelEventUpdate}
+   */
+  public  static final class ChannelEventUpdate extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:lnrpc.ChannelEventUpdate)
+      ChannelEventUpdateOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ChannelEventUpdate.newBuilder() to construct.
+    private ChannelEventUpdate(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ChannelEventUpdate() {
+      type_ = 0;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ChannelEventUpdate(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              lnrpc.Rpc.Channel.Builder subBuilder = null;
+              if (channelCase_ == 1) {
+                subBuilder = ((lnrpc.Rpc.Channel) channel_).toBuilder();
+              }
+              channel_ =
+                  input.readMessage(lnrpc.Rpc.Channel.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((lnrpc.Rpc.Channel) channel_);
+                channel_ = subBuilder.buildPartial();
+              }
+              channelCase_ = 1;
+              break;
+            }
+            case 18: {
+              lnrpc.Rpc.ChannelCloseSummary.Builder subBuilder = null;
+              if (channelCase_ == 2) {
+                subBuilder = ((lnrpc.Rpc.ChannelCloseSummary) channel_).toBuilder();
+              }
+              channel_ =
+                  input.readMessage(lnrpc.Rpc.ChannelCloseSummary.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((lnrpc.Rpc.ChannelCloseSummary) channel_);
+                channel_ = subBuilder.buildPartial();
+              }
+              channelCase_ = 2;
+              break;
+            }
+            case 26: {
+              lnrpc.Rpc.ChannelPoint.Builder subBuilder = null;
+              if (channelCase_ == 3) {
+                subBuilder = ((lnrpc.Rpc.ChannelPoint) channel_).toBuilder();
+              }
+              channel_ =
+                  input.readMessage(lnrpc.Rpc.ChannelPoint.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((lnrpc.Rpc.ChannelPoint) channel_);
+                channel_ = subBuilder.buildPartial();
+              }
+              channelCase_ = 3;
+              break;
+            }
+            case 34: {
+              lnrpc.Rpc.ChannelPoint.Builder subBuilder = null;
+              if (channelCase_ == 4) {
+                subBuilder = ((lnrpc.Rpc.ChannelPoint) channel_).toBuilder();
+              }
+              channel_ =
+                  input.readMessage(lnrpc.Rpc.ChannelPoint.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((lnrpc.Rpc.ChannelPoint) channel_);
+                channel_ = subBuilder.buildPartial();
+              }
+              channelCase_ = 4;
+              break;
+            }
+            case 40: {
+              int rawValue = input.readEnum();
+
+              type_ = rawValue;
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return lnrpc.Rpc.internal_static_lnrpc_ChannelEventUpdate_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return lnrpc.Rpc.internal_static_lnrpc_ChannelEventUpdate_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              lnrpc.Rpc.ChannelEventUpdate.class, lnrpc.Rpc.ChannelEventUpdate.Builder.class);
+    }
+
+    /**
+     * Protobuf enum {@code lnrpc.ChannelEventUpdate.UpdateType}
+     */
+    public enum UpdateType
+        implements com.google.protobuf.ProtocolMessageEnum {
+      /**
+       * <code>OPEN_CHANNEL = 0;</code>
+       */
+      OPEN_CHANNEL(0),
+      /**
+       * <code>CLOSED_CHANNEL = 1;</code>
+       */
+      CLOSED_CHANNEL(1),
+      /**
+       * <code>ACTIVE_CHANNEL = 2;</code>
+       */
+      ACTIVE_CHANNEL(2),
+      /**
+       * <code>INACTIVE_CHANNEL = 3;</code>
+       */
+      INACTIVE_CHANNEL(3),
+      UNRECOGNIZED(-1),
+      ;
+
+      /**
+       * <code>OPEN_CHANNEL = 0;</code>
+       */
+      public static final int OPEN_CHANNEL_VALUE = 0;
+      /**
+       * <code>CLOSED_CHANNEL = 1;</code>
+       */
+      public static final int CLOSED_CHANNEL_VALUE = 1;
+      /**
+       * <code>ACTIVE_CHANNEL = 2;</code>
+       */
+      public static final int ACTIVE_CHANNEL_VALUE = 2;
+      /**
+       * <code>INACTIVE_CHANNEL = 3;</code>
+       */
+      public static final int INACTIVE_CHANNEL_VALUE = 3;
+
+
+      public final int getNumber() {
+        if (this == UNRECOGNIZED) {
+          throw new java.lang.IllegalArgumentException(
+              "Can't get the number of an unknown enum value.");
+        }
+        return value;
+      }
+
+      /**
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
+      public static UpdateType valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static UpdateType forNumber(int value) {
+        switch (value) {
+          case 0: return OPEN_CHANNEL;
+          case 1: return CLOSED_CHANNEL;
+          case 2: return ACTIVE_CHANNEL;
+          case 3: return INACTIVE_CHANNEL;
+          default: return null;
+        }
+      }
+
+      public static com.google.protobuf.Internal.EnumLiteMap<UpdateType>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static final com.google.protobuf.Internal.EnumLiteMap<
+          UpdateType> internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<UpdateType>() {
+              public UpdateType findValueByNumber(int number) {
+                return UpdateType.forNumber(number);
+              }
+            };
+
+      public final com.google.protobuf.Descriptors.EnumValueDescriptor
+          getValueDescriptor() {
+        return getDescriptor().getValues().get(ordinal());
+      }
+      public final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptorForType() {
+        return getDescriptor();
+      }
+      public static final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptor() {
+        return lnrpc.Rpc.ChannelEventUpdate.getDescriptor().getEnumTypes().get(0);
+      }
+
+      private static final UpdateType[] VALUES = values();
+
+      public static UpdateType valueOf(
+          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+          throw new java.lang.IllegalArgumentException(
+            "EnumValueDescriptor is not for this type.");
+        }
+        if (desc.getIndex() == -1) {
+          return UNRECOGNIZED;
+        }
+        return VALUES[desc.getIndex()];
+      }
+
+      private final int value;
+
+      private UpdateType(int value) {
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:lnrpc.ChannelEventUpdate.UpdateType)
+    }
+
+    private int channelCase_ = 0;
+    private java.lang.Object channel_;
+    public enum ChannelCase
+        implements com.google.protobuf.Internal.EnumLite {
+      OPEN_CHANNEL(1),
+      CLOSED_CHANNEL(2),
+      ACTIVE_CHANNEL(3),
+      INACTIVE_CHANNEL(4),
+      CHANNEL_NOT_SET(0);
+      private final int value;
+      private ChannelCase(int value) {
+        this.value = value;
+      }
+      /**
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
+      public static ChannelCase valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static ChannelCase forNumber(int value) {
+        switch (value) {
+          case 1: return OPEN_CHANNEL;
+          case 2: return CLOSED_CHANNEL;
+          case 3: return ACTIVE_CHANNEL;
+          case 4: return INACTIVE_CHANNEL;
+          case 0: return CHANNEL_NOT_SET;
+          default: return null;
+        }
+      }
+      public int getNumber() {
+        return this.value;
+      }
+    };
+
+    public ChannelCase
+    getChannelCase() {
+      return ChannelCase.forNumber(
+          channelCase_);
+    }
+
+    public static final int OPEN_CHANNEL_FIELD_NUMBER = 1;
+    /**
+     * <code>.lnrpc.Channel open_channel = 1[json_name = "open_channel"];</code>
+     */
+    public boolean hasOpenChannel() {
+      return channelCase_ == 1;
+    }
+    /**
+     * <code>.lnrpc.Channel open_channel = 1[json_name = "open_channel"];</code>
+     */
+    public lnrpc.Rpc.Channel getOpenChannel() {
+      if (channelCase_ == 1) {
+         return (lnrpc.Rpc.Channel) channel_;
+      }
+      return lnrpc.Rpc.Channel.getDefaultInstance();
+    }
+    /**
+     * <code>.lnrpc.Channel open_channel = 1[json_name = "open_channel"];</code>
+     */
+    public lnrpc.Rpc.ChannelOrBuilder getOpenChannelOrBuilder() {
+      if (channelCase_ == 1) {
+         return (lnrpc.Rpc.Channel) channel_;
+      }
+      return lnrpc.Rpc.Channel.getDefaultInstance();
+    }
+
+    public static final int CLOSED_CHANNEL_FIELD_NUMBER = 2;
+    /**
+     * <code>.lnrpc.ChannelCloseSummary closed_channel = 2[json_name = "closed_channel"];</code>
+     */
+    public boolean hasClosedChannel() {
+      return channelCase_ == 2;
+    }
+    /**
+     * <code>.lnrpc.ChannelCloseSummary closed_channel = 2[json_name = "closed_channel"];</code>
+     */
+    public lnrpc.Rpc.ChannelCloseSummary getClosedChannel() {
+      if (channelCase_ == 2) {
+         return (lnrpc.Rpc.ChannelCloseSummary) channel_;
+      }
+      return lnrpc.Rpc.ChannelCloseSummary.getDefaultInstance();
+    }
+    /**
+     * <code>.lnrpc.ChannelCloseSummary closed_channel = 2[json_name = "closed_channel"];</code>
+     */
+    public lnrpc.Rpc.ChannelCloseSummaryOrBuilder getClosedChannelOrBuilder() {
+      if (channelCase_ == 2) {
+         return (lnrpc.Rpc.ChannelCloseSummary) channel_;
+      }
+      return lnrpc.Rpc.ChannelCloseSummary.getDefaultInstance();
+    }
+
+    public static final int ACTIVE_CHANNEL_FIELD_NUMBER = 3;
+    /**
+     * <code>.lnrpc.ChannelPoint active_channel = 3[json_name = "active_channel"];</code>
+     */
+    public boolean hasActiveChannel() {
+      return channelCase_ == 3;
+    }
+    /**
+     * <code>.lnrpc.ChannelPoint active_channel = 3[json_name = "active_channel"];</code>
+     */
+    public lnrpc.Rpc.ChannelPoint getActiveChannel() {
+      if (channelCase_ == 3) {
+         return (lnrpc.Rpc.ChannelPoint) channel_;
+      }
+      return lnrpc.Rpc.ChannelPoint.getDefaultInstance();
+    }
+    /**
+     * <code>.lnrpc.ChannelPoint active_channel = 3[json_name = "active_channel"];</code>
+     */
+    public lnrpc.Rpc.ChannelPointOrBuilder getActiveChannelOrBuilder() {
+      if (channelCase_ == 3) {
+         return (lnrpc.Rpc.ChannelPoint) channel_;
+      }
+      return lnrpc.Rpc.ChannelPoint.getDefaultInstance();
+    }
+
+    public static final int INACTIVE_CHANNEL_FIELD_NUMBER = 4;
+    /**
+     * <code>.lnrpc.ChannelPoint inactive_channel = 4[json_name = "inactive_channel"];</code>
+     */
+    public boolean hasInactiveChannel() {
+      return channelCase_ == 4;
+    }
+    /**
+     * <code>.lnrpc.ChannelPoint inactive_channel = 4[json_name = "inactive_channel"];</code>
+     */
+    public lnrpc.Rpc.ChannelPoint getInactiveChannel() {
+      if (channelCase_ == 4) {
+         return (lnrpc.Rpc.ChannelPoint) channel_;
+      }
+      return lnrpc.Rpc.ChannelPoint.getDefaultInstance();
+    }
+    /**
+     * <code>.lnrpc.ChannelPoint inactive_channel = 4[json_name = "inactive_channel"];</code>
+     */
+    public lnrpc.Rpc.ChannelPointOrBuilder getInactiveChannelOrBuilder() {
+      if (channelCase_ == 4) {
+         return (lnrpc.Rpc.ChannelPoint) channel_;
+      }
+      return lnrpc.Rpc.ChannelPoint.getDefaultInstance();
+    }
+
+    public static final int TYPE_FIELD_NUMBER = 5;
+    private int type_;
+    /**
+     * <code>.lnrpc.ChannelEventUpdate.UpdateType type = 5[json_name = "type"];</code>
+     */
+    public int getTypeValue() {
+      return type_;
+    }
+    /**
+     * <code>.lnrpc.ChannelEventUpdate.UpdateType type = 5[json_name = "type"];</code>
+     */
+    public lnrpc.Rpc.ChannelEventUpdate.UpdateType getType() {
+      lnrpc.Rpc.ChannelEventUpdate.UpdateType result = lnrpc.Rpc.ChannelEventUpdate.UpdateType.valueOf(type_);
+      return result == null ? lnrpc.Rpc.ChannelEventUpdate.UpdateType.UNRECOGNIZED : result;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (channelCase_ == 1) {
+        output.writeMessage(1, (lnrpc.Rpc.Channel) channel_);
+      }
+      if (channelCase_ == 2) {
+        output.writeMessage(2, (lnrpc.Rpc.ChannelCloseSummary) channel_);
+      }
+      if (channelCase_ == 3) {
+        output.writeMessage(3, (lnrpc.Rpc.ChannelPoint) channel_);
+      }
+      if (channelCase_ == 4) {
+        output.writeMessage(4, (lnrpc.Rpc.ChannelPoint) channel_);
+      }
+      if (type_ != lnrpc.Rpc.ChannelEventUpdate.UpdateType.OPEN_CHANNEL.getNumber()) {
+        output.writeEnum(5, type_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (channelCase_ == 1) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, (lnrpc.Rpc.Channel) channel_);
+      }
+      if (channelCase_ == 2) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, (lnrpc.Rpc.ChannelCloseSummary) channel_);
+      }
+      if (channelCase_ == 3) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, (lnrpc.Rpc.ChannelPoint) channel_);
+      }
+      if (channelCase_ == 4) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(4, (lnrpc.Rpc.ChannelPoint) channel_);
+      }
+      if (type_ != lnrpc.Rpc.ChannelEventUpdate.UpdateType.OPEN_CHANNEL.getNumber()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(5, type_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof lnrpc.Rpc.ChannelEventUpdate)) {
+        return super.equals(obj);
+      }
+      lnrpc.Rpc.ChannelEventUpdate other = (lnrpc.Rpc.ChannelEventUpdate) obj;
+
+      boolean result = true;
+      result = result && type_ == other.type_;
+      result = result && getChannelCase().equals(
+          other.getChannelCase());
+      if (!result) return false;
+      switch (channelCase_) {
+        case 1:
+          result = result && getOpenChannel()
+              .equals(other.getOpenChannel());
+          break;
+        case 2:
+          result = result && getClosedChannel()
+              .equals(other.getClosedChannel());
+          break;
+        case 3:
+          result = result && getActiveChannel()
+              .equals(other.getActiveChannel());
+          break;
+        case 4:
+          result = result && getInactiveChannel()
+              .equals(other.getInactiveChannel());
+          break;
+        case 0:
+        default:
+      }
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + type_;
+      switch (channelCase_) {
+        case 1:
+          hash = (37 * hash) + OPEN_CHANNEL_FIELD_NUMBER;
+          hash = (53 * hash) + getOpenChannel().hashCode();
+          break;
+        case 2:
+          hash = (37 * hash) + CLOSED_CHANNEL_FIELD_NUMBER;
+          hash = (53 * hash) + getClosedChannel().hashCode();
+          break;
+        case 3:
+          hash = (37 * hash) + ACTIVE_CHANNEL_FIELD_NUMBER;
+          hash = (53 * hash) + getActiveChannel().hashCode();
+          break;
+        case 4:
+          hash = (37 * hash) + INACTIVE_CHANNEL_FIELD_NUMBER;
+          hash = (53 * hash) + getInactiveChannel().hashCode();
+          break;
+        case 0:
+        default:
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static lnrpc.Rpc.ChannelEventUpdate parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChannelEventUpdate parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelEventUpdate parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChannelEventUpdate parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelEventUpdate parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChannelEventUpdate parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelEventUpdate parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChannelEventUpdate parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelEventUpdate parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChannelEventUpdate parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelEventUpdate parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChannelEventUpdate parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(lnrpc.Rpc.ChannelEventUpdate prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code lnrpc.ChannelEventUpdate}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:lnrpc.ChannelEventUpdate)
+        lnrpc.Rpc.ChannelEventUpdateOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChannelEventUpdate_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChannelEventUpdate_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                lnrpc.Rpc.ChannelEventUpdate.class, lnrpc.Rpc.ChannelEventUpdate.Builder.class);
+      }
+
+      // Construct using lnrpc.Rpc.ChannelEventUpdate.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        type_ = 0;
+
+        channelCase_ = 0;
+        channel_ = null;
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChannelEventUpdate_descriptor;
+      }
+
+      public lnrpc.Rpc.ChannelEventUpdate getDefaultInstanceForType() {
+        return lnrpc.Rpc.ChannelEventUpdate.getDefaultInstance();
+      }
+
+      public lnrpc.Rpc.ChannelEventUpdate build() {
+        lnrpc.Rpc.ChannelEventUpdate result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public lnrpc.Rpc.ChannelEventUpdate buildPartial() {
+        lnrpc.Rpc.ChannelEventUpdate result = new lnrpc.Rpc.ChannelEventUpdate(this);
+        if (channelCase_ == 1) {
+          if (openChannelBuilder_ == null) {
+            result.channel_ = channel_;
+          } else {
+            result.channel_ = openChannelBuilder_.build();
+          }
+        }
+        if (channelCase_ == 2) {
+          if (closedChannelBuilder_ == null) {
+            result.channel_ = channel_;
+          } else {
+            result.channel_ = closedChannelBuilder_.build();
+          }
+        }
+        if (channelCase_ == 3) {
+          if (activeChannelBuilder_ == null) {
+            result.channel_ = channel_;
+          } else {
+            result.channel_ = activeChannelBuilder_.build();
+          }
+        }
+        if (channelCase_ == 4) {
+          if (inactiveChannelBuilder_ == null) {
+            result.channel_ = channel_;
+          } else {
+            result.channel_ = inactiveChannelBuilder_.build();
+          }
+        }
+        result.type_ = type_;
+        result.channelCase_ = channelCase_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof lnrpc.Rpc.ChannelEventUpdate) {
+          return mergeFrom((lnrpc.Rpc.ChannelEventUpdate)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(lnrpc.Rpc.ChannelEventUpdate other) {
+        if (other == lnrpc.Rpc.ChannelEventUpdate.getDefaultInstance()) return this;
+        if (other.type_ != 0) {
+          setTypeValue(other.getTypeValue());
+        }
+        switch (other.getChannelCase()) {
+          case OPEN_CHANNEL: {
+            mergeOpenChannel(other.getOpenChannel());
+            break;
+          }
+          case CLOSED_CHANNEL: {
+            mergeClosedChannel(other.getClosedChannel());
+            break;
+          }
+          case ACTIVE_CHANNEL: {
+            mergeActiveChannel(other.getActiveChannel());
+            break;
+          }
+          case INACTIVE_CHANNEL: {
+            mergeInactiveChannel(other.getInactiveChannel());
+            break;
+          }
+          case CHANNEL_NOT_SET: {
+            break;
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        lnrpc.Rpc.ChannelEventUpdate parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (lnrpc.Rpc.ChannelEventUpdate) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int channelCase_ = 0;
+      private java.lang.Object channel_;
+      public ChannelCase
+          getChannelCase() {
+        return ChannelCase.forNumber(
+            channelCase_);
+      }
+
+      public Builder clearChannel() {
+        channelCase_ = 0;
+        channel_ = null;
+        onChanged();
+        return this;
+      }
+
+
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.Channel, lnrpc.Rpc.Channel.Builder, lnrpc.Rpc.ChannelOrBuilder> openChannelBuilder_;
+      /**
+       * <code>.lnrpc.Channel open_channel = 1[json_name = "open_channel"];</code>
+       */
+      public boolean hasOpenChannel() {
+        return channelCase_ == 1;
+      }
+      /**
+       * <code>.lnrpc.Channel open_channel = 1[json_name = "open_channel"];</code>
+       */
+      public lnrpc.Rpc.Channel getOpenChannel() {
+        if (openChannelBuilder_ == null) {
+          if (channelCase_ == 1) {
+            return (lnrpc.Rpc.Channel) channel_;
+          }
+          return lnrpc.Rpc.Channel.getDefaultInstance();
+        } else {
+          if (channelCase_ == 1) {
+            return openChannelBuilder_.getMessage();
+          }
+          return lnrpc.Rpc.Channel.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.lnrpc.Channel open_channel = 1[json_name = "open_channel"];</code>
+       */
+      public Builder setOpenChannel(lnrpc.Rpc.Channel value) {
+        if (openChannelBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          channel_ = value;
+          onChanged();
+        } else {
+          openChannelBuilder_.setMessage(value);
+        }
+        channelCase_ = 1;
+        return this;
+      }
+      /**
+       * <code>.lnrpc.Channel open_channel = 1[json_name = "open_channel"];</code>
+       */
+      public Builder setOpenChannel(
+          lnrpc.Rpc.Channel.Builder builderForValue) {
+        if (openChannelBuilder_ == null) {
+          channel_ = builderForValue.build();
+          onChanged();
+        } else {
+          openChannelBuilder_.setMessage(builderForValue.build());
+        }
+        channelCase_ = 1;
+        return this;
+      }
+      /**
+       * <code>.lnrpc.Channel open_channel = 1[json_name = "open_channel"];</code>
+       */
+      public Builder mergeOpenChannel(lnrpc.Rpc.Channel value) {
+        if (openChannelBuilder_ == null) {
+          if (channelCase_ == 1 &&
+              channel_ != lnrpc.Rpc.Channel.getDefaultInstance()) {
+            channel_ = lnrpc.Rpc.Channel.newBuilder((lnrpc.Rpc.Channel) channel_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            channel_ = value;
+          }
+          onChanged();
+        } else {
+          if (channelCase_ == 1) {
+            openChannelBuilder_.mergeFrom(value);
+          }
+          openChannelBuilder_.setMessage(value);
+        }
+        channelCase_ = 1;
+        return this;
+      }
+      /**
+       * <code>.lnrpc.Channel open_channel = 1[json_name = "open_channel"];</code>
+       */
+      public Builder clearOpenChannel() {
+        if (openChannelBuilder_ == null) {
+          if (channelCase_ == 1) {
+            channelCase_ = 0;
+            channel_ = null;
+            onChanged();
+          }
+        } else {
+          if (channelCase_ == 1) {
+            channelCase_ = 0;
+            channel_ = null;
+          }
+          openChannelBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>.lnrpc.Channel open_channel = 1[json_name = "open_channel"];</code>
+       */
+      public lnrpc.Rpc.Channel.Builder getOpenChannelBuilder() {
+        return getOpenChannelFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.lnrpc.Channel open_channel = 1[json_name = "open_channel"];</code>
+       */
+      public lnrpc.Rpc.ChannelOrBuilder getOpenChannelOrBuilder() {
+        if ((channelCase_ == 1) && (openChannelBuilder_ != null)) {
+          return openChannelBuilder_.getMessageOrBuilder();
+        } else {
+          if (channelCase_ == 1) {
+            return (lnrpc.Rpc.Channel) channel_;
+          }
+          return lnrpc.Rpc.Channel.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.lnrpc.Channel open_channel = 1[json_name = "open_channel"];</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.Channel, lnrpc.Rpc.Channel.Builder, lnrpc.Rpc.ChannelOrBuilder> 
+          getOpenChannelFieldBuilder() {
+        if (openChannelBuilder_ == null) {
+          if (!(channelCase_ == 1)) {
+            channel_ = lnrpc.Rpc.Channel.getDefaultInstance();
+          }
+          openChannelBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              lnrpc.Rpc.Channel, lnrpc.Rpc.Channel.Builder, lnrpc.Rpc.ChannelOrBuilder>(
+                  (lnrpc.Rpc.Channel) channel_,
+                  getParentForChildren(),
+                  isClean());
+          channel_ = null;
+        }
+        channelCase_ = 1;
+        onChanged();;
+        return openChannelBuilder_;
+      }
+
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.ChannelCloseSummary, lnrpc.Rpc.ChannelCloseSummary.Builder, lnrpc.Rpc.ChannelCloseSummaryOrBuilder> closedChannelBuilder_;
+      /**
+       * <code>.lnrpc.ChannelCloseSummary closed_channel = 2[json_name = "closed_channel"];</code>
+       */
+      public boolean hasClosedChannel() {
+        return channelCase_ == 2;
+      }
+      /**
+       * <code>.lnrpc.ChannelCloseSummary closed_channel = 2[json_name = "closed_channel"];</code>
+       */
+      public lnrpc.Rpc.ChannelCloseSummary getClosedChannel() {
+        if (closedChannelBuilder_ == null) {
+          if (channelCase_ == 2) {
+            return (lnrpc.Rpc.ChannelCloseSummary) channel_;
+          }
+          return lnrpc.Rpc.ChannelCloseSummary.getDefaultInstance();
+        } else {
+          if (channelCase_ == 2) {
+            return closedChannelBuilder_.getMessage();
+          }
+          return lnrpc.Rpc.ChannelCloseSummary.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.lnrpc.ChannelCloseSummary closed_channel = 2[json_name = "closed_channel"];</code>
+       */
+      public Builder setClosedChannel(lnrpc.Rpc.ChannelCloseSummary value) {
+        if (closedChannelBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          channel_ = value;
+          onChanged();
+        } else {
+          closedChannelBuilder_.setMessage(value);
+        }
+        channelCase_ = 2;
+        return this;
+      }
+      /**
+       * <code>.lnrpc.ChannelCloseSummary closed_channel = 2[json_name = "closed_channel"];</code>
+       */
+      public Builder setClosedChannel(
+          lnrpc.Rpc.ChannelCloseSummary.Builder builderForValue) {
+        if (closedChannelBuilder_ == null) {
+          channel_ = builderForValue.build();
+          onChanged();
+        } else {
+          closedChannelBuilder_.setMessage(builderForValue.build());
+        }
+        channelCase_ = 2;
+        return this;
+      }
+      /**
+       * <code>.lnrpc.ChannelCloseSummary closed_channel = 2[json_name = "closed_channel"];</code>
+       */
+      public Builder mergeClosedChannel(lnrpc.Rpc.ChannelCloseSummary value) {
+        if (closedChannelBuilder_ == null) {
+          if (channelCase_ == 2 &&
+              channel_ != lnrpc.Rpc.ChannelCloseSummary.getDefaultInstance()) {
+            channel_ = lnrpc.Rpc.ChannelCloseSummary.newBuilder((lnrpc.Rpc.ChannelCloseSummary) channel_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            channel_ = value;
+          }
+          onChanged();
+        } else {
+          if (channelCase_ == 2) {
+            closedChannelBuilder_.mergeFrom(value);
+          }
+          closedChannelBuilder_.setMessage(value);
+        }
+        channelCase_ = 2;
+        return this;
+      }
+      /**
+       * <code>.lnrpc.ChannelCloseSummary closed_channel = 2[json_name = "closed_channel"];</code>
+       */
+      public Builder clearClosedChannel() {
+        if (closedChannelBuilder_ == null) {
+          if (channelCase_ == 2) {
+            channelCase_ = 0;
+            channel_ = null;
+            onChanged();
+          }
+        } else {
+          if (channelCase_ == 2) {
+            channelCase_ = 0;
+            channel_ = null;
+          }
+          closedChannelBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>.lnrpc.ChannelCloseSummary closed_channel = 2[json_name = "closed_channel"];</code>
+       */
+      public lnrpc.Rpc.ChannelCloseSummary.Builder getClosedChannelBuilder() {
+        return getClosedChannelFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.lnrpc.ChannelCloseSummary closed_channel = 2[json_name = "closed_channel"];</code>
+       */
+      public lnrpc.Rpc.ChannelCloseSummaryOrBuilder getClosedChannelOrBuilder() {
+        if ((channelCase_ == 2) && (closedChannelBuilder_ != null)) {
+          return closedChannelBuilder_.getMessageOrBuilder();
+        } else {
+          if (channelCase_ == 2) {
+            return (lnrpc.Rpc.ChannelCloseSummary) channel_;
+          }
+          return lnrpc.Rpc.ChannelCloseSummary.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.lnrpc.ChannelCloseSummary closed_channel = 2[json_name = "closed_channel"];</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.ChannelCloseSummary, lnrpc.Rpc.ChannelCloseSummary.Builder, lnrpc.Rpc.ChannelCloseSummaryOrBuilder> 
+          getClosedChannelFieldBuilder() {
+        if (closedChannelBuilder_ == null) {
+          if (!(channelCase_ == 2)) {
+            channel_ = lnrpc.Rpc.ChannelCloseSummary.getDefaultInstance();
+          }
+          closedChannelBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              lnrpc.Rpc.ChannelCloseSummary, lnrpc.Rpc.ChannelCloseSummary.Builder, lnrpc.Rpc.ChannelCloseSummaryOrBuilder>(
+                  (lnrpc.Rpc.ChannelCloseSummary) channel_,
+                  getParentForChildren(),
+                  isClean());
+          channel_ = null;
+        }
+        channelCase_ = 2;
+        onChanged();;
+        return closedChannelBuilder_;
+      }
+
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.ChannelPoint, lnrpc.Rpc.ChannelPoint.Builder, lnrpc.Rpc.ChannelPointOrBuilder> activeChannelBuilder_;
+      /**
+       * <code>.lnrpc.ChannelPoint active_channel = 3[json_name = "active_channel"];</code>
+       */
+      public boolean hasActiveChannel() {
+        return channelCase_ == 3;
+      }
+      /**
+       * <code>.lnrpc.ChannelPoint active_channel = 3[json_name = "active_channel"];</code>
+       */
+      public lnrpc.Rpc.ChannelPoint getActiveChannel() {
+        if (activeChannelBuilder_ == null) {
+          if (channelCase_ == 3) {
+            return (lnrpc.Rpc.ChannelPoint) channel_;
+          }
+          return lnrpc.Rpc.ChannelPoint.getDefaultInstance();
+        } else {
+          if (channelCase_ == 3) {
+            return activeChannelBuilder_.getMessage();
+          }
+          return lnrpc.Rpc.ChannelPoint.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.lnrpc.ChannelPoint active_channel = 3[json_name = "active_channel"];</code>
+       */
+      public Builder setActiveChannel(lnrpc.Rpc.ChannelPoint value) {
+        if (activeChannelBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          channel_ = value;
+          onChanged();
+        } else {
+          activeChannelBuilder_.setMessage(value);
+        }
+        channelCase_ = 3;
+        return this;
+      }
+      /**
+       * <code>.lnrpc.ChannelPoint active_channel = 3[json_name = "active_channel"];</code>
+       */
+      public Builder setActiveChannel(
+          lnrpc.Rpc.ChannelPoint.Builder builderForValue) {
+        if (activeChannelBuilder_ == null) {
+          channel_ = builderForValue.build();
+          onChanged();
+        } else {
+          activeChannelBuilder_.setMessage(builderForValue.build());
+        }
+        channelCase_ = 3;
+        return this;
+      }
+      /**
+       * <code>.lnrpc.ChannelPoint active_channel = 3[json_name = "active_channel"];</code>
+       */
+      public Builder mergeActiveChannel(lnrpc.Rpc.ChannelPoint value) {
+        if (activeChannelBuilder_ == null) {
+          if (channelCase_ == 3 &&
+              channel_ != lnrpc.Rpc.ChannelPoint.getDefaultInstance()) {
+            channel_ = lnrpc.Rpc.ChannelPoint.newBuilder((lnrpc.Rpc.ChannelPoint) channel_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            channel_ = value;
+          }
+          onChanged();
+        } else {
+          if (channelCase_ == 3) {
+            activeChannelBuilder_.mergeFrom(value);
+          }
+          activeChannelBuilder_.setMessage(value);
+        }
+        channelCase_ = 3;
+        return this;
+      }
+      /**
+       * <code>.lnrpc.ChannelPoint active_channel = 3[json_name = "active_channel"];</code>
+       */
+      public Builder clearActiveChannel() {
+        if (activeChannelBuilder_ == null) {
+          if (channelCase_ == 3) {
+            channelCase_ = 0;
+            channel_ = null;
+            onChanged();
+          }
+        } else {
+          if (channelCase_ == 3) {
+            channelCase_ = 0;
+            channel_ = null;
+          }
+          activeChannelBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>.lnrpc.ChannelPoint active_channel = 3[json_name = "active_channel"];</code>
+       */
+      public lnrpc.Rpc.ChannelPoint.Builder getActiveChannelBuilder() {
+        return getActiveChannelFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.lnrpc.ChannelPoint active_channel = 3[json_name = "active_channel"];</code>
+       */
+      public lnrpc.Rpc.ChannelPointOrBuilder getActiveChannelOrBuilder() {
+        if ((channelCase_ == 3) && (activeChannelBuilder_ != null)) {
+          return activeChannelBuilder_.getMessageOrBuilder();
+        } else {
+          if (channelCase_ == 3) {
+            return (lnrpc.Rpc.ChannelPoint) channel_;
+          }
+          return lnrpc.Rpc.ChannelPoint.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.lnrpc.ChannelPoint active_channel = 3[json_name = "active_channel"];</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.ChannelPoint, lnrpc.Rpc.ChannelPoint.Builder, lnrpc.Rpc.ChannelPointOrBuilder> 
+          getActiveChannelFieldBuilder() {
+        if (activeChannelBuilder_ == null) {
+          if (!(channelCase_ == 3)) {
+            channel_ = lnrpc.Rpc.ChannelPoint.getDefaultInstance();
+          }
+          activeChannelBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              lnrpc.Rpc.ChannelPoint, lnrpc.Rpc.ChannelPoint.Builder, lnrpc.Rpc.ChannelPointOrBuilder>(
+                  (lnrpc.Rpc.ChannelPoint) channel_,
+                  getParentForChildren(),
+                  isClean());
+          channel_ = null;
+        }
+        channelCase_ = 3;
+        onChanged();;
+        return activeChannelBuilder_;
+      }
+
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.ChannelPoint, lnrpc.Rpc.ChannelPoint.Builder, lnrpc.Rpc.ChannelPointOrBuilder> inactiveChannelBuilder_;
+      /**
+       * <code>.lnrpc.ChannelPoint inactive_channel = 4[json_name = "inactive_channel"];</code>
+       */
+      public boolean hasInactiveChannel() {
+        return channelCase_ == 4;
+      }
+      /**
+       * <code>.lnrpc.ChannelPoint inactive_channel = 4[json_name = "inactive_channel"];</code>
+       */
+      public lnrpc.Rpc.ChannelPoint getInactiveChannel() {
+        if (inactiveChannelBuilder_ == null) {
+          if (channelCase_ == 4) {
+            return (lnrpc.Rpc.ChannelPoint) channel_;
+          }
+          return lnrpc.Rpc.ChannelPoint.getDefaultInstance();
+        } else {
+          if (channelCase_ == 4) {
+            return inactiveChannelBuilder_.getMessage();
+          }
+          return lnrpc.Rpc.ChannelPoint.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.lnrpc.ChannelPoint inactive_channel = 4[json_name = "inactive_channel"];</code>
+       */
+      public Builder setInactiveChannel(lnrpc.Rpc.ChannelPoint value) {
+        if (inactiveChannelBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          channel_ = value;
+          onChanged();
+        } else {
+          inactiveChannelBuilder_.setMessage(value);
+        }
+        channelCase_ = 4;
+        return this;
+      }
+      /**
+       * <code>.lnrpc.ChannelPoint inactive_channel = 4[json_name = "inactive_channel"];</code>
+       */
+      public Builder setInactiveChannel(
+          lnrpc.Rpc.ChannelPoint.Builder builderForValue) {
+        if (inactiveChannelBuilder_ == null) {
+          channel_ = builderForValue.build();
+          onChanged();
+        } else {
+          inactiveChannelBuilder_.setMessage(builderForValue.build());
+        }
+        channelCase_ = 4;
+        return this;
+      }
+      /**
+       * <code>.lnrpc.ChannelPoint inactive_channel = 4[json_name = "inactive_channel"];</code>
+       */
+      public Builder mergeInactiveChannel(lnrpc.Rpc.ChannelPoint value) {
+        if (inactiveChannelBuilder_ == null) {
+          if (channelCase_ == 4 &&
+              channel_ != lnrpc.Rpc.ChannelPoint.getDefaultInstance()) {
+            channel_ = lnrpc.Rpc.ChannelPoint.newBuilder((lnrpc.Rpc.ChannelPoint) channel_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            channel_ = value;
+          }
+          onChanged();
+        } else {
+          if (channelCase_ == 4) {
+            inactiveChannelBuilder_.mergeFrom(value);
+          }
+          inactiveChannelBuilder_.setMessage(value);
+        }
+        channelCase_ = 4;
+        return this;
+      }
+      /**
+       * <code>.lnrpc.ChannelPoint inactive_channel = 4[json_name = "inactive_channel"];</code>
+       */
+      public Builder clearInactiveChannel() {
+        if (inactiveChannelBuilder_ == null) {
+          if (channelCase_ == 4) {
+            channelCase_ = 0;
+            channel_ = null;
+            onChanged();
+          }
+        } else {
+          if (channelCase_ == 4) {
+            channelCase_ = 0;
+            channel_ = null;
+          }
+          inactiveChannelBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>.lnrpc.ChannelPoint inactive_channel = 4[json_name = "inactive_channel"];</code>
+       */
+      public lnrpc.Rpc.ChannelPoint.Builder getInactiveChannelBuilder() {
+        return getInactiveChannelFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.lnrpc.ChannelPoint inactive_channel = 4[json_name = "inactive_channel"];</code>
+       */
+      public lnrpc.Rpc.ChannelPointOrBuilder getInactiveChannelOrBuilder() {
+        if ((channelCase_ == 4) && (inactiveChannelBuilder_ != null)) {
+          return inactiveChannelBuilder_.getMessageOrBuilder();
+        } else {
+          if (channelCase_ == 4) {
+            return (lnrpc.Rpc.ChannelPoint) channel_;
+          }
+          return lnrpc.Rpc.ChannelPoint.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.lnrpc.ChannelPoint inactive_channel = 4[json_name = "inactive_channel"];</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.ChannelPoint, lnrpc.Rpc.ChannelPoint.Builder, lnrpc.Rpc.ChannelPointOrBuilder> 
+          getInactiveChannelFieldBuilder() {
+        if (inactiveChannelBuilder_ == null) {
+          if (!(channelCase_ == 4)) {
+            channel_ = lnrpc.Rpc.ChannelPoint.getDefaultInstance();
+          }
+          inactiveChannelBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              lnrpc.Rpc.ChannelPoint, lnrpc.Rpc.ChannelPoint.Builder, lnrpc.Rpc.ChannelPointOrBuilder>(
+                  (lnrpc.Rpc.ChannelPoint) channel_,
+                  getParentForChildren(),
+                  isClean());
+          channel_ = null;
+        }
+        channelCase_ = 4;
+        onChanged();;
+        return inactiveChannelBuilder_;
+      }
+
+      private int type_ = 0;
+      /**
+       * <code>.lnrpc.ChannelEventUpdate.UpdateType type = 5[json_name = "type"];</code>
+       */
+      public int getTypeValue() {
+        return type_;
+      }
+      /**
+       * <code>.lnrpc.ChannelEventUpdate.UpdateType type = 5[json_name = "type"];</code>
+       */
+      public Builder setTypeValue(int value) {
+        type_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.lnrpc.ChannelEventUpdate.UpdateType type = 5[json_name = "type"];</code>
+       */
+      public lnrpc.Rpc.ChannelEventUpdate.UpdateType getType() {
+        lnrpc.Rpc.ChannelEventUpdate.UpdateType result = lnrpc.Rpc.ChannelEventUpdate.UpdateType.valueOf(type_);
+        return result == null ? lnrpc.Rpc.ChannelEventUpdate.UpdateType.UNRECOGNIZED : result;
+      }
+      /**
+       * <code>.lnrpc.ChannelEventUpdate.UpdateType type = 5[json_name = "type"];</code>
+       */
+      public Builder setType(lnrpc.Rpc.ChannelEventUpdate.UpdateType value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        
+        type_ = value.getNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.lnrpc.ChannelEventUpdate.UpdateType type = 5[json_name = "type"];</code>
+       */
+      public Builder clearType() {
+        
+        type_ = 0;
+        onChanged();
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:lnrpc.ChannelEventUpdate)
+    }
+
+    // @@protoc_insertion_point(class_scope:lnrpc.ChannelEventUpdate)
+    private static final lnrpc.Rpc.ChannelEventUpdate DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new lnrpc.Rpc.ChannelEventUpdate();
+    }
+
+    public static lnrpc.Rpc.ChannelEventUpdate getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ChannelEventUpdate>
+        PARSER = new com.google.protobuf.AbstractParser<ChannelEventUpdate>() {
+      public ChannelEventUpdate parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ChannelEventUpdate(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ChannelEventUpdate> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ChannelEventUpdate> getParserForType() {
+      return PARSER;
+    }
+
+    public lnrpc.Rpc.ChannelEventUpdate getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface WalletBalanceRequestOrBuilder extends
       // @@protoc_insertion_point(interface_extends:lnrpc.WalletBalanceRequest)
       com.google.protobuf.MessageOrBuilder {
@@ -55733,12 +61448,14 @@ public final class Rpc {
 
     /**
      * <pre>
-     *&#47; The max number of routes to return.
+     **
+     *Deprecated. The max number of routes to return. In the future, QueryRoutes
+     *will only return a single route.
      * </pre>
      *
-     * <code>int32 num_routes = 3;</code>
+     * <code>int32 num_routes = 3 [deprecated = true];</code>
      */
-    int getNumRoutes();
+    @java.lang.Deprecated int getNumRoutes();
 
     /**
      * <pre>
@@ -55785,6 +61502,105 @@ public final class Rpc {
      * <code>.lnrpc.FeeLimit fee_limit = 5;</code>
      */
     lnrpc.Rpc.FeeLimitOrBuilder getFeeLimitOrBuilder();
+
+    /**
+     * <pre>
+     **
+     *A list of nodes to ignore during path finding.
+     * </pre>
+     *
+     * <code>repeated bytes ignored_nodes = 6;</code>
+     */
+    java.util.List<com.google.protobuf.ByteString> getIgnoredNodesList();
+    /**
+     * <pre>
+     **
+     *A list of nodes to ignore during path finding.
+     * </pre>
+     *
+     * <code>repeated bytes ignored_nodes = 6;</code>
+     */
+    int getIgnoredNodesCount();
+    /**
+     * <pre>
+     **
+     *A list of nodes to ignore during path finding.
+     * </pre>
+     *
+     * <code>repeated bytes ignored_nodes = 6;</code>
+     */
+    com.google.protobuf.ByteString getIgnoredNodes(int index);
+
+    /**
+     * <pre>
+     **
+     *A list of edges to ignore during path finding.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+     */
+    java.util.List<lnrpc.Rpc.EdgeLocator> 
+        getIgnoredEdgesList();
+    /**
+     * <pre>
+     **
+     *A list of edges to ignore during path finding.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+     */
+    lnrpc.Rpc.EdgeLocator getIgnoredEdges(int index);
+    /**
+     * <pre>
+     **
+     *A list of edges to ignore during path finding.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+     */
+    int getIgnoredEdgesCount();
+    /**
+     * <pre>
+     **
+     *A list of edges to ignore during path finding.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+     */
+    java.util.List<? extends lnrpc.Rpc.EdgeLocatorOrBuilder> 
+        getIgnoredEdgesOrBuilderList();
+    /**
+     * <pre>
+     **
+     *A list of edges to ignore during path finding.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+     */
+    lnrpc.Rpc.EdgeLocatorOrBuilder getIgnoredEdgesOrBuilder(
+        int index);
+
+    /**
+     * <pre>
+     **
+     *The source node where the request route should originated from. If empty,
+     *self is assumed.
+     * </pre>
+     *
+     * <code>string source_pub_key = 8;</code>
+     */
+    java.lang.String getSourcePubKey();
+    /**
+     * <pre>
+     **
+     *The source node where the request route should originated from. If empty,
+     *self is assumed.
+     * </pre>
+     *
+     * <code>string source_pub_key = 8;</code>
+     */
+    com.google.protobuf.ByteString
+        getSourcePubKeyBytes();
   }
   /**
    * Protobuf type {@code lnrpc.QueryRoutesRequest}
@@ -55803,6 +61619,9 @@ public final class Rpc {
       amt_ = 0L;
       numRoutes_ = 0;
       finalCltvDelta_ = 0;
+      ignoredNodes_ = java.util.Collections.emptyList();
+      ignoredEdges_ = java.util.Collections.emptyList();
+      sourcePubKey_ = "";
     }
 
     @java.lang.Override
@@ -55870,6 +61689,29 @@ public final class Rpc {
 
               break;
             }
+            case 50: {
+              if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+                ignoredNodes_ = new java.util.ArrayList<com.google.protobuf.ByteString>();
+                mutable_bitField0_ |= 0x00000020;
+              }
+              ignoredNodes_.add(input.readBytes());
+              break;
+            }
+            case 58: {
+              if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
+                ignoredEdges_ = new java.util.ArrayList<lnrpc.Rpc.EdgeLocator>();
+                mutable_bitField0_ |= 0x00000040;
+              }
+              ignoredEdges_.add(
+                  input.readMessage(lnrpc.Rpc.EdgeLocator.parser(), extensionRegistry));
+              break;
+            }
+            case 66: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              sourcePubKey_ = s;
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -55878,6 +61720,12 @@ public final class Rpc {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+          ignoredNodes_ = java.util.Collections.unmodifiableList(ignoredNodes_);
+        }
+        if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
+          ignoredEdges_ = java.util.Collections.unmodifiableList(ignoredEdges_);
+        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -55894,6 +61742,7 @@ public final class Rpc {
               lnrpc.Rpc.QueryRoutesRequest.class, lnrpc.Rpc.QueryRoutesRequest.Builder.class);
     }
 
+    private int bitField0_;
     public static final int PUB_KEY_FIELD_NUMBER = 1;
     private volatile java.lang.Object pubKey_;
     /**
@@ -55953,12 +61802,14 @@ public final class Rpc {
     private int numRoutes_;
     /**
      * <pre>
-     *&#47; The max number of routes to return.
+     **
+     *Deprecated. The max number of routes to return. In the future, QueryRoutes
+     *will only return a single route.
      * </pre>
      *
-     * <code>int32 num_routes = 3;</code>
+     * <code>int32 num_routes = 3 [deprecated = true];</code>
      */
-    public int getNumRoutes() {
+    @java.lang.Deprecated public int getNumRoutes() {
       return numRoutes_;
     }
 
@@ -56020,6 +61871,149 @@ public final class Rpc {
       return getFeeLimit();
     }
 
+    public static final int IGNORED_NODES_FIELD_NUMBER = 6;
+    private java.util.List<com.google.protobuf.ByteString> ignoredNodes_;
+    /**
+     * <pre>
+     **
+     *A list of nodes to ignore during path finding.
+     * </pre>
+     *
+     * <code>repeated bytes ignored_nodes = 6;</code>
+     */
+    public java.util.List<com.google.protobuf.ByteString>
+        getIgnoredNodesList() {
+      return ignoredNodes_;
+    }
+    /**
+     * <pre>
+     **
+     *A list of nodes to ignore during path finding.
+     * </pre>
+     *
+     * <code>repeated bytes ignored_nodes = 6;</code>
+     */
+    public int getIgnoredNodesCount() {
+      return ignoredNodes_.size();
+    }
+    /**
+     * <pre>
+     **
+     *A list of nodes to ignore during path finding.
+     * </pre>
+     *
+     * <code>repeated bytes ignored_nodes = 6;</code>
+     */
+    public com.google.protobuf.ByteString getIgnoredNodes(int index) {
+      return ignoredNodes_.get(index);
+    }
+
+    public static final int IGNORED_EDGES_FIELD_NUMBER = 7;
+    private java.util.List<lnrpc.Rpc.EdgeLocator> ignoredEdges_;
+    /**
+     * <pre>
+     **
+     *A list of edges to ignore during path finding.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+     */
+    public java.util.List<lnrpc.Rpc.EdgeLocator> getIgnoredEdgesList() {
+      return ignoredEdges_;
+    }
+    /**
+     * <pre>
+     **
+     *A list of edges to ignore during path finding.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+     */
+    public java.util.List<? extends lnrpc.Rpc.EdgeLocatorOrBuilder> 
+        getIgnoredEdgesOrBuilderList() {
+      return ignoredEdges_;
+    }
+    /**
+     * <pre>
+     **
+     *A list of edges to ignore during path finding.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+     */
+    public int getIgnoredEdgesCount() {
+      return ignoredEdges_.size();
+    }
+    /**
+     * <pre>
+     **
+     *A list of edges to ignore during path finding.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+     */
+    public lnrpc.Rpc.EdgeLocator getIgnoredEdges(int index) {
+      return ignoredEdges_.get(index);
+    }
+    /**
+     * <pre>
+     **
+     *A list of edges to ignore during path finding.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+     */
+    public lnrpc.Rpc.EdgeLocatorOrBuilder getIgnoredEdgesOrBuilder(
+        int index) {
+      return ignoredEdges_.get(index);
+    }
+
+    public static final int SOURCE_PUB_KEY_FIELD_NUMBER = 8;
+    private volatile java.lang.Object sourcePubKey_;
+    /**
+     * <pre>
+     **
+     *The source node where the request route should originated from. If empty,
+     *self is assumed.
+     * </pre>
+     *
+     * <code>string source_pub_key = 8;</code>
+     */
+    public java.lang.String getSourcePubKey() {
+      java.lang.Object ref = sourcePubKey_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        sourcePubKey_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     **
+     *The source node where the request route should originated from. If empty,
+     *self is assumed.
+     * </pre>
+     *
+     * <code>string source_pub_key = 8;</code>
+     */
+    public com.google.protobuf.ByteString
+        getSourcePubKeyBytes() {
+      java.lang.Object ref = sourcePubKey_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        sourcePubKey_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -56047,6 +62041,15 @@ public final class Rpc {
       if (feeLimit_ != null) {
         output.writeMessage(5, getFeeLimit());
       }
+      for (int i = 0; i < ignoredNodes_.size(); i++) {
+        output.writeBytes(6, ignoredNodes_.get(i));
+      }
+      for (int i = 0; i < ignoredEdges_.size(); i++) {
+        output.writeMessage(7, ignoredEdges_.get(i));
+      }
+      if (!getSourcePubKeyBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, sourcePubKey_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -56073,6 +62076,22 @@ public final class Rpc {
       if (feeLimit_ != null) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(5, getFeeLimit());
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < ignoredNodes_.size(); i++) {
+          dataSize += com.google.protobuf.CodedOutputStream
+            .computeBytesSizeNoTag(ignoredNodes_.get(i));
+        }
+        size += dataSize;
+        size += 1 * getIgnoredNodesList().size();
+      }
+      for (int i = 0; i < ignoredEdges_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(7, ignoredEdges_.get(i));
+      }
+      if (!getSourcePubKeyBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, sourcePubKey_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -56103,6 +62122,12 @@ public final class Rpc {
         result = result && getFeeLimit()
             .equals(other.getFeeLimit());
       }
+      result = result && getIgnoredNodesList()
+          .equals(other.getIgnoredNodesList());
+      result = result && getIgnoredEdgesList()
+          .equals(other.getIgnoredEdgesList());
+      result = result && getSourcePubKey()
+          .equals(other.getSourcePubKey());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -56127,6 +62152,16 @@ public final class Rpc {
         hash = (37 * hash) + FEE_LIMIT_FIELD_NUMBER;
         hash = (53 * hash) + getFeeLimit().hashCode();
       }
+      if (getIgnoredNodesCount() > 0) {
+        hash = (37 * hash) + IGNORED_NODES_FIELD_NUMBER;
+        hash = (53 * hash) + getIgnoredNodesList().hashCode();
+      }
+      if (getIgnoredEdgesCount() > 0) {
+        hash = (37 * hash) + IGNORED_EDGES_FIELD_NUMBER;
+        hash = (53 * hash) + getIgnoredEdgesList().hashCode();
+      }
+      hash = (37 * hash) + SOURCE_PUB_KEY_FIELD_NUMBER;
+      hash = (53 * hash) + getSourcePubKey().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -56252,6 +62287,7 @@ public final class Rpc {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
+          getIgnoredEdgesFieldBuilder();
         }
       }
       public Builder clear() {
@@ -56270,6 +62306,16 @@ public final class Rpc {
           feeLimit_ = null;
           feeLimitBuilder_ = null;
         }
+        ignoredNodes_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000020);
+        if (ignoredEdgesBuilder_ == null) {
+          ignoredEdges_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000040);
+        } else {
+          ignoredEdgesBuilder_.clear();
+        }
+        sourcePubKey_ = "";
+
         return this;
       }
 
@@ -56292,6 +62338,8 @@ public final class Rpc {
 
       public lnrpc.Rpc.QueryRoutesRequest buildPartial() {
         lnrpc.Rpc.QueryRoutesRequest result = new lnrpc.Rpc.QueryRoutesRequest(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         result.pubKey_ = pubKey_;
         result.amt_ = amt_;
         result.numRoutes_ = numRoutes_;
@@ -56301,6 +62349,22 @@ public final class Rpc {
         } else {
           result.feeLimit_ = feeLimitBuilder_.build();
         }
+        if (((bitField0_ & 0x00000020) == 0x00000020)) {
+          ignoredNodes_ = java.util.Collections.unmodifiableList(ignoredNodes_);
+          bitField0_ = (bitField0_ & ~0x00000020);
+        }
+        result.ignoredNodes_ = ignoredNodes_;
+        if (ignoredEdgesBuilder_ == null) {
+          if (((bitField0_ & 0x00000040) == 0x00000040)) {
+            ignoredEdges_ = java.util.Collections.unmodifiableList(ignoredEdges_);
+            bitField0_ = (bitField0_ & ~0x00000040);
+          }
+          result.ignoredEdges_ = ignoredEdges_;
+        } else {
+          result.ignoredEdges_ = ignoredEdgesBuilder_.build();
+        }
+        result.sourcePubKey_ = sourcePubKey_;
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -56358,6 +62422,46 @@ public final class Rpc {
         if (other.hasFeeLimit()) {
           mergeFeeLimit(other.getFeeLimit());
         }
+        if (!other.ignoredNodes_.isEmpty()) {
+          if (ignoredNodes_.isEmpty()) {
+            ignoredNodes_ = other.ignoredNodes_;
+            bitField0_ = (bitField0_ & ~0x00000020);
+          } else {
+            ensureIgnoredNodesIsMutable();
+            ignoredNodes_.addAll(other.ignoredNodes_);
+          }
+          onChanged();
+        }
+        if (ignoredEdgesBuilder_ == null) {
+          if (!other.ignoredEdges_.isEmpty()) {
+            if (ignoredEdges_.isEmpty()) {
+              ignoredEdges_ = other.ignoredEdges_;
+              bitField0_ = (bitField0_ & ~0x00000040);
+            } else {
+              ensureIgnoredEdgesIsMutable();
+              ignoredEdges_.addAll(other.ignoredEdges_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.ignoredEdges_.isEmpty()) {
+            if (ignoredEdgesBuilder_.isEmpty()) {
+              ignoredEdgesBuilder_.dispose();
+              ignoredEdgesBuilder_ = null;
+              ignoredEdges_ = other.ignoredEdges_;
+              bitField0_ = (bitField0_ & ~0x00000040);
+              ignoredEdgesBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getIgnoredEdgesFieldBuilder() : null;
+            } else {
+              ignoredEdgesBuilder_.addAllMessages(other.ignoredEdges_);
+            }
+          }
+        }
+        if (!other.getSourcePubKey().isEmpty()) {
+          sourcePubKey_ = other.sourcePubKey_;
+          onChanged();
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -56384,6 +62488,7 @@ public final class Rpc {
         }
         return this;
       }
+      private int bitField0_;
 
       private java.lang.Object pubKey_ = "";
       /**
@@ -56515,22 +62620,26 @@ public final class Rpc {
       private int numRoutes_ ;
       /**
        * <pre>
-       *&#47; The max number of routes to return.
+       **
+       *Deprecated. The max number of routes to return. In the future, QueryRoutes
+       *will only return a single route.
        * </pre>
        *
-       * <code>int32 num_routes = 3;</code>
+       * <code>int32 num_routes = 3 [deprecated = true];</code>
        */
-      public int getNumRoutes() {
+      @java.lang.Deprecated public int getNumRoutes() {
         return numRoutes_;
       }
       /**
        * <pre>
-       *&#47; The max number of routes to return.
+       **
+       *Deprecated. The max number of routes to return. In the future, QueryRoutes
+       *will only return a single route.
        * </pre>
        *
-       * <code>int32 num_routes = 3;</code>
+       * <code>int32 num_routes = 3 [deprecated = true];</code>
        */
-      public Builder setNumRoutes(int value) {
+      @java.lang.Deprecated public Builder setNumRoutes(int value) {
         
         numRoutes_ = value;
         onChanged();
@@ -56538,12 +62647,14 @@ public final class Rpc {
       }
       /**
        * <pre>
-       *&#47; The max number of routes to return.
+       **
+       *Deprecated. The max number of routes to return. In the future, QueryRoutes
+       *will only return a single route.
        * </pre>
        *
-       * <code>int32 num_routes = 3;</code>
+       * <code>int32 num_routes = 3 [deprecated = true];</code>
        */
-      public Builder clearNumRoutes() {
+      @java.lang.Deprecated public Builder clearNumRoutes() {
         
         numRoutes_ = 0;
         onChanged();
@@ -56776,6 +62887,542 @@ public final class Rpc {
         }
         return feeLimitBuilder_;
       }
+
+      private java.util.List<com.google.protobuf.ByteString> ignoredNodes_ = java.util.Collections.emptyList();
+      private void ensureIgnoredNodesIsMutable() {
+        if (!((bitField0_ & 0x00000020) == 0x00000020)) {
+          ignoredNodes_ = new java.util.ArrayList<com.google.protobuf.ByteString>(ignoredNodes_);
+          bitField0_ |= 0x00000020;
+         }
+      }
+      /**
+       * <pre>
+       **
+       *A list of nodes to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated bytes ignored_nodes = 6;</code>
+       */
+      public java.util.List<com.google.protobuf.ByteString>
+          getIgnoredNodesList() {
+        return java.util.Collections.unmodifiableList(ignoredNodes_);
+      }
+      /**
+       * <pre>
+       **
+       *A list of nodes to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated bytes ignored_nodes = 6;</code>
+       */
+      public int getIgnoredNodesCount() {
+        return ignoredNodes_.size();
+      }
+      /**
+       * <pre>
+       **
+       *A list of nodes to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated bytes ignored_nodes = 6;</code>
+       */
+      public com.google.protobuf.ByteString getIgnoredNodes(int index) {
+        return ignoredNodes_.get(index);
+      }
+      /**
+       * <pre>
+       **
+       *A list of nodes to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated bytes ignored_nodes = 6;</code>
+       */
+      public Builder setIgnoredNodes(
+          int index, com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureIgnoredNodesIsMutable();
+        ignoredNodes_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A list of nodes to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated bytes ignored_nodes = 6;</code>
+       */
+      public Builder addIgnoredNodes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureIgnoredNodesIsMutable();
+        ignoredNodes_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A list of nodes to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated bytes ignored_nodes = 6;</code>
+       */
+      public Builder addAllIgnoredNodes(
+          java.lang.Iterable<? extends com.google.protobuf.ByteString> values) {
+        ensureIgnoredNodesIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, ignoredNodes_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A list of nodes to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated bytes ignored_nodes = 6;</code>
+       */
+      public Builder clearIgnoredNodes() {
+        ignoredNodes_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000020);
+        onChanged();
+        return this;
+      }
+
+      private java.util.List<lnrpc.Rpc.EdgeLocator> ignoredEdges_ =
+        java.util.Collections.emptyList();
+      private void ensureIgnoredEdgesIsMutable() {
+        if (!((bitField0_ & 0x00000040) == 0x00000040)) {
+          ignoredEdges_ = new java.util.ArrayList<lnrpc.Rpc.EdgeLocator>(ignoredEdges_);
+          bitField0_ |= 0x00000040;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          lnrpc.Rpc.EdgeLocator, lnrpc.Rpc.EdgeLocator.Builder, lnrpc.Rpc.EdgeLocatorOrBuilder> ignoredEdgesBuilder_;
+
+      /**
+       * <pre>
+       **
+       *A list of edges to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+       */
+      public java.util.List<lnrpc.Rpc.EdgeLocator> getIgnoredEdgesList() {
+        if (ignoredEdgesBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(ignoredEdges_);
+        } else {
+          return ignoredEdgesBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <pre>
+       **
+       *A list of edges to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+       */
+      public int getIgnoredEdgesCount() {
+        if (ignoredEdgesBuilder_ == null) {
+          return ignoredEdges_.size();
+        } else {
+          return ignoredEdgesBuilder_.getCount();
+        }
+      }
+      /**
+       * <pre>
+       **
+       *A list of edges to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+       */
+      public lnrpc.Rpc.EdgeLocator getIgnoredEdges(int index) {
+        if (ignoredEdgesBuilder_ == null) {
+          return ignoredEdges_.get(index);
+        } else {
+          return ignoredEdgesBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <pre>
+       **
+       *A list of edges to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+       */
+      public Builder setIgnoredEdges(
+          int index, lnrpc.Rpc.EdgeLocator value) {
+        if (ignoredEdgesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureIgnoredEdgesIsMutable();
+          ignoredEdges_.set(index, value);
+          onChanged();
+        } else {
+          ignoredEdgesBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A list of edges to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+       */
+      public Builder setIgnoredEdges(
+          int index, lnrpc.Rpc.EdgeLocator.Builder builderForValue) {
+        if (ignoredEdgesBuilder_ == null) {
+          ensureIgnoredEdgesIsMutable();
+          ignoredEdges_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          ignoredEdgesBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A list of edges to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+       */
+      public Builder addIgnoredEdges(lnrpc.Rpc.EdgeLocator value) {
+        if (ignoredEdgesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureIgnoredEdgesIsMutable();
+          ignoredEdges_.add(value);
+          onChanged();
+        } else {
+          ignoredEdgesBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A list of edges to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+       */
+      public Builder addIgnoredEdges(
+          int index, lnrpc.Rpc.EdgeLocator value) {
+        if (ignoredEdgesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureIgnoredEdgesIsMutable();
+          ignoredEdges_.add(index, value);
+          onChanged();
+        } else {
+          ignoredEdgesBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A list of edges to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+       */
+      public Builder addIgnoredEdges(
+          lnrpc.Rpc.EdgeLocator.Builder builderForValue) {
+        if (ignoredEdgesBuilder_ == null) {
+          ensureIgnoredEdgesIsMutable();
+          ignoredEdges_.add(builderForValue.build());
+          onChanged();
+        } else {
+          ignoredEdgesBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A list of edges to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+       */
+      public Builder addIgnoredEdges(
+          int index, lnrpc.Rpc.EdgeLocator.Builder builderForValue) {
+        if (ignoredEdgesBuilder_ == null) {
+          ensureIgnoredEdgesIsMutable();
+          ignoredEdges_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          ignoredEdgesBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A list of edges to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+       */
+      public Builder addAllIgnoredEdges(
+          java.lang.Iterable<? extends lnrpc.Rpc.EdgeLocator> values) {
+        if (ignoredEdgesBuilder_ == null) {
+          ensureIgnoredEdgesIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, ignoredEdges_);
+          onChanged();
+        } else {
+          ignoredEdgesBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A list of edges to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+       */
+      public Builder clearIgnoredEdges() {
+        if (ignoredEdgesBuilder_ == null) {
+          ignoredEdges_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000040);
+          onChanged();
+        } else {
+          ignoredEdgesBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A list of edges to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+       */
+      public Builder removeIgnoredEdges(int index) {
+        if (ignoredEdgesBuilder_ == null) {
+          ensureIgnoredEdgesIsMutable();
+          ignoredEdges_.remove(index);
+          onChanged();
+        } else {
+          ignoredEdgesBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A list of edges to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+       */
+      public lnrpc.Rpc.EdgeLocator.Builder getIgnoredEdgesBuilder(
+          int index) {
+        return getIgnoredEdgesFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <pre>
+       **
+       *A list of edges to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+       */
+      public lnrpc.Rpc.EdgeLocatorOrBuilder getIgnoredEdgesOrBuilder(
+          int index) {
+        if (ignoredEdgesBuilder_ == null) {
+          return ignoredEdges_.get(index);  } else {
+          return ignoredEdgesBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <pre>
+       **
+       *A list of edges to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+       */
+      public java.util.List<? extends lnrpc.Rpc.EdgeLocatorOrBuilder> 
+           getIgnoredEdgesOrBuilderList() {
+        if (ignoredEdgesBuilder_ != null) {
+          return ignoredEdgesBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(ignoredEdges_);
+        }
+      }
+      /**
+       * <pre>
+       **
+       *A list of edges to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+       */
+      public lnrpc.Rpc.EdgeLocator.Builder addIgnoredEdgesBuilder() {
+        return getIgnoredEdgesFieldBuilder().addBuilder(
+            lnrpc.Rpc.EdgeLocator.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       **
+       *A list of edges to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+       */
+      public lnrpc.Rpc.EdgeLocator.Builder addIgnoredEdgesBuilder(
+          int index) {
+        return getIgnoredEdgesFieldBuilder().addBuilder(
+            index, lnrpc.Rpc.EdgeLocator.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       **
+       *A list of edges to ignore during path finding.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.EdgeLocator ignored_edges = 7;</code>
+       */
+      public java.util.List<lnrpc.Rpc.EdgeLocator.Builder> 
+           getIgnoredEdgesBuilderList() {
+        return getIgnoredEdgesFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          lnrpc.Rpc.EdgeLocator, lnrpc.Rpc.EdgeLocator.Builder, lnrpc.Rpc.EdgeLocatorOrBuilder> 
+          getIgnoredEdgesFieldBuilder() {
+        if (ignoredEdgesBuilder_ == null) {
+          ignoredEdgesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              lnrpc.Rpc.EdgeLocator, lnrpc.Rpc.EdgeLocator.Builder, lnrpc.Rpc.EdgeLocatorOrBuilder>(
+                  ignoredEdges_,
+                  ((bitField0_ & 0x00000040) == 0x00000040),
+                  getParentForChildren(),
+                  isClean());
+          ignoredEdges_ = null;
+        }
+        return ignoredEdgesBuilder_;
+      }
+
+      private java.lang.Object sourcePubKey_ = "";
+      /**
+       * <pre>
+       **
+       *The source node where the request route should originated from. If empty,
+       *self is assumed.
+       * </pre>
+       *
+       * <code>string source_pub_key = 8;</code>
+       */
+      public java.lang.String getSourcePubKey() {
+        java.lang.Object ref = sourcePubKey_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          sourcePubKey_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       **
+       *The source node where the request route should originated from. If empty,
+       *self is assumed.
+       * </pre>
+       *
+       * <code>string source_pub_key = 8;</code>
+       */
+      public com.google.protobuf.ByteString
+          getSourcePubKeyBytes() {
+        java.lang.Object ref = sourcePubKey_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          sourcePubKey_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       **
+       *The source node where the request route should originated from. If empty,
+       *self is assumed.
+       * </pre>
+       *
+       * <code>string source_pub_key = 8;</code>
+       */
+      public Builder setSourcePubKey(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        sourcePubKey_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *The source node where the request route should originated from. If empty,
+       *self is assumed.
+       * </pre>
+       *
+       * <code>string source_pub_key = 8;</code>
+       */
+      public Builder clearSourcePubKey() {
+        
+        sourcePubKey_ = getDefaultInstance().getSourcePubKey();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *The source node where the request route should originated from. If empty,
+       *self is assumed.
+       * </pre>
+       *
+       * <code>string source_pub_key = 8;</code>
+       */
+      public Builder setSourcePubKeyBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        sourcePubKey_ = value;
+        onChanged();
+        return this;
+      }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.setUnknownFieldsProto3(unknownFields);
@@ -56820,6 +63467,582 @@ public final class Rpc {
     }
 
     public lnrpc.Rpc.QueryRoutesRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface EdgeLocatorOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:lnrpc.EdgeLocator)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     *&#47; The short channel id of this edge.
+     * </pre>
+     *
+     * <code>uint64 channel_id = 1;</code>
+     */
+    long getChannelId();
+
+    /**
+     * <pre>
+     **
+     *The direction of this edge. If direction_reverse is false, the direction
+     *of this edge is from the channel endpoint with the lexicographically smaller
+     *pub key to the endpoint with the larger pub key. If direction_reverse is
+     *is true, the edge goes the other way.
+     * </pre>
+     *
+     * <code>bool direction_reverse = 2;</code>
+     */
+    boolean getDirectionReverse();
+  }
+  /**
+   * Protobuf type {@code lnrpc.EdgeLocator}
+   */
+  public  static final class EdgeLocator extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:lnrpc.EdgeLocator)
+      EdgeLocatorOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use EdgeLocator.newBuilder() to construct.
+    private EdgeLocator(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private EdgeLocator() {
+      channelId_ = 0L;
+      directionReverse_ = false;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private EdgeLocator(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+
+              channelId_ = input.readUInt64();
+              break;
+            }
+            case 16: {
+
+              directionReverse_ = input.readBool();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return lnrpc.Rpc.internal_static_lnrpc_EdgeLocator_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return lnrpc.Rpc.internal_static_lnrpc_EdgeLocator_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              lnrpc.Rpc.EdgeLocator.class, lnrpc.Rpc.EdgeLocator.Builder.class);
+    }
+
+    public static final int CHANNEL_ID_FIELD_NUMBER = 1;
+    private long channelId_;
+    /**
+     * <pre>
+     *&#47; The short channel id of this edge.
+     * </pre>
+     *
+     * <code>uint64 channel_id = 1;</code>
+     */
+    public long getChannelId() {
+      return channelId_;
+    }
+
+    public static final int DIRECTION_REVERSE_FIELD_NUMBER = 2;
+    private boolean directionReverse_;
+    /**
+     * <pre>
+     **
+     *The direction of this edge. If direction_reverse is false, the direction
+     *of this edge is from the channel endpoint with the lexicographically smaller
+     *pub key to the endpoint with the larger pub key. If direction_reverse is
+     *is true, the edge goes the other way.
+     * </pre>
+     *
+     * <code>bool direction_reverse = 2;</code>
+     */
+    public boolean getDirectionReverse() {
+      return directionReverse_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (channelId_ != 0L) {
+        output.writeUInt64(1, channelId_);
+      }
+      if (directionReverse_ != false) {
+        output.writeBool(2, directionReverse_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (channelId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(1, channelId_);
+      }
+      if (directionReverse_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(2, directionReverse_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof lnrpc.Rpc.EdgeLocator)) {
+        return super.equals(obj);
+      }
+      lnrpc.Rpc.EdgeLocator other = (lnrpc.Rpc.EdgeLocator) obj;
+
+      boolean result = true;
+      result = result && (getChannelId()
+          == other.getChannelId());
+      result = result && (getDirectionReverse()
+          == other.getDirectionReverse());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + CHANNEL_ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getChannelId());
+      hash = (37 * hash) + DIRECTION_REVERSE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getDirectionReverse());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static lnrpc.Rpc.EdgeLocator parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.EdgeLocator parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.EdgeLocator parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.EdgeLocator parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.EdgeLocator parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.EdgeLocator parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.EdgeLocator parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.EdgeLocator parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.EdgeLocator parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.EdgeLocator parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.EdgeLocator parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.EdgeLocator parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(lnrpc.Rpc.EdgeLocator prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code lnrpc.EdgeLocator}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:lnrpc.EdgeLocator)
+        lnrpc.Rpc.EdgeLocatorOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return lnrpc.Rpc.internal_static_lnrpc_EdgeLocator_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return lnrpc.Rpc.internal_static_lnrpc_EdgeLocator_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                lnrpc.Rpc.EdgeLocator.class, lnrpc.Rpc.EdgeLocator.Builder.class);
+      }
+
+      // Construct using lnrpc.Rpc.EdgeLocator.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        channelId_ = 0L;
+
+        directionReverse_ = false;
+
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return lnrpc.Rpc.internal_static_lnrpc_EdgeLocator_descriptor;
+      }
+
+      public lnrpc.Rpc.EdgeLocator getDefaultInstanceForType() {
+        return lnrpc.Rpc.EdgeLocator.getDefaultInstance();
+      }
+
+      public lnrpc.Rpc.EdgeLocator build() {
+        lnrpc.Rpc.EdgeLocator result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public lnrpc.Rpc.EdgeLocator buildPartial() {
+        lnrpc.Rpc.EdgeLocator result = new lnrpc.Rpc.EdgeLocator(this);
+        result.channelId_ = channelId_;
+        result.directionReverse_ = directionReverse_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof lnrpc.Rpc.EdgeLocator) {
+          return mergeFrom((lnrpc.Rpc.EdgeLocator)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(lnrpc.Rpc.EdgeLocator other) {
+        if (other == lnrpc.Rpc.EdgeLocator.getDefaultInstance()) return this;
+        if (other.getChannelId() != 0L) {
+          setChannelId(other.getChannelId());
+        }
+        if (other.getDirectionReverse() != false) {
+          setDirectionReverse(other.getDirectionReverse());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        lnrpc.Rpc.EdgeLocator parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (lnrpc.Rpc.EdgeLocator) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long channelId_ ;
+      /**
+       * <pre>
+       *&#47; The short channel id of this edge.
+       * </pre>
+       *
+       * <code>uint64 channel_id = 1;</code>
+       */
+      public long getChannelId() {
+        return channelId_;
+      }
+      /**
+       * <pre>
+       *&#47; The short channel id of this edge.
+       * </pre>
+       *
+       * <code>uint64 channel_id = 1;</code>
+       */
+      public Builder setChannelId(long value) {
+        
+        channelId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *&#47; The short channel id of this edge.
+       * </pre>
+       *
+       * <code>uint64 channel_id = 1;</code>
+       */
+      public Builder clearChannelId() {
+        
+        channelId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private boolean directionReverse_ ;
+      /**
+       * <pre>
+       **
+       *The direction of this edge. If direction_reverse is false, the direction
+       *of this edge is from the channel endpoint with the lexicographically smaller
+       *pub key to the endpoint with the larger pub key. If direction_reverse is
+       *is true, the edge goes the other way.
+       * </pre>
+       *
+       * <code>bool direction_reverse = 2;</code>
+       */
+      public boolean getDirectionReverse() {
+        return directionReverse_;
+      }
+      /**
+       * <pre>
+       **
+       *The direction of this edge. If direction_reverse is false, the direction
+       *of this edge is from the channel endpoint with the lexicographically smaller
+       *pub key to the endpoint with the larger pub key. If direction_reverse is
+       *is true, the edge goes the other way.
+       * </pre>
+       *
+       * <code>bool direction_reverse = 2;</code>
+       */
+      public Builder setDirectionReverse(boolean value) {
+        
+        directionReverse_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *The direction of this edge. If direction_reverse is false, the direction
+       *of this edge is from the channel endpoint with the lexicographically smaller
+       *pub key to the endpoint with the larger pub key. If direction_reverse is
+       *is true, the edge goes the other way.
+       * </pre>
+       *
+       * <code>bool direction_reverse = 2;</code>
+       */
+      public Builder clearDirectionReverse() {
+        
+        directionReverse_ = false;
+        onChanged();
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:lnrpc.EdgeLocator)
+    }
+
+    // @@protoc_insertion_point(class_scope:lnrpc.EdgeLocator)
+    private static final lnrpc.Rpc.EdgeLocator DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new lnrpc.Rpc.EdgeLocator();
+    }
+
+    public static lnrpc.Rpc.EdgeLocator getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<EdgeLocator>
+        PARSER = new com.google.protobuf.AbstractParser<EdgeLocator>() {
+      public EdgeLocator parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new EdgeLocator(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<EdgeLocator> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<EdgeLocator> getParserForType() {
+      return PARSER;
+    }
+
+    public lnrpc.Rpc.EdgeLocator getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -63380,6 +70603,11 @@ public final class Rpc {
      * <code>bool disabled = 5[json_name = "disabled"];</code>
      */
     boolean getDisabled();
+
+    /**
+     * <code>uint64 max_htlc_msat = 6[json_name = "max_htlc_msat"];</code>
+     */
+    long getMaxHtlcMsat();
   }
   /**
    * Protobuf type {@code lnrpc.RoutingPolicy}
@@ -63399,6 +70627,7 @@ public final class Rpc {
       feeBaseMsat_ = 0L;
       feeRateMilliMsat_ = 0L;
       disabled_ = false;
+      maxHtlcMsat_ = 0L;
     }
 
     @java.lang.Override
@@ -63455,6 +70684,11 @@ public final class Rpc {
             case 40: {
 
               disabled_ = input.readBool();
+              break;
+            }
+            case 48: {
+
+              maxHtlcMsat_ = input.readUInt64();
               break;
             }
           }
@@ -63526,6 +70760,15 @@ public final class Rpc {
       return disabled_;
     }
 
+    public static final int MAX_HTLC_MSAT_FIELD_NUMBER = 6;
+    private long maxHtlcMsat_;
+    /**
+     * <code>uint64 max_htlc_msat = 6[json_name = "max_htlc_msat"];</code>
+     */
+    public long getMaxHtlcMsat() {
+      return maxHtlcMsat_;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -63552,6 +70795,9 @@ public final class Rpc {
       }
       if (disabled_ != false) {
         output.writeBool(5, disabled_);
+      }
+      if (maxHtlcMsat_ != 0L) {
+        output.writeUInt64(6, maxHtlcMsat_);
       }
       unknownFields.writeTo(output);
     }
@@ -63581,6 +70827,10 @@ public final class Rpc {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(5, disabled_);
       }
+      if (maxHtlcMsat_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(6, maxHtlcMsat_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -63607,6 +70857,8 @@ public final class Rpc {
           == other.getFeeRateMilliMsat());
       result = result && (getDisabled()
           == other.getDisabled());
+      result = result && (getMaxHtlcMsat()
+          == other.getMaxHtlcMsat());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -63632,6 +70884,9 @@ public final class Rpc {
       hash = (37 * hash) + DISABLED_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
           getDisabled());
+      hash = (37 * hash) + MAX_HTLC_MSAT_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getMaxHtlcMsat());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -63771,6 +71026,8 @@ public final class Rpc {
 
         disabled_ = false;
 
+        maxHtlcMsat_ = 0L;
+
         return this;
       }
 
@@ -63798,6 +71055,7 @@ public final class Rpc {
         result.feeBaseMsat_ = feeBaseMsat_;
         result.feeRateMilliMsat_ = feeRateMilliMsat_;
         result.disabled_ = disabled_;
+        result.maxHtlcMsat_ = maxHtlcMsat_;
         onBuilt();
         return result;
       }
@@ -63853,6 +71111,9 @@ public final class Rpc {
         }
         if (other.getDisabled() != false) {
           setDisabled(other.getDisabled());
+        }
+        if (other.getMaxHtlcMsat() != 0L) {
+          setMaxHtlcMsat(other.getMaxHtlcMsat());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -64007,6 +71268,32 @@ public final class Rpc {
       public Builder clearDisabled() {
         
         disabled_ = false;
+        onChanged();
+        return this;
+      }
+
+      private long maxHtlcMsat_ ;
+      /**
+       * <code>uint64 max_htlc_msat = 6[json_name = "max_htlc_msat"];</code>
+       */
+      public long getMaxHtlcMsat() {
+        return maxHtlcMsat_;
+      }
+      /**
+       * <code>uint64 max_htlc_msat = 6[json_name = "max_htlc_msat"];</code>
+       */
+      public Builder setMaxHtlcMsat(long value) {
+        
+        maxHtlcMsat_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint64 max_htlc_msat = 6[json_name = "max_htlc_msat"];</code>
+       */
+      public Builder clearMaxHtlcMsat() {
+        
+        maxHtlcMsat_ = 0L;
         onChanged();
         return this;
       }
@@ -68255,6 +75542,11 @@ public final class Rpc {
      * <code>int64 max_channel_size = 9[json_name = "max_channel_size"];</code>
      */
     long getMaxChannelSize();
+
+    /**
+     * <code>int64 median_channel_size_sat = 10[json_name = "median_channel_size_sat"];</code>
+     */
+    long getMedianChannelSizeSat();
   }
   /**
    * Protobuf type {@code lnrpc.NetworkInfo}
@@ -68278,6 +75570,7 @@ public final class Rpc {
       avgChannelSize_ = 0D;
       minChannelSize_ = 0L;
       maxChannelSize_ = 0L;
+      medianChannelSizeSat_ = 0L;
     }
 
     @java.lang.Override
@@ -68354,6 +75647,11 @@ public final class Rpc {
             case 72: {
 
               maxChannelSize_ = input.readInt64();
+              break;
+            }
+            case 80: {
+
+              medianChannelSizeSat_ = input.readInt64();
               break;
             }
           }
@@ -68461,6 +75759,15 @@ public final class Rpc {
       return maxChannelSize_;
     }
 
+    public static final int MEDIAN_CHANNEL_SIZE_SAT_FIELD_NUMBER = 10;
+    private long medianChannelSizeSat_;
+    /**
+     * <code>int64 median_channel_size_sat = 10[json_name = "median_channel_size_sat"];</code>
+     */
+    public long getMedianChannelSizeSat() {
+      return medianChannelSizeSat_;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -68499,6 +75806,9 @@ public final class Rpc {
       }
       if (maxChannelSize_ != 0L) {
         output.writeInt64(9, maxChannelSize_);
+      }
+      if (medianChannelSizeSat_ != 0L) {
+        output.writeInt64(10, medianChannelSizeSat_);
       }
       unknownFields.writeTo(output);
     }
@@ -68544,6 +75854,10 @@ public final class Rpc {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(9, maxChannelSize_);
       }
+      if (medianChannelSizeSat_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(10, medianChannelSizeSat_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -68582,6 +75896,8 @@ public final class Rpc {
           == other.getMinChannelSize());
       result = result && (getMaxChannelSize()
           == other.getMaxChannelSize());
+      result = result && (getMedianChannelSizeSat()
+          == other.getMedianChannelSizeSat());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -68616,6 +75932,9 @@ public final class Rpc {
       hash = (37 * hash) + MAX_CHANNEL_SIZE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getMaxChannelSize());
+      hash = (37 * hash) + MEDIAN_CHANNEL_SIZE_SAT_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getMedianChannelSizeSat());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -68763,6 +76082,8 @@ public final class Rpc {
 
         maxChannelSize_ = 0L;
 
+        medianChannelSizeSat_ = 0L;
+
         return this;
       }
 
@@ -68794,6 +76115,7 @@ public final class Rpc {
         result.avgChannelSize_ = avgChannelSize_;
         result.minChannelSize_ = minChannelSize_;
         result.maxChannelSize_ = maxChannelSize_;
+        result.medianChannelSizeSat_ = medianChannelSizeSat_;
         onBuilt();
         return result;
       }
@@ -68861,6 +76183,9 @@ public final class Rpc {
         }
         if (other.getMaxChannelSize() != 0L) {
           setMaxChannelSize(other.getMaxChannelSize());
+        }
+        if (other.getMedianChannelSizeSat() != 0L) {
+          setMedianChannelSizeSat(other.getMedianChannelSizeSat());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -69119,6 +76444,32 @@ public final class Rpc {
       public Builder clearMaxChannelSize() {
         
         maxChannelSize_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long medianChannelSizeSat_ ;
+      /**
+       * <code>int64 median_channel_size_sat = 10[json_name = "median_channel_size_sat"];</code>
+       */
+      public long getMedianChannelSizeSat() {
+        return medianChannelSizeSat_;
+      }
+      /**
+       * <code>int64 median_channel_size_sat = 10[json_name = "median_channel_size_sat"];</code>
+       */
+      public Builder setMedianChannelSizeSat(long value) {
+        
+        medianChannelSizeSat_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 median_channel_size_sat = 10[json_name = "median_channel_size_sat"];</code>
+       */
+      public Builder clearMedianChannelSizeSat() {
+        
+        medianChannelSizeSat_ = 0L;
         onChanged();
         return this;
       }
@@ -77130,6 +84481,14 @@ public final class Rpc {
        * <code>SETTLED = 1;</code>
        */
       SETTLED(1),
+      /**
+       * <code>CANCELED = 2;</code>
+       */
+      CANCELED(2),
+      /**
+       * <code>ACCEPTED = 3;</code>
+       */
+      ACCEPTED(3),
       UNRECOGNIZED(-1),
       ;
 
@@ -77141,6 +84500,14 @@ public final class Rpc {
        * <code>SETTLED = 1;</code>
        */
       public static final int SETTLED_VALUE = 1;
+      /**
+       * <code>CANCELED = 2;</code>
+       */
+      public static final int CANCELED_VALUE = 2;
+      /**
+       * <code>ACCEPTED = 3;</code>
+       */
+      public static final int ACCEPTED_VALUE = 3;
 
 
       public final int getNumber() {
@@ -77163,6 +84530,8 @@ public final class Rpc {
         switch (value) {
           case 0: return OPEN;
           case 1: return SETTLED;
+          case 2: return CANCELED;
+          case 3: return ACCEPTED;
           default: return null;
         }
       }
@@ -97944,6 +105313,6563 @@ public final class Rpc {
 
   }
 
+  public interface ExportChannelBackupRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:lnrpc.ExportChannelBackupRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     *&#47; The target chanenl point to obtain a back up for.
+     * </pre>
+     *
+     * <code>.lnrpc.ChannelPoint chan_point = 1;</code>
+     */
+    boolean hasChanPoint();
+    /**
+     * <pre>
+     *&#47; The target chanenl point to obtain a back up for.
+     * </pre>
+     *
+     * <code>.lnrpc.ChannelPoint chan_point = 1;</code>
+     */
+    lnrpc.Rpc.ChannelPoint getChanPoint();
+    /**
+     * <pre>
+     *&#47; The target chanenl point to obtain a back up for.
+     * </pre>
+     *
+     * <code>.lnrpc.ChannelPoint chan_point = 1;</code>
+     */
+    lnrpc.Rpc.ChannelPointOrBuilder getChanPointOrBuilder();
+  }
+  /**
+   * Protobuf type {@code lnrpc.ExportChannelBackupRequest}
+   */
+  public  static final class ExportChannelBackupRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:lnrpc.ExportChannelBackupRequest)
+      ExportChannelBackupRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ExportChannelBackupRequest.newBuilder() to construct.
+    private ExportChannelBackupRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ExportChannelBackupRequest() {
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ExportChannelBackupRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              lnrpc.Rpc.ChannelPoint.Builder subBuilder = null;
+              if (chanPoint_ != null) {
+                subBuilder = chanPoint_.toBuilder();
+              }
+              chanPoint_ = input.readMessage(lnrpc.Rpc.ChannelPoint.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(chanPoint_);
+                chanPoint_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return lnrpc.Rpc.internal_static_lnrpc_ExportChannelBackupRequest_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return lnrpc.Rpc.internal_static_lnrpc_ExportChannelBackupRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              lnrpc.Rpc.ExportChannelBackupRequest.class, lnrpc.Rpc.ExportChannelBackupRequest.Builder.class);
+    }
+
+    public static final int CHAN_POINT_FIELD_NUMBER = 1;
+    private lnrpc.Rpc.ChannelPoint chanPoint_;
+    /**
+     * <pre>
+     *&#47; The target chanenl point to obtain a back up for.
+     * </pre>
+     *
+     * <code>.lnrpc.ChannelPoint chan_point = 1;</code>
+     */
+    public boolean hasChanPoint() {
+      return chanPoint_ != null;
+    }
+    /**
+     * <pre>
+     *&#47; The target chanenl point to obtain a back up for.
+     * </pre>
+     *
+     * <code>.lnrpc.ChannelPoint chan_point = 1;</code>
+     */
+    public lnrpc.Rpc.ChannelPoint getChanPoint() {
+      return chanPoint_ == null ? lnrpc.Rpc.ChannelPoint.getDefaultInstance() : chanPoint_;
+    }
+    /**
+     * <pre>
+     *&#47; The target chanenl point to obtain a back up for.
+     * </pre>
+     *
+     * <code>.lnrpc.ChannelPoint chan_point = 1;</code>
+     */
+    public lnrpc.Rpc.ChannelPointOrBuilder getChanPointOrBuilder() {
+      return getChanPoint();
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (chanPoint_ != null) {
+        output.writeMessage(1, getChanPoint());
+      }
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (chanPoint_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getChanPoint());
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof lnrpc.Rpc.ExportChannelBackupRequest)) {
+        return super.equals(obj);
+      }
+      lnrpc.Rpc.ExportChannelBackupRequest other = (lnrpc.Rpc.ExportChannelBackupRequest) obj;
+
+      boolean result = true;
+      result = result && (hasChanPoint() == other.hasChanPoint());
+      if (hasChanPoint()) {
+        result = result && getChanPoint()
+            .equals(other.getChanPoint());
+      }
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasChanPoint()) {
+        hash = (37 * hash) + CHAN_POINT_FIELD_NUMBER;
+        hash = (53 * hash) + getChanPoint().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static lnrpc.Rpc.ExportChannelBackupRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ExportChannelBackupRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ExportChannelBackupRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ExportChannelBackupRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ExportChannelBackupRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ExportChannelBackupRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ExportChannelBackupRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ExportChannelBackupRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ExportChannelBackupRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ExportChannelBackupRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ExportChannelBackupRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ExportChannelBackupRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(lnrpc.Rpc.ExportChannelBackupRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code lnrpc.ExportChannelBackupRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:lnrpc.ExportChannelBackupRequest)
+        lnrpc.Rpc.ExportChannelBackupRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return lnrpc.Rpc.internal_static_lnrpc_ExportChannelBackupRequest_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return lnrpc.Rpc.internal_static_lnrpc_ExportChannelBackupRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                lnrpc.Rpc.ExportChannelBackupRequest.class, lnrpc.Rpc.ExportChannelBackupRequest.Builder.class);
+      }
+
+      // Construct using lnrpc.Rpc.ExportChannelBackupRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        if (chanPointBuilder_ == null) {
+          chanPoint_ = null;
+        } else {
+          chanPoint_ = null;
+          chanPointBuilder_ = null;
+        }
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return lnrpc.Rpc.internal_static_lnrpc_ExportChannelBackupRequest_descriptor;
+      }
+
+      public lnrpc.Rpc.ExportChannelBackupRequest getDefaultInstanceForType() {
+        return lnrpc.Rpc.ExportChannelBackupRequest.getDefaultInstance();
+      }
+
+      public lnrpc.Rpc.ExportChannelBackupRequest build() {
+        lnrpc.Rpc.ExportChannelBackupRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public lnrpc.Rpc.ExportChannelBackupRequest buildPartial() {
+        lnrpc.Rpc.ExportChannelBackupRequest result = new lnrpc.Rpc.ExportChannelBackupRequest(this);
+        if (chanPointBuilder_ == null) {
+          result.chanPoint_ = chanPoint_;
+        } else {
+          result.chanPoint_ = chanPointBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof lnrpc.Rpc.ExportChannelBackupRequest) {
+          return mergeFrom((lnrpc.Rpc.ExportChannelBackupRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(lnrpc.Rpc.ExportChannelBackupRequest other) {
+        if (other == lnrpc.Rpc.ExportChannelBackupRequest.getDefaultInstance()) return this;
+        if (other.hasChanPoint()) {
+          mergeChanPoint(other.getChanPoint());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        lnrpc.Rpc.ExportChannelBackupRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (lnrpc.Rpc.ExportChannelBackupRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private lnrpc.Rpc.ChannelPoint chanPoint_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.ChannelPoint, lnrpc.Rpc.ChannelPoint.Builder, lnrpc.Rpc.ChannelPointOrBuilder> chanPointBuilder_;
+      /**
+       * <pre>
+       *&#47; The target chanenl point to obtain a back up for.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelPoint chan_point = 1;</code>
+       */
+      public boolean hasChanPoint() {
+        return chanPointBuilder_ != null || chanPoint_ != null;
+      }
+      /**
+       * <pre>
+       *&#47; The target chanenl point to obtain a back up for.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelPoint chan_point = 1;</code>
+       */
+      public lnrpc.Rpc.ChannelPoint getChanPoint() {
+        if (chanPointBuilder_ == null) {
+          return chanPoint_ == null ? lnrpc.Rpc.ChannelPoint.getDefaultInstance() : chanPoint_;
+        } else {
+          return chanPointBuilder_.getMessage();
+        }
+      }
+      /**
+       * <pre>
+       *&#47; The target chanenl point to obtain a back up for.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelPoint chan_point = 1;</code>
+       */
+      public Builder setChanPoint(lnrpc.Rpc.ChannelPoint value) {
+        if (chanPointBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          chanPoint_ = value;
+          onChanged();
+        } else {
+          chanPointBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       *&#47; The target chanenl point to obtain a back up for.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelPoint chan_point = 1;</code>
+       */
+      public Builder setChanPoint(
+          lnrpc.Rpc.ChannelPoint.Builder builderForValue) {
+        if (chanPointBuilder_ == null) {
+          chanPoint_ = builderForValue.build();
+          onChanged();
+        } else {
+          chanPointBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       *&#47; The target chanenl point to obtain a back up for.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelPoint chan_point = 1;</code>
+       */
+      public Builder mergeChanPoint(lnrpc.Rpc.ChannelPoint value) {
+        if (chanPointBuilder_ == null) {
+          if (chanPoint_ != null) {
+            chanPoint_ =
+              lnrpc.Rpc.ChannelPoint.newBuilder(chanPoint_).mergeFrom(value).buildPartial();
+          } else {
+            chanPoint_ = value;
+          }
+          onChanged();
+        } else {
+          chanPointBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       *&#47; The target chanenl point to obtain a back up for.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelPoint chan_point = 1;</code>
+       */
+      public Builder clearChanPoint() {
+        if (chanPointBuilder_ == null) {
+          chanPoint_ = null;
+          onChanged();
+        } else {
+          chanPoint_ = null;
+          chanPointBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       *&#47; The target chanenl point to obtain a back up for.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelPoint chan_point = 1;</code>
+       */
+      public lnrpc.Rpc.ChannelPoint.Builder getChanPointBuilder() {
+        
+        onChanged();
+        return getChanPointFieldBuilder().getBuilder();
+      }
+      /**
+       * <pre>
+       *&#47; The target chanenl point to obtain a back up for.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelPoint chan_point = 1;</code>
+       */
+      public lnrpc.Rpc.ChannelPointOrBuilder getChanPointOrBuilder() {
+        if (chanPointBuilder_ != null) {
+          return chanPointBuilder_.getMessageOrBuilder();
+        } else {
+          return chanPoint_ == null ?
+              lnrpc.Rpc.ChannelPoint.getDefaultInstance() : chanPoint_;
+        }
+      }
+      /**
+       * <pre>
+       *&#47; The target chanenl point to obtain a back up for.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelPoint chan_point = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.ChannelPoint, lnrpc.Rpc.ChannelPoint.Builder, lnrpc.Rpc.ChannelPointOrBuilder> 
+          getChanPointFieldBuilder() {
+        if (chanPointBuilder_ == null) {
+          chanPointBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              lnrpc.Rpc.ChannelPoint, lnrpc.Rpc.ChannelPoint.Builder, lnrpc.Rpc.ChannelPointOrBuilder>(
+                  getChanPoint(),
+                  getParentForChildren(),
+                  isClean());
+          chanPoint_ = null;
+        }
+        return chanPointBuilder_;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:lnrpc.ExportChannelBackupRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:lnrpc.ExportChannelBackupRequest)
+    private static final lnrpc.Rpc.ExportChannelBackupRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new lnrpc.Rpc.ExportChannelBackupRequest();
+    }
+
+    public static lnrpc.Rpc.ExportChannelBackupRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ExportChannelBackupRequest>
+        PARSER = new com.google.protobuf.AbstractParser<ExportChannelBackupRequest>() {
+      public ExportChannelBackupRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ExportChannelBackupRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ExportChannelBackupRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ExportChannelBackupRequest> getParserForType() {
+      return PARSER;
+    }
+
+    public lnrpc.Rpc.ExportChannelBackupRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ChannelBackupOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:lnrpc.ChannelBackup)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     **
+     *Identifies the channel that this backup belongs to.
+     * </pre>
+     *
+     * <code>.lnrpc.ChannelPoint chan_point = 1[json_name = "chan_point"];</code>
+     */
+    boolean hasChanPoint();
+    /**
+     * <pre>
+     **
+     *Identifies the channel that this backup belongs to.
+     * </pre>
+     *
+     * <code>.lnrpc.ChannelPoint chan_point = 1[json_name = "chan_point"];</code>
+     */
+    lnrpc.Rpc.ChannelPoint getChanPoint();
+    /**
+     * <pre>
+     **
+     *Identifies the channel that this backup belongs to.
+     * </pre>
+     *
+     * <code>.lnrpc.ChannelPoint chan_point = 1[json_name = "chan_point"];</code>
+     */
+    lnrpc.Rpc.ChannelPointOrBuilder getChanPointOrBuilder();
+
+    /**
+     * <pre>
+     **
+     *Is an encrypted single-chan backup. this can be passed to
+     *RestoreChannelBackups, or the WalletUnlocker Innit and Unlock methods in
+     *order to trigger the recovery protocol.
+     * </pre>
+     *
+     * <code>bytes chan_backup = 2[json_name = "chan_backup"];</code>
+     */
+    com.google.protobuf.ByteString getChanBackup();
+  }
+  /**
+   * Protobuf type {@code lnrpc.ChannelBackup}
+   */
+  public  static final class ChannelBackup extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:lnrpc.ChannelBackup)
+      ChannelBackupOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ChannelBackup.newBuilder() to construct.
+    private ChannelBackup(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ChannelBackup() {
+      chanBackup_ = com.google.protobuf.ByteString.EMPTY;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ChannelBackup(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              lnrpc.Rpc.ChannelPoint.Builder subBuilder = null;
+              if (chanPoint_ != null) {
+                subBuilder = chanPoint_.toBuilder();
+              }
+              chanPoint_ = input.readMessage(lnrpc.Rpc.ChannelPoint.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(chanPoint_);
+                chanPoint_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 18: {
+
+              chanBackup_ = input.readBytes();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return lnrpc.Rpc.internal_static_lnrpc_ChannelBackup_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return lnrpc.Rpc.internal_static_lnrpc_ChannelBackup_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              lnrpc.Rpc.ChannelBackup.class, lnrpc.Rpc.ChannelBackup.Builder.class);
+    }
+
+    public static final int CHAN_POINT_FIELD_NUMBER = 1;
+    private lnrpc.Rpc.ChannelPoint chanPoint_;
+    /**
+     * <pre>
+     **
+     *Identifies the channel that this backup belongs to.
+     * </pre>
+     *
+     * <code>.lnrpc.ChannelPoint chan_point = 1[json_name = "chan_point"];</code>
+     */
+    public boolean hasChanPoint() {
+      return chanPoint_ != null;
+    }
+    /**
+     * <pre>
+     **
+     *Identifies the channel that this backup belongs to.
+     * </pre>
+     *
+     * <code>.lnrpc.ChannelPoint chan_point = 1[json_name = "chan_point"];</code>
+     */
+    public lnrpc.Rpc.ChannelPoint getChanPoint() {
+      return chanPoint_ == null ? lnrpc.Rpc.ChannelPoint.getDefaultInstance() : chanPoint_;
+    }
+    /**
+     * <pre>
+     **
+     *Identifies the channel that this backup belongs to.
+     * </pre>
+     *
+     * <code>.lnrpc.ChannelPoint chan_point = 1[json_name = "chan_point"];</code>
+     */
+    public lnrpc.Rpc.ChannelPointOrBuilder getChanPointOrBuilder() {
+      return getChanPoint();
+    }
+
+    public static final int CHAN_BACKUP_FIELD_NUMBER = 2;
+    private com.google.protobuf.ByteString chanBackup_;
+    /**
+     * <pre>
+     **
+     *Is an encrypted single-chan backup. this can be passed to
+     *RestoreChannelBackups, or the WalletUnlocker Innit and Unlock methods in
+     *order to trigger the recovery protocol.
+     * </pre>
+     *
+     * <code>bytes chan_backup = 2[json_name = "chan_backup"];</code>
+     */
+    public com.google.protobuf.ByteString getChanBackup() {
+      return chanBackup_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (chanPoint_ != null) {
+        output.writeMessage(1, getChanPoint());
+      }
+      if (!chanBackup_.isEmpty()) {
+        output.writeBytes(2, chanBackup_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (chanPoint_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getChanPoint());
+      }
+      if (!chanBackup_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(2, chanBackup_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof lnrpc.Rpc.ChannelBackup)) {
+        return super.equals(obj);
+      }
+      lnrpc.Rpc.ChannelBackup other = (lnrpc.Rpc.ChannelBackup) obj;
+
+      boolean result = true;
+      result = result && (hasChanPoint() == other.hasChanPoint());
+      if (hasChanPoint()) {
+        result = result && getChanPoint()
+            .equals(other.getChanPoint());
+      }
+      result = result && getChanBackup()
+          .equals(other.getChanBackup());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasChanPoint()) {
+        hash = (37 * hash) + CHAN_POINT_FIELD_NUMBER;
+        hash = (53 * hash) + getChanPoint().hashCode();
+      }
+      hash = (37 * hash) + CHAN_BACKUP_FIELD_NUMBER;
+      hash = (53 * hash) + getChanBackup().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static lnrpc.Rpc.ChannelBackup parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChannelBackup parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelBackup parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChannelBackup parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelBackup parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChannelBackup parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelBackup parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChannelBackup parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelBackup parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChannelBackup parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelBackup parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChannelBackup parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(lnrpc.Rpc.ChannelBackup prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code lnrpc.ChannelBackup}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:lnrpc.ChannelBackup)
+        lnrpc.Rpc.ChannelBackupOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChannelBackup_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChannelBackup_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                lnrpc.Rpc.ChannelBackup.class, lnrpc.Rpc.ChannelBackup.Builder.class);
+      }
+
+      // Construct using lnrpc.Rpc.ChannelBackup.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        if (chanPointBuilder_ == null) {
+          chanPoint_ = null;
+        } else {
+          chanPoint_ = null;
+          chanPointBuilder_ = null;
+        }
+        chanBackup_ = com.google.protobuf.ByteString.EMPTY;
+
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChannelBackup_descriptor;
+      }
+
+      public lnrpc.Rpc.ChannelBackup getDefaultInstanceForType() {
+        return lnrpc.Rpc.ChannelBackup.getDefaultInstance();
+      }
+
+      public lnrpc.Rpc.ChannelBackup build() {
+        lnrpc.Rpc.ChannelBackup result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public lnrpc.Rpc.ChannelBackup buildPartial() {
+        lnrpc.Rpc.ChannelBackup result = new lnrpc.Rpc.ChannelBackup(this);
+        if (chanPointBuilder_ == null) {
+          result.chanPoint_ = chanPoint_;
+        } else {
+          result.chanPoint_ = chanPointBuilder_.build();
+        }
+        result.chanBackup_ = chanBackup_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof lnrpc.Rpc.ChannelBackup) {
+          return mergeFrom((lnrpc.Rpc.ChannelBackup)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(lnrpc.Rpc.ChannelBackup other) {
+        if (other == lnrpc.Rpc.ChannelBackup.getDefaultInstance()) return this;
+        if (other.hasChanPoint()) {
+          mergeChanPoint(other.getChanPoint());
+        }
+        if (other.getChanBackup() != com.google.protobuf.ByteString.EMPTY) {
+          setChanBackup(other.getChanBackup());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        lnrpc.Rpc.ChannelBackup parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (lnrpc.Rpc.ChannelBackup) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private lnrpc.Rpc.ChannelPoint chanPoint_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.ChannelPoint, lnrpc.Rpc.ChannelPoint.Builder, lnrpc.Rpc.ChannelPointOrBuilder> chanPointBuilder_;
+      /**
+       * <pre>
+       **
+       *Identifies the channel that this backup belongs to.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelPoint chan_point = 1[json_name = "chan_point"];</code>
+       */
+      public boolean hasChanPoint() {
+        return chanPointBuilder_ != null || chanPoint_ != null;
+      }
+      /**
+       * <pre>
+       **
+       *Identifies the channel that this backup belongs to.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelPoint chan_point = 1[json_name = "chan_point"];</code>
+       */
+      public lnrpc.Rpc.ChannelPoint getChanPoint() {
+        if (chanPointBuilder_ == null) {
+          return chanPoint_ == null ? lnrpc.Rpc.ChannelPoint.getDefaultInstance() : chanPoint_;
+        } else {
+          return chanPointBuilder_.getMessage();
+        }
+      }
+      /**
+       * <pre>
+       **
+       *Identifies the channel that this backup belongs to.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelPoint chan_point = 1[json_name = "chan_point"];</code>
+       */
+      public Builder setChanPoint(lnrpc.Rpc.ChannelPoint value) {
+        if (chanPointBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          chanPoint_ = value;
+          onChanged();
+        } else {
+          chanPointBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *Identifies the channel that this backup belongs to.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelPoint chan_point = 1[json_name = "chan_point"];</code>
+       */
+      public Builder setChanPoint(
+          lnrpc.Rpc.ChannelPoint.Builder builderForValue) {
+        if (chanPointBuilder_ == null) {
+          chanPoint_ = builderForValue.build();
+          onChanged();
+        } else {
+          chanPointBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *Identifies the channel that this backup belongs to.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelPoint chan_point = 1[json_name = "chan_point"];</code>
+       */
+      public Builder mergeChanPoint(lnrpc.Rpc.ChannelPoint value) {
+        if (chanPointBuilder_ == null) {
+          if (chanPoint_ != null) {
+            chanPoint_ =
+              lnrpc.Rpc.ChannelPoint.newBuilder(chanPoint_).mergeFrom(value).buildPartial();
+          } else {
+            chanPoint_ = value;
+          }
+          onChanged();
+        } else {
+          chanPointBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *Identifies the channel that this backup belongs to.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelPoint chan_point = 1[json_name = "chan_point"];</code>
+       */
+      public Builder clearChanPoint() {
+        if (chanPointBuilder_ == null) {
+          chanPoint_ = null;
+          onChanged();
+        } else {
+          chanPoint_ = null;
+          chanPointBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *Identifies the channel that this backup belongs to.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelPoint chan_point = 1[json_name = "chan_point"];</code>
+       */
+      public lnrpc.Rpc.ChannelPoint.Builder getChanPointBuilder() {
+        
+        onChanged();
+        return getChanPointFieldBuilder().getBuilder();
+      }
+      /**
+       * <pre>
+       **
+       *Identifies the channel that this backup belongs to.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelPoint chan_point = 1[json_name = "chan_point"];</code>
+       */
+      public lnrpc.Rpc.ChannelPointOrBuilder getChanPointOrBuilder() {
+        if (chanPointBuilder_ != null) {
+          return chanPointBuilder_.getMessageOrBuilder();
+        } else {
+          return chanPoint_ == null ?
+              lnrpc.Rpc.ChannelPoint.getDefaultInstance() : chanPoint_;
+        }
+      }
+      /**
+       * <pre>
+       **
+       *Identifies the channel that this backup belongs to.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelPoint chan_point = 1[json_name = "chan_point"];</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.ChannelPoint, lnrpc.Rpc.ChannelPoint.Builder, lnrpc.Rpc.ChannelPointOrBuilder> 
+          getChanPointFieldBuilder() {
+        if (chanPointBuilder_ == null) {
+          chanPointBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              lnrpc.Rpc.ChannelPoint, lnrpc.Rpc.ChannelPoint.Builder, lnrpc.Rpc.ChannelPointOrBuilder>(
+                  getChanPoint(),
+                  getParentForChildren(),
+                  isClean());
+          chanPoint_ = null;
+        }
+        return chanPointBuilder_;
+      }
+
+      private com.google.protobuf.ByteString chanBackup_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <pre>
+       **
+       *Is an encrypted single-chan backup. this can be passed to
+       *RestoreChannelBackups, or the WalletUnlocker Innit and Unlock methods in
+       *order to trigger the recovery protocol.
+       * </pre>
+       *
+       * <code>bytes chan_backup = 2[json_name = "chan_backup"];</code>
+       */
+      public com.google.protobuf.ByteString getChanBackup() {
+        return chanBackup_;
+      }
+      /**
+       * <pre>
+       **
+       *Is an encrypted single-chan backup. this can be passed to
+       *RestoreChannelBackups, or the WalletUnlocker Innit and Unlock methods in
+       *order to trigger the recovery protocol.
+       * </pre>
+       *
+       * <code>bytes chan_backup = 2[json_name = "chan_backup"];</code>
+       */
+      public Builder setChanBackup(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        chanBackup_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *Is an encrypted single-chan backup. this can be passed to
+       *RestoreChannelBackups, or the WalletUnlocker Innit and Unlock methods in
+       *order to trigger the recovery protocol.
+       * </pre>
+       *
+       * <code>bytes chan_backup = 2[json_name = "chan_backup"];</code>
+       */
+      public Builder clearChanBackup() {
+        
+        chanBackup_ = getDefaultInstance().getChanBackup();
+        onChanged();
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:lnrpc.ChannelBackup)
+    }
+
+    // @@protoc_insertion_point(class_scope:lnrpc.ChannelBackup)
+    private static final lnrpc.Rpc.ChannelBackup DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new lnrpc.Rpc.ChannelBackup();
+    }
+
+    public static lnrpc.Rpc.ChannelBackup getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ChannelBackup>
+        PARSER = new com.google.protobuf.AbstractParser<ChannelBackup>() {
+      public ChannelBackup parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ChannelBackup(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ChannelBackup> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ChannelBackup> getParserForType() {
+      return PARSER;
+    }
+
+    public lnrpc.Rpc.ChannelBackup getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface MultiChanBackupOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:lnrpc.MultiChanBackup)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     **
+     *Is the set of all channels that are included in this multi-channel backup.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+     */
+    java.util.List<lnrpc.Rpc.ChannelPoint> 
+        getChanPointsList();
+    /**
+     * <pre>
+     **
+     *Is the set of all channels that are included in this multi-channel backup.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+     */
+    lnrpc.Rpc.ChannelPoint getChanPoints(int index);
+    /**
+     * <pre>
+     **
+     *Is the set of all channels that are included in this multi-channel backup.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+     */
+    int getChanPointsCount();
+    /**
+     * <pre>
+     **
+     *Is the set of all channels that are included in this multi-channel backup.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+     */
+    java.util.List<? extends lnrpc.Rpc.ChannelPointOrBuilder> 
+        getChanPointsOrBuilderList();
+    /**
+     * <pre>
+     **
+     *Is the set of all channels that are included in this multi-channel backup.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+     */
+    lnrpc.Rpc.ChannelPointOrBuilder getChanPointsOrBuilder(
+        int index);
+
+    /**
+     * <pre>
+     **
+     *A single encrypted blob containing all the static channel backups of the
+     *channel listed above. This can be stored as a single file or blob, and
+     *safely be replaced with any prior/future versions.
+     * </pre>
+     *
+     * <code>bytes multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+     */
+    com.google.protobuf.ByteString getMultiChanBackup();
+  }
+  /**
+   * Protobuf type {@code lnrpc.MultiChanBackup}
+   */
+  public  static final class MultiChanBackup extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:lnrpc.MultiChanBackup)
+      MultiChanBackupOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use MultiChanBackup.newBuilder() to construct.
+    private MultiChanBackup(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private MultiChanBackup() {
+      chanPoints_ = java.util.Collections.emptyList();
+      multiChanBackup_ = com.google.protobuf.ByteString.EMPTY;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private MultiChanBackup(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                chanPoints_ = new java.util.ArrayList<lnrpc.Rpc.ChannelPoint>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              chanPoints_.add(
+                  input.readMessage(lnrpc.Rpc.ChannelPoint.parser(), extensionRegistry));
+              break;
+            }
+            case 18: {
+
+              multiChanBackup_ = input.readBytes();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+          chanPoints_ = java.util.Collections.unmodifiableList(chanPoints_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return lnrpc.Rpc.internal_static_lnrpc_MultiChanBackup_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return lnrpc.Rpc.internal_static_lnrpc_MultiChanBackup_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              lnrpc.Rpc.MultiChanBackup.class, lnrpc.Rpc.MultiChanBackup.Builder.class);
+    }
+
+    private int bitField0_;
+    public static final int CHAN_POINTS_FIELD_NUMBER = 1;
+    private java.util.List<lnrpc.Rpc.ChannelPoint> chanPoints_;
+    /**
+     * <pre>
+     **
+     *Is the set of all channels that are included in this multi-channel backup.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+     */
+    public java.util.List<lnrpc.Rpc.ChannelPoint> getChanPointsList() {
+      return chanPoints_;
+    }
+    /**
+     * <pre>
+     **
+     *Is the set of all channels that are included in this multi-channel backup.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+     */
+    public java.util.List<? extends lnrpc.Rpc.ChannelPointOrBuilder> 
+        getChanPointsOrBuilderList() {
+      return chanPoints_;
+    }
+    /**
+     * <pre>
+     **
+     *Is the set of all channels that are included in this multi-channel backup.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+     */
+    public int getChanPointsCount() {
+      return chanPoints_.size();
+    }
+    /**
+     * <pre>
+     **
+     *Is the set of all channels that are included in this multi-channel backup.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+     */
+    public lnrpc.Rpc.ChannelPoint getChanPoints(int index) {
+      return chanPoints_.get(index);
+    }
+    /**
+     * <pre>
+     **
+     *Is the set of all channels that are included in this multi-channel backup.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+     */
+    public lnrpc.Rpc.ChannelPointOrBuilder getChanPointsOrBuilder(
+        int index) {
+      return chanPoints_.get(index);
+    }
+
+    public static final int MULTI_CHAN_BACKUP_FIELD_NUMBER = 2;
+    private com.google.protobuf.ByteString multiChanBackup_;
+    /**
+     * <pre>
+     **
+     *A single encrypted blob containing all the static channel backups of the
+     *channel listed above. This can be stored as a single file or blob, and
+     *safely be replaced with any prior/future versions.
+     * </pre>
+     *
+     * <code>bytes multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+     */
+    public com.google.protobuf.ByteString getMultiChanBackup() {
+      return multiChanBackup_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      for (int i = 0; i < chanPoints_.size(); i++) {
+        output.writeMessage(1, chanPoints_.get(i));
+      }
+      if (!multiChanBackup_.isEmpty()) {
+        output.writeBytes(2, multiChanBackup_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      for (int i = 0; i < chanPoints_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, chanPoints_.get(i));
+      }
+      if (!multiChanBackup_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(2, multiChanBackup_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof lnrpc.Rpc.MultiChanBackup)) {
+        return super.equals(obj);
+      }
+      lnrpc.Rpc.MultiChanBackup other = (lnrpc.Rpc.MultiChanBackup) obj;
+
+      boolean result = true;
+      result = result && getChanPointsList()
+          .equals(other.getChanPointsList());
+      result = result && getMultiChanBackup()
+          .equals(other.getMultiChanBackup());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getChanPointsCount() > 0) {
+        hash = (37 * hash) + CHAN_POINTS_FIELD_NUMBER;
+        hash = (53 * hash) + getChanPointsList().hashCode();
+      }
+      hash = (37 * hash) + MULTI_CHAN_BACKUP_FIELD_NUMBER;
+      hash = (53 * hash) + getMultiChanBackup().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static lnrpc.Rpc.MultiChanBackup parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.MultiChanBackup parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.MultiChanBackup parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.MultiChanBackup parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.MultiChanBackup parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.MultiChanBackup parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.MultiChanBackup parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.MultiChanBackup parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.MultiChanBackup parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.MultiChanBackup parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.MultiChanBackup parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.MultiChanBackup parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(lnrpc.Rpc.MultiChanBackup prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code lnrpc.MultiChanBackup}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:lnrpc.MultiChanBackup)
+        lnrpc.Rpc.MultiChanBackupOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return lnrpc.Rpc.internal_static_lnrpc_MultiChanBackup_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return lnrpc.Rpc.internal_static_lnrpc_MultiChanBackup_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                lnrpc.Rpc.MultiChanBackup.class, lnrpc.Rpc.MultiChanBackup.Builder.class);
+      }
+
+      // Construct using lnrpc.Rpc.MultiChanBackup.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+          getChanPointsFieldBuilder();
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        if (chanPointsBuilder_ == null) {
+          chanPoints_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          chanPointsBuilder_.clear();
+        }
+        multiChanBackup_ = com.google.protobuf.ByteString.EMPTY;
+
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return lnrpc.Rpc.internal_static_lnrpc_MultiChanBackup_descriptor;
+      }
+
+      public lnrpc.Rpc.MultiChanBackup getDefaultInstanceForType() {
+        return lnrpc.Rpc.MultiChanBackup.getDefaultInstance();
+      }
+
+      public lnrpc.Rpc.MultiChanBackup build() {
+        lnrpc.Rpc.MultiChanBackup result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public lnrpc.Rpc.MultiChanBackup buildPartial() {
+        lnrpc.Rpc.MultiChanBackup result = new lnrpc.Rpc.MultiChanBackup(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (chanPointsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) == 0x00000001)) {
+            chanPoints_ = java.util.Collections.unmodifiableList(chanPoints_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.chanPoints_ = chanPoints_;
+        } else {
+          result.chanPoints_ = chanPointsBuilder_.build();
+        }
+        result.multiChanBackup_ = multiChanBackup_;
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof lnrpc.Rpc.MultiChanBackup) {
+          return mergeFrom((lnrpc.Rpc.MultiChanBackup)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(lnrpc.Rpc.MultiChanBackup other) {
+        if (other == lnrpc.Rpc.MultiChanBackup.getDefaultInstance()) return this;
+        if (chanPointsBuilder_ == null) {
+          if (!other.chanPoints_.isEmpty()) {
+            if (chanPoints_.isEmpty()) {
+              chanPoints_ = other.chanPoints_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureChanPointsIsMutable();
+              chanPoints_.addAll(other.chanPoints_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.chanPoints_.isEmpty()) {
+            if (chanPointsBuilder_.isEmpty()) {
+              chanPointsBuilder_.dispose();
+              chanPointsBuilder_ = null;
+              chanPoints_ = other.chanPoints_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              chanPointsBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getChanPointsFieldBuilder() : null;
+            } else {
+              chanPointsBuilder_.addAllMessages(other.chanPoints_);
+            }
+          }
+        }
+        if (other.getMultiChanBackup() != com.google.protobuf.ByteString.EMPTY) {
+          setMultiChanBackup(other.getMultiChanBackup());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        lnrpc.Rpc.MultiChanBackup parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (lnrpc.Rpc.MultiChanBackup) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private java.util.List<lnrpc.Rpc.ChannelPoint> chanPoints_ =
+        java.util.Collections.emptyList();
+      private void ensureChanPointsIsMutable() {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+          chanPoints_ = new java.util.ArrayList<lnrpc.Rpc.ChannelPoint>(chanPoints_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          lnrpc.Rpc.ChannelPoint, lnrpc.Rpc.ChannelPoint.Builder, lnrpc.Rpc.ChannelPointOrBuilder> chanPointsBuilder_;
+
+      /**
+       * <pre>
+       **
+       *Is the set of all channels that are included in this multi-channel backup.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+       */
+      public java.util.List<lnrpc.Rpc.ChannelPoint> getChanPointsList() {
+        if (chanPointsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(chanPoints_);
+        } else {
+          return chanPointsBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <pre>
+       **
+       *Is the set of all channels that are included in this multi-channel backup.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+       */
+      public int getChanPointsCount() {
+        if (chanPointsBuilder_ == null) {
+          return chanPoints_.size();
+        } else {
+          return chanPointsBuilder_.getCount();
+        }
+      }
+      /**
+       * <pre>
+       **
+       *Is the set of all channels that are included in this multi-channel backup.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+       */
+      public lnrpc.Rpc.ChannelPoint getChanPoints(int index) {
+        if (chanPointsBuilder_ == null) {
+          return chanPoints_.get(index);
+        } else {
+          return chanPointsBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <pre>
+       **
+       *Is the set of all channels that are included in this multi-channel backup.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+       */
+      public Builder setChanPoints(
+          int index, lnrpc.Rpc.ChannelPoint value) {
+        if (chanPointsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureChanPointsIsMutable();
+          chanPoints_.set(index, value);
+          onChanged();
+        } else {
+          chanPointsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *Is the set of all channels that are included in this multi-channel backup.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+       */
+      public Builder setChanPoints(
+          int index, lnrpc.Rpc.ChannelPoint.Builder builderForValue) {
+        if (chanPointsBuilder_ == null) {
+          ensureChanPointsIsMutable();
+          chanPoints_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          chanPointsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *Is the set of all channels that are included in this multi-channel backup.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+       */
+      public Builder addChanPoints(lnrpc.Rpc.ChannelPoint value) {
+        if (chanPointsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureChanPointsIsMutable();
+          chanPoints_.add(value);
+          onChanged();
+        } else {
+          chanPointsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *Is the set of all channels that are included in this multi-channel backup.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+       */
+      public Builder addChanPoints(
+          int index, lnrpc.Rpc.ChannelPoint value) {
+        if (chanPointsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureChanPointsIsMutable();
+          chanPoints_.add(index, value);
+          onChanged();
+        } else {
+          chanPointsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *Is the set of all channels that are included in this multi-channel backup.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+       */
+      public Builder addChanPoints(
+          lnrpc.Rpc.ChannelPoint.Builder builderForValue) {
+        if (chanPointsBuilder_ == null) {
+          ensureChanPointsIsMutable();
+          chanPoints_.add(builderForValue.build());
+          onChanged();
+        } else {
+          chanPointsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *Is the set of all channels that are included in this multi-channel backup.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+       */
+      public Builder addChanPoints(
+          int index, lnrpc.Rpc.ChannelPoint.Builder builderForValue) {
+        if (chanPointsBuilder_ == null) {
+          ensureChanPointsIsMutable();
+          chanPoints_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          chanPointsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *Is the set of all channels that are included in this multi-channel backup.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+       */
+      public Builder addAllChanPoints(
+          java.lang.Iterable<? extends lnrpc.Rpc.ChannelPoint> values) {
+        if (chanPointsBuilder_ == null) {
+          ensureChanPointsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, chanPoints_);
+          onChanged();
+        } else {
+          chanPointsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *Is the set of all channels that are included in this multi-channel backup.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+       */
+      public Builder clearChanPoints() {
+        if (chanPointsBuilder_ == null) {
+          chanPoints_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          chanPointsBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *Is the set of all channels that are included in this multi-channel backup.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+       */
+      public Builder removeChanPoints(int index) {
+        if (chanPointsBuilder_ == null) {
+          ensureChanPointsIsMutable();
+          chanPoints_.remove(index);
+          onChanged();
+        } else {
+          chanPointsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *Is the set of all channels that are included in this multi-channel backup.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+       */
+      public lnrpc.Rpc.ChannelPoint.Builder getChanPointsBuilder(
+          int index) {
+        return getChanPointsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <pre>
+       **
+       *Is the set of all channels that are included in this multi-channel backup.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+       */
+      public lnrpc.Rpc.ChannelPointOrBuilder getChanPointsOrBuilder(
+          int index) {
+        if (chanPointsBuilder_ == null) {
+          return chanPoints_.get(index);  } else {
+          return chanPointsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <pre>
+       **
+       *Is the set of all channels that are included in this multi-channel backup.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+       */
+      public java.util.List<? extends lnrpc.Rpc.ChannelPointOrBuilder> 
+           getChanPointsOrBuilderList() {
+        if (chanPointsBuilder_ != null) {
+          return chanPointsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(chanPoints_);
+        }
+      }
+      /**
+       * <pre>
+       **
+       *Is the set of all channels that are included in this multi-channel backup.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+       */
+      public lnrpc.Rpc.ChannelPoint.Builder addChanPointsBuilder() {
+        return getChanPointsFieldBuilder().addBuilder(
+            lnrpc.Rpc.ChannelPoint.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       **
+       *Is the set of all channels that are included in this multi-channel backup.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+       */
+      public lnrpc.Rpc.ChannelPoint.Builder addChanPointsBuilder(
+          int index) {
+        return getChanPointsFieldBuilder().addBuilder(
+            index, lnrpc.Rpc.ChannelPoint.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       **
+       *Is the set of all channels that are included in this multi-channel backup.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelPoint chan_points = 1[json_name = "chan_points"];</code>
+       */
+      public java.util.List<lnrpc.Rpc.ChannelPoint.Builder> 
+           getChanPointsBuilderList() {
+        return getChanPointsFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          lnrpc.Rpc.ChannelPoint, lnrpc.Rpc.ChannelPoint.Builder, lnrpc.Rpc.ChannelPointOrBuilder> 
+          getChanPointsFieldBuilder() {
+        if (chanPointsBuilder_ == null) {
+          chanPointsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              lnrpc.Rpc.ChannelPoint, lnrpc.Rpc.ChannelPoint.Builder, lnrpc.Rpc.ChannelPointOrBuilder>(
+                  chanPoints_,
+                  ((bitField0_ & 0x00000001) == 0x00000001),
+                  getParentForChildren(),
+                  isClean());
+          chanPoints_ = null;
+        }
+        return chanPointsBuilder_;
+      }
+
+      private com.google.protobuf.ByteString multiChanBackup_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <pre>
+       **
+       *A single encrypted blob containing all the static channel backups of the
+       *channel listed above. This can be stored as a single file or blob, and
+       *safely be replaced with any prior/future versions.
+       * </pre>
+       *
+       * <code>bytes multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+       */
+      public com.google.protobuf.ByteString getMultiChanBackup() {
+        return multiChanBackup_;
+      }
+      /**
+       * <pre>
+       **
+       *A single encrypted blob containing all the static channel backups of the
+       *channel listed above. This can be stored as a single file or blob, and
+       *safely be replaced with any prior/future versions.
+       * </pre>
+       *
+       * <code>bytes multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+       */
+      public Builder setMultiChanBackup(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        multiChanBackup_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A single encrypted blob containing all the static channel backups of the
+       *channel listed above. This can be stored as a single file or blob, and
+       *safely be replaced with any prior/future versions.
+       * </pre>
+       *
+       * <code>bytes multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+       */
+      public Builder clearMultiChanBackup() {
+        
+        multiChanBackup_ = getDefaultInstance().getMultiChanBackup();
+        onChanged();
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:lnrpc.MultiChanBackup)
+    }
+
+    // @@protoc_insertion_point(class_scope:lnrpc.MultiChanBackup)
+    private static final lnrpc.Rpc.MultiChanBackup DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new lnrpc.Rpc.MultiChanBackup();
+    }
+
+    public static lnrpc.Rpc.MultiChanBackup getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<MultiChanBackup>
+        PARSER = new com.google.protobuf.AbstractParser<MultiChanBackup>() {
+      public MultiChanBackup parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new MultiChanBackup(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<MultiChanBackup> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<MultiChanBackup> getParserForType() {
+      return PARSER;
+    }
+
+    public lnrpc.Rpc.MultiChanBackup getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ChanBackupExportRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:lnrpc.ChanBackupExportRequest)
+      com.google.protobuf.MessageOrBuilder {
+  }
+  /**
+   * Protobuf type {@code lnrpc.ChanBackupExportRequest}
+   */
+  public  static final class ChanBackupExportRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:lnrpc.ChanBackupExportRequest)
+      ChanBackupExportRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ChanBackupExportRequest.newBuilder() to construct.
+    private ChanBackupExportRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ChanBackupExportRequest() {
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ChanBackupExportRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return lnrpc.Rpc.internal_static_lnrpc_ChanBackupExportRequest_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return lnrpc.Rpc.internal_static_lnrpc_ChanBackupExportRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              lnrpc.Rpc.ChanBackupExportRequest.class, lnrpc.Rpc.ChanBackupExportRequest.Builder.class);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof lnrpc.Rpc.ChanBackupExportRequest)) {
+        return super.equals(obj);
+      }
+      lnrpc.Rpc.ChanBackupExportRequest other = (lnrpc.Rpc.ChanBackupExportRequest) obj;
+
+      boolean result = true;
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static lnrpc.Rpc.ChanBackupExportRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChanBackupExportRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChanBackupExportRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChanBackupExportRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChanBackupExportRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChanBackupExportRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChanBackupExportRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChanBackupExportRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChanBackupExportRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChanBackupExportRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChanBackupExportRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChanBackupExportRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(lnrpc.Rpc.ChanBackupExportRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code lnrpc.ChanBackupExportRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:lnrpc.ChanBackupExportRequest)
+        lnrpc.Rpc.ChanBackupExportRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChanBackupExportRequest_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChanBackupExportRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                lnrpc.Rpc.ChanBackupExportRequest.class, lnrpc.Rpc.ChanBackupExportRequest.Builder.class);
+      }
+
+      // Construct using lnrpc.Rpc.ChanBackupExportRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChanBackupExportRequest_descriptor;
+      }
+
+      public lnrpc.Rpc.ChanBackupExportRequest getDefaultInstanceForType() {
+        return lnrpc.Rpc.ChanBackupExportRequest.getDefaultInstance();
+      }
+
+      public lnrpc.Rpc.ChanBackupExportRequest build() {
+        lnrpc.Rpc.ChanBackupExportRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public lnrpc.Rpc.ChanBackupExportRequest buildPartial() {
+        lnrpc.Rpc.ChanBackupExportRequest result = new lnrpc.Rpc.ChanBackupExportRequest(this);
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof lnrpc.Rpc.ChanBackupExportRequest) {
+          return mergeFrom((lnrpc.Rpc.ChanBackupExportRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(lnrpc.Rpc.ChanBackupExportRequest other) {
+        if (other == lnrpc.Rpc.ChanBackupExportRequest.getDefaultInstance()) return this;
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        lnrpc.Rpc.ChanBackupExportRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (lnrpc.Rpc.ChanBackupExportRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:lnrpc.ChanBackupExportRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:lnrpc.ChanBackupExportRequest)
+    private static final lnrpc.Rpc.ChanBackupExportRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new lnrpc.Rpc.ChanBackupExportRequest();
+    }
+
+    public static lnrpc.Rpc.ChanBackupExportRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ChanBackupExportRequest>
+        PARSER = new com.google.protobuf.AbstractParser<ChanBackupExportRequest>() {
+      public ChanBackupExportRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ChanBackupExportRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ChanBackupExportRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ChanBackupExportRequest> getParserForType() {
+      return PARSER;
+    }
+
+    public lnrpc.Rpc.ChanBackupExportRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ChanBackupSnapshotOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:lnrpc.ChanBackupSnapshot)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     **
+     *The set of new channels that have been added since the last channel backup
+     *snapshot was requested.
+     * </pre>
+     *
+     * <code>.lnrpc.ChannelBackups single_chan_backups = 1[json_name = "single_chan_backups"];</code>
+     */
+    boolean hasSingleChanBackups();
+    /**
+     * <pre>
+     **
+     *The set of new channels that have been added since the last channel backup
+     *snapshot was requested.
+     * </pre>
+     *
+     * <code>.lnrpc.ChannelBackups single_chan_backups = 1[json_name = "single_chan_backups"];</code>
+     */
+    lnrpc.Rpc.ChannelBackups getSingleChanBackups();
+    /**
+     * <pre>
+     **
+     *The set of new channels that have been added since the last channel backup
+     *snapshot was requested.
+     * </pre>
+     *
+     * <code>.lnrpc.ChannelBackups single_chan_backups = 1[json_name = "single_chan_backups"];</code>
+     */
+    lnrpc.Rpc.ChannelBackupsOrBuilder getSingleChanBackupsOrBuilder();
+
+    /**
+     * <pre>
+     **
+     *A multi-channel backup that covers all open channels currently known to
+     *lnd.
+     * </pre>
+     *
+     * <code>.lnrpc.MultiChanBackup multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+     */
+    boolean hasMultiChanBackup();
+    /**
+     * <pre>
+     **
+     *A multi-channel backup that covers all open channels currently known to
+     *lnd.
+     * </pre>
+     *
+     * <code>.lnrpc.MultiChanBackup multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+     */
+    lnrpc.Rpc.MultiChanBackup getMultiChanBackup();
+    /**
+     * <pre>
+     **
+     *A multi-channel backup that covers all open channels currently known to
+     *lnd.
+     * </pre>
+     *
+     * <code>.lnrpc.MultiChanBackup multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+     */
+    lnrpc.Rpc.MultiChanBackupOrBuilder getMultiChanBackupOrBuilder();
+  }
+  /**
+   * Protobuf type {@code lnrpc.ChanBackupSnapshot}
+   */
+  public  static final class ChanBackupSnapshot extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:lnrpc.ChanBackupSnapshot)
+      ChanBackupSnapshotOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ChanBackupSnapshot.newBuilder() to construct.
+    private ChanBackupSnapshot(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ChanBackupSnapshot() {
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ChanBackupSnapshot(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              lnrpc.Rpc.ChannelBackups.Builder subBuilder = null;
+              if (singleChanBackups_ != null) {
+                subBuilder = singleChanBackups_.toBuilder();
+              }
+              singleChanBackups_ = input.readMessage(lnrpc.Rpc.ChannelBackups.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(singleChanBackups_);
+                singleChanBackups_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 18: {
+              lnrpc.Rpc.MultiChanBackup.Builder subBuilder = null;
+              if (multiChanBackup_ != null) {
+                subBuilder = multiChanBackup_.toBuilder();
+              }
+              multiChanBackup_ = input.readMessage(lnrpc.Rpc.MultiChanBackup.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(multiChanBackup_);
+                multiChanBackup_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return lnrpc.Rpc.internal_static_lnrpc_ChanBackupSnapshot_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return lnrpc.Rpc.internal_static_lnrpc_ChanBackupSnapshot_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              lnrpc.Rpc.ChanBackupSnapshot.class, lnrpc.Rpc.ChanBackupSnapshot.Builder.class);
+    }
+
+    public static final int SINGLE_CHAN_BACKUPS_FIELD_NUMBER = 1;
+    private lnrpc.Rpc.ChannelBackups singleChanBackups_;
+    /**
+     * <pre>
+     **
+     *The set of new channels that have been added since the last channel backup
+     *snapshot was requested.
+     * </pre>
+     *
+     * <code>.lnrpc.ChannelBackups single_chan_backups = 1[json_name = "single_chan_backups"];</code>
+     */
+    public boolean hasSingleChanBackups() {
+      return singleChanBackups_ != null;
+    }
+    /**
+     * <pre>
+     **
+     *The set of new channels that have been added since the last channel backup
+     *snapshot was requested.
+     * </pre>
+     *
+     * <code>.lnrpc.ChannelBackups single_chan_backups = 1[json_name = "single_chan_backups"];</code>
+     */
+    public lnrpc.Rpc.ChannelBackups getSingleChanBackups() {
+      return singleChanBackups_ == null ? lnrpc.Rpc.ChannelBackups.getDefaultInstance() : singleChanBackups_;
+    }
+    /**
+     * <pre>
+     **
+     *The set of new channels that have been added since the last channel backup
+     *snapshot was requested.
+     * </pre>
+     *
+     * <code>.lnrpc.ChannelBackups single_chan_backups = 1[json_name = "single_chan_backups"];</code>
+     */
+    public lnrpc.Rpc.ChannelBackupsOrBuilder getSingleChanBackupsOrBuilder() {
+      return getSingleChanBackups();
+    }
+
+    public static final int MULTI_CHAN_BACKUP_FIELD_NUMBER = 2;
+    private lnrpc.Rpc.MultiChanBackup multiChanBackup_;
+    /**
+     * <pre>
+     **
+     *A multi-channel backup that covers all open channels currently known to
+     *lnd.
+     * </pre>
+     *
+     * <code>.lnrpc.MultiChanBackup multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+     */
+    public boolean hasMultiChanBackup() {
+      return multiChanBackup_ != null;
+    }
+    /**
+     * <pre>
+     **
+     *A multi-channel backup that covers all open channels currently known to
+     *lnd.
+     * </pre>
+     *
+     * <code>.lnrpc.MultiChanBackup multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+     */
+    public lnrpc.Rpc.MultiChanBackup getMultiChanBackup() {
+      return multiChanBackup_ == null ? lnrpc.Rpc.MultiChanBackup.getDefaultInstance() : multiChanBackup_;
+    }
+    /**
+     * <pre>
+     **
+     *A multi-channel backup that covers all open channels currently known to
+     *lnd.
+     * </pre>
+     *
+     * <code>.lnrpc.MultiChanBackup multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+     */
+    public lnrpc.Rpc.MultiChanBackupOrBuilder getMultiChanBackupOrBuilder() {
+      return getMultiChanBackup();
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (singleChanBackups_ != null) {
+        output.writeMessage(1, getSingleChanBackups());
+      }
+      if (multiChanBackup_ != null) {
+        output.writeMessage(2, getMultiChanBackup());
+      }
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (singleChanBackups_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getSingleChanBackups());
+      }
+      if (multiChanBackup_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, getMultiChanBackup());
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof lnrpc.Rpc.ChanBackupSnapshot)) {
+        return super.equals(obj);
+      }
+      lnrpc.Rpc.ChanBackupSnapshot other = (lnrpc.Rpc.ChanBackupSnapshot) obj;
+
+      boolean result = true;
+      result = result && (hasSingleChanBackups() == other.hasSingleChanBackups());
+      if (hasSingleChanBackups()) {
+        result = result && getSingleChanBackups()
+            .equals(other.getSingleChanBackups());
+      }
+      result = result && (hasMultiChanBackup() == other.hasMultiChanBackup());
+      if (hasMultiChanBackup()) {
+        result = result && getMultiChanBackup()
+            .equals(other.getMultiChanBackup());
+      }
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasSingleChanBackups()) {
+        hash = (37 * hash) + SINGLE_CHAN_BACKUPS_FIELD_NUMBER;
+        hash = (53 * hash) + getSingleChanBackups().hashCode();
+      }
+      if (hasMultiChanBackup()) {
+        hash = (37 * hash) + MULTI_CHAN_BACKUP_FIELD_NUMBER;
+        hash = (53 * hash) + getMultiChanBackup().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static lnrpc.Rpc.ChanBackupSnapshot parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChanBackupSnapshot parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChanBackupSnapshot parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChanBackupSnapshot parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChanBackupSnapshot parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChanBackupSnapshot parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChanBackupSnapshot parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChanBackupSnapshot parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChanBackupSnapshot parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChanBackupSnapshot parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChanBackupSnapshot parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChanBackupSnapshot parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(lnrpc.Rpc.ChanBackupSnapshot prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code lnrpc.ChanBackupSnapshot}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:lnrpc.ChanBackupSnapshot)
+        lnrpc.Rpc.ChanBackupSnapshotOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChanBackupSnapshot_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChanBackupSnapshot_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                lnrpc.Rpc.ChanBackupSnapshot.class, lnrpc.Rpc.ChanBackupSnapshot.Builder.class);
+      }
+
+      // Construct using lnrpc.Rpc.ChanBackupSnapshot.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        if (singleChanBackupsBuilder_ == null) {
+          singleChanBackups_ = null;
+        } else {
+          singleChanBackups_ = null;
+          singleChanBackupsBuilder_ = null;
+        }
+        if (multiChanBackupBuilder_ == null) {
+          multiChanBackup_ = null;
+        } else {
+          multiChanBackup_ = null;
+          multiChanBackupBuilder_ = null;
+        }
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChanBackupSnapshot_descriptor;
+      }
+
+      public lnrpc.Rpc.ChanBackupSnapshot getDefaultInstanceForType() {
+        return lnrpc.Rpc.ChanBackupSnapshot.getDefaultInstance();
+      }
+
+      public lnrpc.Rpc.ChanBackupSnapshot build() {
+        lnrpc.Rpc.ChanBackupSnapshot result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public lnrpc.Rpc.ChanBackupSnapshot buildPartial() {
+        lnrpc.Rpc.ChanBackupSnapshot result = new lnrpc.Rpc.ChanBackupSnapshot(this);
+        if (singleChanBackupsBuilder_ == null) {
+          result.singleChanBackups_ = singleChanBackups_;
+        } else {
+          result.singleChanBackups_ = singleChanBackupsBuilder_.build();
+        }
+        if (multiChanBackupBuilder_ == null) {
+          result.multiChanBackup_ = multiChanBackup_;
+        } else {
+          result.multiChanBackup_ = multiChanBackupBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof lnrpc.Rpc.ChanBackupSnapshot) {
+          return mergeFrom((lnrpc.Rpc.ChanBackupSnapshot)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(lnrpc.Rpc.ChanBackupSnapshot other) {
+        if (other == lnrpc.Rpc.ChanBackupSnapshot.getDefaultInstance()) return this;
+        if (other.hasSingleChanBackups()) {
+          mergeSingleChanBackups(other.getSingleChanBackups());
+        }
+        if (other.hasMultiChanBackup()) {
+          mergeMultiChanBackup(other.getMultiChanBackup());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        lnrpc.Rpc.ChanBackupSnapshot parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (lnrpc.Rpc.ChanBackupSnapshot) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private lnrpc.Rpc.ChannelBackups singleChanBackups_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.ChannelBackups, lnrpc.Rpc.ChannelBackups.Builder, lnrpc.Rpc.ChannelBackupsOrBuilder> singleChanBackupsBuilder_;
+      /**
+       * <pre>
+       **
+       *The set of new channels that have been added since the last channel backup
+       *snapshot was requested.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelBackups single_chan_backups = 1[json_name = "single_chan_backups"];</code>
+       */
+      public boolean hasSingleChanBackups() {
+        return singleChanBackupsBuilder_ != null || singleChanBackups_ != null;
+      }
+      /**
+       * <pre>
+       **
+       *The set of new channels that have been added since the last channel backup
+       *snapshot was requested.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelBackups single_chan_backups = 1[json_name = "single_chan_backups"];</code>
+       */
+      public lnrpc.Rpc.ChannelBackups getSingleChanBackups() {
+        if (singleChanBackupsBuilder_ == null) {
+          return singleChanBackups_ == null ? lnrpc.Rpc.ChannelBackups.getDefaultInstance() : singleChanBackups_;
+        } else {
+          return singleChanBackupsBuilder_.getMessage();
+        }
+      }
+      /**
+       * <pre>
+       **
+       *The set of new channels that have been added since the last channel backup
+       *snapshot was requested.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelBackups single_chan_backups = 1[json_name = "single_chan_backups"];</code>
+       */
+      public Builder setSingleChanBackups(lnrpc.Rpc.ChannelBackups value) {
+        if (singleChanBackupsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          singleChanBackups_ = value;
+          onChanged();
+        } else {
+          singleChanBackupsBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *The set of new channels that have been added since the last channel backup
+       *snapshot was requested.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelBackups single_chan_backups = 1[json_name = "single_chan_backups"];</code>
+       */
+      public Builder setSingleChanBackups(
+          lnrpc.Rpc.ChannelBackups.Builder builderForValue) {
+        if (singleChanBackupsBuilder_ == null) {
+          singleChanBackups_ = builderForValue.build();
+          onChanged();
+        } else {
+          singleChanBackupsBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *The set of new channels that have been added since the last channel backup
+       *snapshot was requested.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelBackups single_chan_backups = 1[json_name = "single_chan_backups"];</code>
+       */
+      public Builder mergeSingleChanBackups(lnrpc.Rpc.ChannelBackups value) {
+        if (singleChanBackupsBuilder_ == null) {
+          if (singleChanBackups_ != null) {
+            singleChanBackups_ =
+              lnrpc.Rpc.ChannelBackups.newBuilder(singleChanBackups_).mergeFrom(value).buildPartial();
+          } else {
+            singleChanBackups_ = value;
+          }
+          onChanged();
+        } else {
+          singleChanBackupsBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *The set of new channels that have been added since the last channel backup
+       *snapshot was requested.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelBackups single_chan_backups = 1[json_name = "single_chan_backups"];</code>
+       */
+      public Builder clearSingleChanBackups() {
+        if (singleChanBackupsBuilder_ == null) {
+          singleChanBackups_ = null;
+          onChanged();
+        } else {
+          singleChanBackups_ = null;
+          singleChanBackupsBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *The set of new channels that have been added since the last channel backup
+       *snapshot was requested.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelBackups single_chan_backups = 1[json_name = "single_chan_backups"];</code>
+       */
+      public lnrpc.Rpc.ChannelBackups.Builder getSingleChanBackupsBuilder() {
+        
+        onChanged();
+        return getSingleChanBackupsFieldBuilder().getBuilder();
+      }
+      /**
+       * <pre>
+       **
+       *The set of new channels that have been added since the last channel backup
+       *snapshot was requested.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelBackups single_chan_backups = 1[json_name = "single_chan_backups"];</code>
+       */
+      public lnrpc.Rpc.ChannelBackupsOrBuilder getSingleChanBackupsOrBuilder() {
+        if (singleChanBackupsBuilder_ != null) {
+          return singleChanBackupsBuilder_.getMessageOrBuilder();
+        } else {
+          return singleChanBackups_ == null ?
+              lnrpc.Rpc.ChannelBackups.getDefaultInstance() : singleChanBackups_;
+        }
+      }
+      /**
+       * <pre>
+       **
+       *The set of new channels that have been added since the last channel backup
+       *snapshot was requested.
+       * </pre>
+       *
+       * <code>.lnrpc.ChannelBackups single_chan_backups = 1[json_name = "single_chan_backups"];</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.ChannelBackups, lnrpc.Rpc.ChannelBackups.Builder, lnrpc.Rpc.ChannelBackupsOrBuilder> 
+          getSingleChanBackupsFieldBuilder() {
+        if (singleChanBackupsBuilder_ == null) {
+          singleChanBackupsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              lnrpc.Rpc.ChannelBackups, lnrpc.Rpc.ChannelBackups.Builder, lnrpc.Rpc.ChannelBackupsOrBuilder>(
+                  getSingleChanBackups(),
+                  getParentForChildren(),
+                  isClean());
+          singleChanBackups_ = null;
+        }
+        return singleChanBackupsBuilder_;
+      }
+
+      private lnrpc.Rpc.MultiChanBackup multiChanBackup_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.MultiChanBackup, lnrpc.Rpc.MultiChanBackup.Builder, lnrpc.Rpc.MultiChanBackupOrBuilder> multiChanBackupBuilder_;
+      /**
+       * <pre>
+       **
+       *A multi-channel backup that covers all open channels currently known to
+       *lnd.
+       * </pre>
+       *
+       * <code>.lnrpc.MultiChanBackup multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+       */
+      public boolean hasMultiChanBackup() {
+        return multiChanBackupBuilder_ != null || multiChanBackup_ != null;
+      }
+      /**
+       * <pre>
+       **
+       *A multi-channel backup that covers all open channels currently known to
+       *lnd.
+       * </pre>
+       *
+       * <code>.lnrpc.MultiChanBackup multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+       */
+      public lnrpc.Rpc.MultiChanBackup getMultiChanBackup() {
+        if (multiChanBackupBuilder_ == null) {
+          return multiChanBackup_ == null ? lnrpc.Rpc.MultiChanBackup.getDefaultInstance() : multiChanBackup_;
+        } else {
+          return multiChanBackupBuilder_.getMessage();
+        }
+      }
+      /**
+       * <pre>
+       **
+       *A multi-channel backup that covers all open channels currently known to
+       *lnd.
+       * </pre>
+       *
+       * <code>.lnrpc.MultiChanBackup multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+       */
+      public Builder setMultiChanBackup(lnrpc.Rpc.MultiChanBackup value) {
+        if (multiChanBackupBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          multiChanBackup_ = value;
+          onChanged();
+        } else {
+          multiChanBackupBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A multi-channel backup that covers all open channels currently known to
+       *lnd.
+       * </pre>
+       *
+       * <code>.lnrpc.MultiChanBackup multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+       */
+      public Builder setMultiChanBackup(
+          lnrpc.Rpc.MultiChanBackup.Builder builderForValue) {
+        if (multiChanBackupBuilder_ == null) {
+          multiChanBackup_ = builderForValue.build();
+          onChanged();
+        } else {
+          multiChanBackupBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A multi-channel backup that covers all open channels currently known to
+       *lnd.
+       * </pre>
+       *
+       * <code>.lnrpc.MultiChanBackup multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+       */
+      public Builder mergeMultiChanBackup(lnrpc.Rpc.MultiChanBackup value) {
+        if (multiChanBackupBuilder_ == null) {
+          if (multiChanBackup_ != null) {
+            multiChanBackup_ =
+              lnrpc.Rpc.MultiChanBackup.newBuilder(multiChanBackup_).mergeFrom(value).buildPartial();
+          } else {
+            multiChanBackup_ = value;
+          }
+          onChanged();
+        } else {
+          multiChanBackupBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A multi-channel backup that covers all open channels currently known to
+       *lnd.
+       * </pre>
+       *
+       * <code>.lnrpc.MultiChanBackup multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+       */
+      public Builder clearMultiChanBackup() {
+        if (multiChanBackupBuilder_ == null) {
+          multiChanBackup_ = null;
+          onChanged();
+        } else {
+          multiChanBackup_ = null;
+          multiChanBackupBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A multi-channel backup that covers all open channels currently known to
+       *lnd.
+       * </pre>
+       *
+       * <code>.lnrpc.MultiChanBackup multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+       */
+      public lnrpc.Rpc.MultiChanBackup.Builder getMultiChanBackupBuilder() {
+        
+        onChanged();
+        return getMultiChanBackupFieldBuilder().getBuilder();
+      }
+      /**
+       * <pre>
+       **
+       *A multi-channel backup that covers all open channels currently known to
+       *lnd.
+       * </pre>
+       *
+       * <code>.lnrpc.MultiChanBackup multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+       */
+      public lnrpc.Rpc.MultiChanBackupOrBuilder getMultiChanBackupOrBuilder() {
+        if (multiChanBackupBuilder_ != null) {
+          return multiChanBackupBuilder_.getMessageOrBuilder();
+        } else {
+          return multiChanBackup_ == null ?
+              lnrpc.Rpc.MultiChanBackup.getDefaultInstance() : multiChanBackup_;
+        }
+      }
+      /**
+       * <pre>
+       **
+       *A multi-channel backup that covers all open channels currently known to
+       *lnd.
+       * </pre>
+       *
+       * <code>.lnrpc.MultiChanBackup multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.MultiChanBackup, lnrpc.Rpc.MultiChanBackup.Builder, lnrpc.Rpc.MultiChanBackupOrBuilder> 
+          getMultiChanBackupFieldBuilder() {
+        if (multiChanBackupBuilder_ == null) {
+          multiChanBackupBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              lnrpc.Rpc.MultiChanBackup, lnrpc.Rpc.MultiChanBackup.Builder, lnrpc.Rpc.MultiChanBackupOrBuilder>(
+                  getMultiChanBackup(),
+                  getParentForChildren(),
+                  isClean());
+          multiChanBackup_ = null;
+        }
+        return multiChanBackupBuilder_;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:lnrpc.ChanBackupSnapshot)
+    }
+
+    // @@protoc_insertion_point(class_scope:lnrpc.ChanBackupSnapshot)
+    private static final lnrpc.Rpc.ChanBackupSnapshot DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new lnrpc.Rpc.ChanBackupSnapshot();
+    }
+
+    public static lnrpc.Rpc.ChanBackupSnapshot getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ChanBackupSnapshot>
+        PARSER = new com.google.protobuf.AbstractParser<ChanBackupSnapshot>() {
+      public ChanBackupSnapshot parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ChanBackupSnapshot(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ChanBackupSnapshot> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ChanBackupSnapshot> getParserForType() {
+      return PARSER;
+    }
+
+    public lnrpc.Rpc.ChanBackupSnapshot getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ChannelBackupsOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:lnrpc.ChannelBackups)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     **
+     *A set of single-chan static channel backups.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+     */
+    java.util.List<lnrpc.Rpc.ChannelBackup> 
+        getChanBackupsList();
+    /**
+     * <pre>
+     **
+     *A set of single-chan static channel backups.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+     */
+    lnrpc.Rpc.ChannelBackup getChanBackups(int index);
+    /**
+     * <pre>
+     **
+     *A set of single-chan static channel backups.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+     */
+    int getChanBackupsCount();
+    /**
+     * <pre>
+     **
+     *A set of single-chan static channel backups.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+     */
+    java.util.List<? extends lnrpc.Rpc.ChannelBackupOrBuilder> 
+        getChanBackupsOrBuilderList();
+    /**
+     * <pre>
+     **
+     *A set of single-chan static channel backups.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+     */
+    lnrpc.Rpc.ChannelBackupOrBuilder getChanBackupsOrBuilder(
+        int index);
+  }
+  /**
+   * Protobuf type {@code lnrpc.ChannelBackups}
+   */
+  public  static final class ChannelBackups extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:lnrpc.ChannelBackups)
+      ChannelBackupsOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ChannelBackups.newBuilder() to construct.
+    private ChannelBackups(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ChannelBackups() {
+      chanBackups_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ChannelBackups(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                chanBackups_ = new java.util.ArrayList<lnrpc.Rpc.ChannelBackup>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              chanBackups_.add(
+                  input.readMessage(lnrpc.Rpc.ChannelBackup.parser(), extensionRegistry));
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+          chanBackups_ = java.util.Collections.unmodifiableList(chanBackups_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return lnrpc.Rpc.internal_static_lnrpc_ChannelBackups_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return lnrpc.Rpc.internal_static_lnrpc_ChannelBackups_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              lnrpc.Rpc.ChannelBackups.class, lnrpc.Rpc.ChannelBackups.Builder.class);
+    }
+
+    public static final int CHAN_BACKUPS_FIELD_NUMBER = 1;
+    private java.util.List<lnrpc.Rpc.ChannelBackup> chanBackups_;
+    /**
+     * <pre>
+     **
+     *A set of single-chan static channel backups.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+     */
+    public java.util.List<lnrpc.Rpc.ChannelBackup> getChanBackupsList() {
+      return chanBackups_;
+    }
+    /**
+     * <pre>
+     **
+     *A set of single-chan static channel backups.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+     */
+    public java.util.List<? extends lnrpc.Rpc.ChannelBackupOrBuilder> 
+        getChanBackupsOrBuilderList() {
+      return chanBackups_;
+    }
+    /**
+     * <pre>
+     **
+     *A set of single-chan static channel backups.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+     */
+    public int getChanBackupsCount() {
+      return chanBackups_.size();
+    }
+    /**
+     * <pre>
+     **
+     *A set of single-chan static channel backups.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+     */
+    public lnrpc.Rpc.ChannelBackup getChanBackups(int index) {
+      return chanBackups_.get(index);
+    }
+    /**
+     * <pre>
+     **
+     *A set of single-chan static channel backups.
+     * </pre>
+     *
+     * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+     */
+    public lnrpc.Rpc.ChannelBackupOrBuilder getChanBackupsOrBuilder(
+        int index) {
+      return chanBackups_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      for (int i = 0; i < chanBackups_.size(); i++) {
+        output.writeMessage(1, chanBackups_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      for (int i = 0; i < chanBackups_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, chanBackups_.get(i));
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof lnrpc.Rpc.ChannelBackups)) {
+        return super.equals(obj);
+      }
+      lnrpc.Rpc.ChannelBackups other = (lnrpc.Rpc.ChannelBackups) obj;
+
+      boolean result = true;
+      result = result && getChanBackupsList()
+          .equals(other.getChanBackupsList());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getChanBackupsCount() > 0) {
+        hash = (37 * hash) + CHAN_BACKUPS_FIELD_NUMBER;
+        hash = (53 * hash) + getChanBackupsList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static lnrpc.Rpc.ChannelBackups parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChannelBackups parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelBackups parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChannelBackups parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelBackups parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChannelBackups parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelBackups parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChannelBackups parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelBackups parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChannelBackups parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelBackups parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChannelBackups parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(lnrpc.Rpc.ChannelBackups prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code lnrpc.ChannelBackups}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:lnrpc.ChannelBackups)
+        lnrpc.Rpc.ChannelBackupsOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChannelBackups_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChannelBackups_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                lnrpc.Rpc.ChannelBackups.class, lnrpc.Rpc.ChannelBackups.Builder.class);
+      }
+
+      // Construct using lnrpc.Rpc.ChannelBackups.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+          getChanBackupsFieldBuilder();
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        if (chanBackupsBuilder_ == null) {
+          chanBackups_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          chanBackupsBuilder_.clear();
+        }
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChannelBackups_descriptor;
+      }
+
+      public lnrpc.Rpc.ChannelBackups getDefaultInstanceForType() {
+        return lnrpc.Rpc.ChannelBackups.getDefaultInstance();
+      }
+
+      public lnrpc.Rpc.ChannelBackups build() {
+        lnrpc.Rpc.ChannelBackups result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public lnrpc.Rpc.ChannelBackups buildPartial() {
+        lnrpc.Rpc.ChannelBackups result = new lnrpc.Rpc.ChannelBackups(this);
+        int from_bitField0_ = bitField0_;
+        if (chanBackupsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) == 0x00000001)) {
+            chanBackups_ = java.util.Collections.unmodifiableList(chanBackups_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.chanBackups_ = chanBackups_;
+        } else {
+          result.chanBackups_ = chanBackupsBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof lnrpc.Rpc.ChannelBackups) {
+          return mergeFrom((lnrpc.Rpc.ChannelBackups)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(lnrpc.Rpc.ChannelBackups other) {
+        if (other == lnrpc.Rpc.ChannelBackups.getDefaultInstance()) return this;
+        if (chanBackupsBuilder_ == null) {
+          if (!other.chanBackups_.isEmpty()) {
+            if (chanBackups_.isEmpty()) {
+              chanBackups_ = other.chanBackups_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureChanBackupsIsMutable();
+              chanBackups_.addAll(other.chanBackups_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.chanBackups_.isEmpty()) {
+            if (chanBackupsBuilder_.isEmpty()) {
+              chanBackupsBuilder_.dispose();
+              chanBackupsBuilder_ = null;
+              chanBackups_ = other.chanBackups_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              chanBackupsBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getChanBackupsFieldBuilder() : null;
+            } else {
+              chanBackupsBuilder_.addAllMessages(other.chanBackups_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        lnrpc.Rpc.ChannelBackups parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (lnrpc.Rpc.ChannelBackups) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private java.util.List<lnrpc.Rpc.ChannelBackup> chanBackups_ =
+        java.util.Collections.emptyList();
+      private void ensureChanBackupsIsMutable() {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+          chanBackups_ = new java.util.ArrayList<lnrpc.Rpc.ChannelBackup>(chanBackups_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          lnrpc.Rpc.ChannelBackup, lnrpc.Rpc.ChannelBackup.Builder, lnrpc.Rpc.ChannelBackupOrBuilder> chanBackupsBuilder_;
+
+      /**
+       * <pre>
+       **
+       *A set of single-chan static channel backups.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public java.util.List<lnrpc.Rpc.ChannelBackup> getChanBackupsList() {
+        if (chanBackupsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(chanBackups_);
+        } else {
+          return chanBackupsBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <pre>
+       **
+       *A set of single-chan static channel backups.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public int getChanBackupsCount() {
+        if (chanBackupsBuilder_ == null) {
+          return chanBackups_.size();
+        } else {
+          return chanBackupsBuilder_.getCount();
+        }
+      }
+      /**
+       * <pre>
+       **
+       *A set of single-chan static channel backups.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public lnrpc.Rpc.ChannelBackup getChanBackups(int index) {
+        if (chanBackupsBuilder_ == null) {
+          return chanBackups_.get(index);
+        } else {
+          return chanBackupsBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <pre>
+       **
+       *A set of single-chan static channel backups.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public Builder setChanBackups(
+          int index, lnrpc.Rpc.ChannelBackup value) {
+        if (chanBackupsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureChanBackupsIsMutable();
+          chanBackups_.set(index, value);
+          onChanged();
+        } else {
+          chanBackupsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A set of single-chan static channel backups.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public Builder setChanBackups(
+          int index, lnrpc.Rpc.ChannelBackup.Builder builderForValue) {
+        if (chanBackupsBuilder_ == null) {
+          ensureChanBackupsIsMutable();
+          chanBackups_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          chanBackupsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A set of single-chan static channel backups.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public Builder addChanBackups(lnrpc.Rpc.ChannelBackup value) {
+        if (chanBackupsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureChanBackupsIsMutable();
+          chanBackups_.add(value);
+          onChanged();
+        } else {
+          chanBackupsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A set of single-chan static channel backups.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public Builder addChanBackups(
+          int index, lnrpc.Rpc.ChannelBackup value) {
+        if (chanBackupsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureChanBackupsIsMutable();
+          chanBackups_.add(index, value);
+          onChanged();
+        } else {
+          chanBackupsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A set of single-chan static channel backups.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public Builder addChanBackups(
+          lnrpc.Rpc.ChannelBackup.Builder builderForValue) {
+        if (chanBackupsBuilder_ == null) {
+          ensureChanBackupsIsMutable();
+          chanBackups_.add(builderForValue.build());
+          onChanged();
+        } else {
+          chanBackupsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A set of single-chan static channel backups.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public Builder addChanBackups(
+          int index, lnrpc.Rpc.ChannelBackup.Builder builderForValue) {
+        if (chanBackupsBuilder_ == null) {
+          ensureChanBackupsIsMutable();
+          chanBackups_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          chanBackupsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A set of single-chan static channel backups.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public Builder addAllChanBackups(
+          java.lang.Iterable<? extends lnrpc.Rpc.ChannelBackup> values) {
+        if (chanBackupsBuilder_ == null) {
+          ensureChanBackupsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, chanBackups_);
+          onChanged();
+        } else {
+          chanBackupsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A set of single-chan static channel backups.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public Builder clearChanBackups() {
+        if (chanBackupsBuilder_ == null) {
+          chanBackups_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          chanBackupsBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A set of single-chan static channel backups.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public Builder removeChanBackups(int index) {
+        if (chanBackupsBuilder_ == null) {
+          ensureChanBackupsIsMutable();
+          chanBackups_.remove(index);
+          onChanged();
+        } else {
+          chanBackupsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       **
+       *A set of single-chan static channel backups.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public lnrpc.Rpc.ChannelBackup.Builder getChanBackupsBuilder(
+          int index) {
+        return getChanBackupsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <pre>
+       **
+       *A set of single-chan static channel backups.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public lnrpc.Rpc.ChannelBackupOrBuilder getChanBackupsOrBuilder(
+          int index) {
+        if (chanBackupsBuilder_ == null) {
+          return chanBackups_.get(index);  } else {
+          return chanBackupsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <pre>
+       **
+       *A set of single-chan static channel backups.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public java.util.List<? extends lnrpc.Rpc.ChannelBackupOrBuilder> 
+           getChanBackupsOrBuilderList() {
+        if (chanBackupsBuilder_ != null) {
+          return chanBackupsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(chanBackups_);
+        }
+      }
+      /**
+       * <pre>
+       **
+       *A set of single-chan static channel backups.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public lnrpc.Rpc.ChannelBackup.Builder addChanBackupsBuilder() {
+        return getChanBackupsFieldBuilder().addBuilder(
+            lnrpc.Rpc.ChannelBackup.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       **
+       *A set of single-chan static channel backups.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public lnrpc.Rpc.ChannelBackup.Builder addChanBackupsBuilder(
+          int index) {
+        return getChanBackupsFieldBuilder().addBuilder(
+            index, lnrpc.Rpc.ChannelBackup.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       **
+       *A set of single-chan static channel backups.
+       * </pre>
+       *
+       * <code>repeated .lnrpc.ChannelBackup chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public java.util.List<lnrpc.Rpc.ChannelBackup.Builder> 
+           getChanBackupsBuilderList() {
+        return getChanBackupsFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          lnrpc.Rpc.ChannelBackup, lnrpc.Rpc.ChannelBackup.Builder, lnrpc.Rpc.ChannelBackupOrBuilder> 
+          getChanBackupsFieldBuilder() {
+        if (chanBackupsBuilder_ == null) {
+          chanBackupsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              lnrpc.Rpc.ChannelBackup, lnrpc.Rpc.ChannelBackup.Builder, lnrpc.Rpc.ChannelBackupOrBuilder>(
+                  chanBackups_,
+                  ((bitField0_ & 0x00000001) == 0x00000001),
+                  getParentForChildren(),
+                  isClean());
+          chanBackups_ = null;
+        }
+        return chanBackupsBuilder_;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:lnrpc.ChannelBackups)
+    }
+
+    // @@protoc_insertion_point(class_scope:lnrpc.ChannelBackups)
+    private static final lnrpc.Rpc.ChannelBackups DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new lnrpc.Rpc.ChannelBackups();
+    }
+
+    public static lnrpc.Rpc.ChannelBackups getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ChannelBackups>
+        PARSER = new com.google.protobuf.AbstractParser<ChannelBackups>() {
+      public ChannelBackups parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ChannelBackups(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ChannelBackups> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ChannelBackups> getParserForType() {
+      return PARSER;
+    }
+
+    public lnrpc.Rpc.ChannelBackups getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface RestoreChanBackupRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:lnrpc.RestoreChanBackupRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.lnrpc.ChannelBackups chan_backups = 1[json_name = "chan_backups"];</code>
+     */
+    boolean hasChanBackups();
+    /**
+     * <code>.lnrpc.ChannelBackups chan_backups = 1[json_name = "chan_backups"];</code>
+     */
+    lnrpc.Rpc.ChannelBackups getChanBackups();
+    /**
+     * <code>.lnrpc.ChannelBackups chan_backups = 1[json_name = "chan_backups"];</code>
+     */
+    lnrpc.Rpc.ChannelBackupsOrBuilder getChanBackupsOrBuilder();
+
+    /**
+     * <code>bytes multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+     */
+    com.google.protobuf.ByteString getMultiChanBackup();
+
+    public lnrpc.Rpc.RestoreChanBackupRequest.BackupCase getBackupCase();
+  }
+  /**
+   * Protobuf type {@code lnrpc.RestoreChanBackupRequest}
+   */
+  public  static final class RestoreChanBackupRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:lnrpc.RestoreChanBackupRequest)
+      RestoreChanBackupRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use RestoreChanBackupRequest.newBuilder() to construct.
+    private RestoreChanBackupRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private RestoreChanBackupRequest() {
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private RestoreChanBackupRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              lnrpc.Rpc.ChannelBackups.Builder subBuilder = null;
+              if (backupCase_ == 1) {
+                subBuilder = ((lnrpc.Rpc.ChannelBackups) backup_).toBuilder();
+              }
+              backup_ =
+                  input.readMessage(lnrpc.Rpc.ChannelBackups.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((lnrpc.Rpc.ChannelBackups) backup_);
+                backup_ = subBuilder.buildPartial();
+              }
+              backupCase_ = 1;
+              break;
+            }
+            case 18: {
+              backupCase_ = 2;
+              backup_ = input.readBytes();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return lnrpc.Rpc.internal_static_lnrpc_RestoreChanBackupRequest_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return lnrpc.Rpc.internal_static_lnrpc_RestoreChanBackupRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              lnrpc.Rpc.RestoreChanBackupRequest.class, lnrpc.Rpc.RestoreChanBackupRequest.Builder.class);
+    }
+
+    private int backupCase_ = 0;
+    private java.lang.Object backup_;
+    public enum BackupCase
+        implements com.google.protobuf.Internal.EnumLite {
+      CHAN_BACKUPS(1),
+      MULTI_CHAN_BACKUP(2),
+      BACKUP_NOT_SET(0);
+      private final int value;
+      private BackupCase(int value) {
+        this.value = value;
+      }
+      /**
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
+      public static BackupCase valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static BackupCase forNumber(int value) {
+        switch (value) {
+          case 1: return CHAN_BACKUPS;
+          case 2: return MULTI_CHAN_BACKUP;
+          case 0: return BACKUP_NOT_SET;
+          default: return null;
+        }
+      }
+      public int getNumber() {
+        return this.value;
+      }
+    };
+
+    public BackupCase
+    getBackupCase() {
+      return BackupCase.forNumber(
+          backupCase_);
+    }
+
+    public static final int CHAN_BACKUPS_FIELD_NUMBER = 1;
+    /**
+     * <code>.lnrpc.ChannelBackups chan_backups = 1[json_name = "chan_backups"];</code>
+     */
+    public boolean hasChanBackups() {
+      return backupCase_ == 1;
+    }
+    /**
+     * <code>.lnrpc.ChannelBackups chan_backups = 1[json_name = "chan_backups"];</code>
+     */
+    public lnrpc.Rpc.ChannelBackups getChanBackups() {
+      if (backupCase_ == 1) {
+         return (lnrpc.Rpc.ChannelBackups) backup_;
+      }
+      return lnrpc.Rpc.ChannelBackups.getDefaultInstance();
+    }
+    /**
+     * <code>.lnrpc.ChannelBackups chan_backups = 1[json_name = "chan_backups"];</code>
+     */
+    public lnrpc.Rpc.ChannelBackupsOrBuilder getChanBackupsOrBuilder() {
+      if (backupCase_ == 1) {
+         return (lnrpc.Rpc.ChannelBackups) backup_;
+      }
+      return lnrpc.Rpc.ChannelBackups.getDefaultInstance();
+    }
+
+    public static final int MULTI_CHAN_BACKUP_FIELD_NUMBER = 2;
+    /**
+     * <code>bytes multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+     */
+    public com.google.protobuf.ByteString getMultiChanBackup() {
+      if (backupCase_ == 2) {
+        return (com.google.protobuf.ByteString) backup_;
+      }
+      return com.google.protobuf.ByteString.EMPTY;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (backupCase_ == 1) {
+        output.writeMessage(1, (lnrpc.Rpc.ChannelBackups) backup_);
+      }
+      if (backupCase_ == 2) {
+        output.writeBytes(
+            2, (com.google.protobuf.ByteString) backup_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (backupCase_ == 1) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, (lnrpc.Rpc.ChannelBackups) backup_);
+      }
+      if (backupCase_ == 2) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(
+              2, (com.google.protobuf.ByteString) backup_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof lnrpc.Rpc.RestoreChanBackupRequest)) {
+        return super.equals(obj);
+      }
+      lnrpc.Rpc.RestoreChanBackupRequest other = (lnrpc.Rpc.RestoreChanBackupRequest) obj;
+
+      boolean result = true;
+      result = result && getBackupCase().equals(
+          other.getBackupCase());
+      if (!result) return false;
+      switch (backupCase_) {
+        case 1:
+          result = result && getChanBackups()
+              .equals(other.getChanBackups());
+          break;
+        case 2:
+          result = result && getMultiChanBackup()
+              .equals(other.getMultiChanBackup());
+          break;
+        case 0:
+        default:
+      }
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      switch (backupCase_) {
+        case 1:
+          hash = (37 * hash) + CHAN_BACKUPS_FIELD_NUMBER;
+          hash = (53 * hash) + getChanBackups().hashCode();
+          break;
+        case 2:
+          hash = (37 * hash) + MULTI_CHAN_BACKUP_FIELD_NUMBER;
+          hash = (53 * hash) + getMultiChanBackup().hashCode();
+          break;
+        case 0:
+        default:
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static lnrpc.Rpc.RestoreChanBackupRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.RestoreChanBackupRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.RestoreChanBackupRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.RestoreChanBackupRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.RestoreChanBackupRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.RestoreChanBackupRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.RestoreChanBackupRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.RestoreChanBackupRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.RestoreChanBackupRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.RestoreChanBackupRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.RestoreChanBackupRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.RestoreChanBackupRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(lnrpc.Rpc.RestoreChanBackupRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code lnrpc.RestoreChanBackupRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:lnrpc.RestoreChanBackupRequest)
+        lnrpc.Rpc.RestoreChanBackupRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return lnrpc.Rpc.internal_static_lnrpc_RestoreChanBackupRequest_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return lnrpc.Rpc.internal_static_lnrpc_RestoreChanBackupRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                lnrpc.Rpc.RestoreChanBackupRequest.class, lnrpc.Rpc.RestoreChanBackupRequest.Builder.class);
+      }
+
+      // Construct using lnrpc.Rpc.RestoreChanBackupRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        backupCase_ = 0;
+        backup_ = null;
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return lnrpc.Rpc.internal_static_lnrpc_RestoreChanBackupRequest_descriptor;
+      }
+
+      public lnrpc.Rpc.RestoreChanBackupRequest getDefaultInstanceForType() {
+        return lnrpc.Rpc.RestoreChanBackupRequest.getDefaultInstance();
+      }
+
+      public lnrpc.Rpc.RestoreChanBackupRequest build() {
+        lnrpc.Rpc.RestoreChanBackupRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public lnrpc.Rpc.RestoreChanBackupRequest buildPartial() {
+        lnrpc.Rpc.RestoreChanBackupRequest result = new lnrpc.Rpc.RestoreChanBackupRequest(this);
+        if (backupCase_ == 1) {
+          if (chanBackupsBuilder_ == null) {
+            result.backup_ = backup_;
+          } else {
+            result.backup_ = chanBackupsBuilder_.build();
+          }
+        }
+        if (backupCase_ == 2) {
+          result.backup_ = backup_;
+        }
+        result.backupCase_ = backupCase_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof lnrpc.Rpc.RestoreChanBackupRequest) {
+          return mergeFrom((lnrpc.Rpc.RestoreChanBackupRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(lnrpc.Rpc.RestoreChanBackupRequest other) {
+        if (other == lnrpc.Rpc.RestoreChanBackupRequest.getDefaultInstance()) return this;
+        switch (other.getBackupCase()) {
+          case CHAN_BACKUPS: {
+            mergeChanBackups(other.getChanBackups());
+            break;
+          }
+          case MULTI_CHAN_BACKUP: {
+            setMultiChanBackup(other.getMultiChanBackup());
+            break;
+          }
+          case BACKUP_NOT_SET: {
+            break;
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        lnrpc.Rpc.RestoreChanBackupRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (lnrpc.Rpc.RestoreChanBackupRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int backupCase_ = 0;
+      private java.lang.Object backup_;
+      public BackupCase
+          getBackupCase() {
+        return BackupCase.forNumber(
+            backupCase_);
+      }
+
+      public Builder clearBackup() {
+        backupCase_ = 0;
+        backup_ = null;
+        onChanged();
+        return this;
+      }
+
+
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.ChannelBackups, lnrpc.Rpc.ChannelBackups.Builder, lnrpc.Rpc.ChannelBackupsOrBuilder> chanBackupsBuilder_;
+      /**
+       * <code>.lnrpc.ChannelBackups chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public boolean hasChanBackups() {
+        return backupCase_ == 1;
+      }
+      /**
+       * <code>.lnrpc.ChannelBackups chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public lnrpc.Rpc.ChannelBackups getChanBackups() {
+        if (chanBackupsBuilder_ == null) {
+          if (backupCase_ == 1) {
+            return (lnrpc.Rpc.ChannelBackups) backup_;
+          }
+          return lnrpc.Rpc.ChannelBackups.getDefaultInstance();
+        } else {
+          if (backupCase_ == 1) {
+            return chanBackupsBuilder_.getMessage();
+          }
+          return lnrpc.Rpc.ChannelBackups.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.lnrpc.ChannelBackups chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public Builder setChanBackups(lnrpc.Rpc.ChannelBackups value) {
+        if (chanBackupsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          backup_ = value;
+          onChanged();
+        } else {
+          chanBackupsBuilder_.setMessage(value);
+        }
+        backupCase_ = 1;
+        return this;
+      }
+      /**
+       * <code>.lnrpc.ChannelBackups chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public Builder setChanBackups(
+          lnrpc.Rpc.ChannelBackups.Builder builderForValue) {
+        if (chanBackupsBuilder_ == null) {
+          backup_ = builderForValue.build();
+          onChanged();
+        } else {
+          chanBackupsBuilder_.setMessage(builderForValue.build());
+        }
+        backupCase_ = 1;
+        return this;
+      }
+      /**
+       * <code>.lnrpc.ChannelBackups chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public Builder mergeChanBackups(lnrpc.Rpc.ChannelBackups value) {
+        if (chanBackupsBuilder_ == null) {
+          if (backupCase_ == 1 &&
+              backup_ != lnrpc.Rpc.ChannelBackups.getDefaultInstance()) {
+            backup_ = lnrpc.Rpc.ChannelBackups.newBuilder((lnrpc.Rpc.ChannelBackups) backup_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            backup_ = value;
+          }
+          onChanged();
+        } else {
+          if (backupCase_ == 1) {
+            chanBackupsBuilder_.mergeFrom(value);
+          }
+          chanBackupsBuilder_.setMessage(value);
+        }
+        backupCase_ = 1;
+        return this;
+      }
+      /**
+       * <code>.lnrpc.ChannelBackups chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public Builder clearChanBackups() {
+        if (chanBackupsBuilder_ == null) {
+          if (backupCase_ == 1) {
+            backupCase_ = 0;
+            backup_ = null;
+            onChanged();
+          }
+        } else {
+          if (backupCase_ == 1) {
+            backupCase_ = 0;
+            backup_ = null;
+          }
+          chanBackupsBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>.lnrpc.ChannelBackups chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public lnrpc.Rpc.ChannelBackups.Builder getChanBackupsBuilder() {
+        return getChanBackupsFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.lnrpc.ChannelBackups chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      public lnrpc.Rpc.ChannelBackupsOrBuilder getChanBackupsOrBuilder() {
+        if ((backupCase_ == 1) && (chanBackupsBuilder_ != null)) {
+          return chanBackupsBuilder_.getMessageOrBuilder();
+        } else {
+          if (backupCase_ == 1) {
+            return (lnrpc.Rpc.ChannelBackups) backup_;
+          }
+          return lnrpc.Rpc.ChannelBackups.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.lnrpc.ChannelBackups chan_backups = 1[json_name = "chan_backups"];</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          lnrpc.Rpc.ChannelBackups, lnrpc.Rpc.ChannelBackups.Builder, lnrpc.Rpc.ChannelBackupsOrBuilder> 
+          getChanBackupsFieldBuilder() {
+        if (chanBackupsBuilder_ == null) {
+          if (!(backupCase_ == 1)) {
+            backup_ = lnrpc.Rpc.ChannelBackups.getDefaultInstance();
+          }
+          chanBackupsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              lnrpc.Rpc.ChannelBackups, lnrpc.Rpc.ChannelBackups.Builder, lnrpc.Rpc.ChannelBackupsOrBuilder>(
+                  (lnrpc.Rpc.ChannelBackups) backup_,
+                  getParentForChildren(),
+                  isClean());
+          backup_ = null;
+        }
+        backupCase_ = 1;
+        onChanged();;
+        return chanBackupsBuilder_;
+      }
+
+      /**
+       * <code>bytes multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+       */
+      public com.google.protobuf.ByteString getMultiChanBackup() {
+        if (backupCase_ == 2) {
+          return (com.google.protobuf.ByteString) backup_;
+        }
+        return com.google.protobuf.ByteString.EMPTY;
+      }
+      /**
+       * <code>bytes multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+       */
+      public Builder setMultiChanBackup(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  backupCase_ = 2;
+        backup_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes multi_chan_backup = 2[json_name = "multi_chan_backup"];</code>
+       */
+      public Builder clearMultiChanBackup() {
+        if (backupCase_ == 2) {
+          backupCase_ = 0;
+          backup_ = null;
+          onChanged();
+        }
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:lnrpc.RestoreChanBackupRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:lnrpc.RestoreChanBackupRequest)
+    private static final lnrpc.Rpc.RestoreChanBackupRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new lnrpc.Rpc.RestoreChanBackupRequest();
+    }
+
+    public static lnrpc.Rpc.RestoreChanBackupRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<RestoreChanBackupRequest>
+        PARSER = new com.google.protobuf.AbstractParser<RestoreChanBackupRequest>() {
+      public RestoreChanBackupRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new RestoreChanBackupRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<RestoreChanBackupRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<RestoreChanBackupRequest> getParserForType() {
+      return PARSER;
+    }
+
+    public lnrpc.Rpc.RestoreChanBackupRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface RestoreBackupResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:lnrpc.RestoreBackupResponse)
+      com.google.protobuf.MessageOrBuilder {
+  }
+  /**
+   * Protobuf type {@code lnrpc.RestoreBackupResponse}
+   */
+  public  static final class RestoreBackupResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:lnrpc.RestoreBackupResponse)
+      RestoreBackupResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use RestoreBackupResponse.newBuilder() to construct.
+    private RestoreBackupResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private RestoreBackupResponse() {
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private RestoreBackupResponse(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return lnrpc.Rpc.internal_static_lnrpc_RestoreBackupResponse_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return lnrpc.Rpc.internal_static_lnrpc_RestoreBackupResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              lnrpc.Rpc.RestoreBackupResponse.class, lnrpc.Rpc.RestoreBackupResponse.Builder.class);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof lnrpc.Rpc.RestoreBackupResponse)) {
+        return super.equals(obj);
+      }
+      lnrpc.Rpc.RestoreBackupResponse other = (lnrpc.Rpc.RestoreBackupResponse) obj;
+
+      boolean result = true;
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static lnrpc.Rpc.RestoreBackupResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.RestoreBackupResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.RestoreBackupResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.RestoreBackupResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.RestoreBackupResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.RestoreBackupResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.RestoreBackupResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.RestoreBackupResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.RestoreBackupResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.RestoreBackupResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.RestoreBackupResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.RestoreBackupResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(lnrpc.Rpc.RestoreBackupResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code lnrpc.RestoreBackupResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:lnrpc.RestoreBackupResponse)
+        lnrpc.Rpc.RestoreBackupResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return lnrpc.Rpc.internal_static_lnrpc_RestoreBackupResponse_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return lnrpc.Rpc.internal_static_lnrpc_RestoreBackupResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                lnrpc.Rpc.RestoreBackupResponse.class, lnrpc.Rpc.RestoreBackupResponse.Builder.class);
+      }
+
+      // Construct using lnrpc.Rpc.RestoreBackupResponse.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return lnrpc.Rpc.internal_static_lnrpc_RestoreBackupResponse_descriptor;
+      }
+
+      public lnrpc.Rpc.RestoreBackupResponse getDefaultInstanceForType() {
+        return lnrpc.Rpc.RestoreBackupResponse.getDefaultInstance();
+      }
+
+      public lnrpc.Rpc.RestoreBackupResponse build() {
+        lnrpc.Rpc.RestoreBackupResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public lnrpc.Rpc.RestoreBackupResponse buildPartial() {
+        lnrpc.Rpc.RestoreBackupResponse result = new lnrpc.Rpc.RestoreBackupResponse(this);
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof lnrpc.Rpc.RestoreBackupResponse) {
+          return mergeFrom((lnrpc.Rpc.RestoreBackupResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(lnrpc.Rpc.RestoreBackupResponse other) {
+        if (other == lnrpc.Rpc.RestoreBackupResponse.getDefaultInstance()) return this;
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        lnrpc.Rpc.RestoreBackupResponse parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (lnrpc.Rpc.RestoreBackupResponse) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:lnrpc.RestoreBackupResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:lnrpc.RestoreBackupResponse)
+    private static final lnrpc.Rpc.RestoreBackupResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new lnrpc.Rpc.RestoreBackupResponse();
+    }
+
+    public static lnrpc.Rpc.RestoreBackupResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<RestoreBackupResponse>
+        PARSER = new com.google.protobuf.AbstractParser<RestoreBackupResponse>() {
+      public RestoreBackupResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new RestoreBackupResponse(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<RestoreBackupResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<RestoreBackupResponse> getParserForType() {
+      return PARSER;
+    }
+
+    public lnrpc.Rpc.RestoreBackupResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ChannelBackupSubscriptionOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:lnrpc.ChannelBackupSubscription)
+      com.google.protobuf.MessageOrBuilder {
+  }
+  /**
+   * Protobuf type {@code lnrpc.ChannelBackupSubscription}
+   */
+  public  static final class ChannelBackupSubscription extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:lnrpc.ChannelBackupSubscription)
+      ChannelBackupSubscriptionOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ChannelBackupSubscription.newBuilder() to construct.
+    private ChannelBackupSubscription(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ChannelBackupSubscription() {
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ChannelBackupSubscription(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return lnrpc.Rpc.internal_static_lnrpc_ChannelBackupSubscription_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return lnrpc.Rpc.internal_static_lnrpc_ChannelBackupSubscription_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              lnrpc.Rpc.ChannelBackupSubscription.class, lnrpc.Rpc.ChannelBackupSubscription.Builder.class);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof lnrpc.Rpc.ChannelBackupSubscription)) {
+        return super.equals(obj);
+      }
+      lnrpc.Rpc.ChannelBackupSubscription other = (lnrpc.Rpc.ChannelBackupSubscription) obj;
+
+      boolean result = true;
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static lnrpc.Rpc.ChannelBackupSubscription parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChannelBackupSubscription parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelBackupSubscription parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChannelBackupSubscription parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelBackupSubscription parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.ChannelBackupSubscription parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelBackupSubscription parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChannelBackupSubscription parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelBackupSubscription parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChannelBackupSubscription parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.ChannelBackupSubscription parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.ChannelBackupSubscription parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(lnrpc.Rpc.ChannelBackupSubscription prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code lnrpc.ChannelBackupSubscription}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:lnrpc.ChannelBackupSubscription)
+        lnrpc.Rpc.ChannelBackupSubscriptionOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChannelBackupSubscription_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChannelBackupSubscription_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                lnrpc.Rpc.ChannelBackupSubscription.class, lnrpc.Rpc.ChannelBackupSubscription.Builder.class);
+      }
+
+      // Construct using lnrpc.Rpc.ChannelBackupSubscription.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return lnrpc.Rpc.internal_static_lnrpc_ChannelBackupSubscription_descriptor;
+      }
+
+      public lnrpc.Rpc.ChannelBackupSubscription getDefaultInstanceForType() {
+        return lnrpc.Rpc.ChannelBackupSubscription.getDefaultInstance();
+      }
+
+      public lnrpc.Rpc.ChannelBackupSubscription build() {
+        lnrpc.Rpc.ChannelBackupSubscription result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public lnrpc.Rpc.ChannelBackupSubscription buildPartial() {
+        lnrpc.Rpc.ChannelBackupSubscription result = new lnrpc.Rpc.ChannelBackupSubscription(this);
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof lnrpc.Rpc.ChannelBackupSubscription) {
+          return mergeFrom((lnrpc.Rpc.ChannelBackupSubscription)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(lnrpc.Rpc.ChannelBackupSubscription other) {
+        if (other == lnrpc.Rpc.ChannelBackupSubscription.getDefaultInstance()) return this;
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        lnrpc.Rpc.ChannelBackupSubscription parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (lnrpc.Rpc.ChannelBackupSubscription) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:lnrpc.ChannelBackupSubscription)
+    }
+
+    // @@protoc_insertion_point(class_scope:lnrpc.ChannelBackupSubscription)
+    private static final lnrpc.Rpc.ChannelBackupSubscription DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new lnrpc.Rpc.ChannelBackupSubscription();
+    }
+
+    public static lnrpc.Rpc.ChannelBackupSubscription getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ChannelBackupSubscription>
+        PARSER = new com.google.protobuf.AbstractParser<ChannelBackupSubscription>() {
+      public ChannelBackupSubscription parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ChannelBackupSubscription(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ChannelBackupSubscription> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ChannelBackupSubscription> getParserForType() {
+      return PARSER;
+    }
+
+    public lnrpc.Rpc.ChannelBackupSubscription getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface VerifyChanBackupResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:lnrpc.VerifyChanBackupResponse)
+      com.google.protobuf.MessageOrBuilder {
+  }
+  /**
+   * Protobuf type {@code lnrpc.VerifyChanBackupResponse}
+   */
+  public  static final class VerifyChanBackupResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:lnrpc.VerifyChanBackupResponse)
+      VerifyChanBackupResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use VerifyChanBackupResponse.newBuilder() to construct.
+    private VerifyChanBackupResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private VerifyChanBackupResponse() {
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private VerifyChanBackupResponse(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return lnrpc.Rpc.internal_static_lnrpc_VerifyChanBackupResponse_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return lnrpc.Rpc.internal_static_lnrpc_VerifyChanBackupResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              lnrpc.Rpc.VerifyChanBackupResponse.class, lnrpc.Rpc.VerifyChanBackupResponse.Builder.class);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof lnrpc.Rpc.VerifyChanBackupResponse)) {
+        return super.equals(obj);
+      }
+      lnrpc.Rpc.VerifyChanBackupResponse other = (lnrpc.Rpc.VerifyChanBackupResponse) obj;
+
+      boolean result = true;
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static lnrpc.Rpc.VerifyChanBackupResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.VerifyChanBackupResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.VerifyChanBackupResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.VerifyChanBackupResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.VerifyChanBackupResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static lnrpc.Rpc.VerifyChanBackupResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static lnrpc.Rpc.VerifyChanBackupResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.VerifyChanBackupResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.VerifyChanBackupResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.VerifyChanBackupResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static lnrpc.Rpc.VerifyChanBackupResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static lnrpc.Rpc.VerifyChanBackupResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(lnrpc.Rpc.VerifyChanBackupResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code lnrpc.VerifyChanBackupResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:lnrpc.VerifyChanBackupResponse)
+        lnrpc.Rpc.VerifyChanBackupResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return lnrpc.Rpc.internal_static_lnrpc_VerifyChanBackupResponse_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return lnrpc.Rpc.internal_static_lnrpc_VerifyChanBackupResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                lnrpc.Rpc.VerifyChanBackupResponse.class, lnrpc.Rpc.VerifyChanBackupResponse.Builder.class);
+      }
+
+      // Construct using lnrpc.Rpc.VerifyChanBackupResponse.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return lnrpc.Rpc.internal_static_lnrpc_VerifyChanBackupResponse_descriptor;
+      }
+
+      public lnrpc.Rpc.VerifyChanBackupResponse getDefaultInstanceForType() {
+        return lnrpc.Rpc.VerifyChanBackupResponse.getDefaultInstance();
+      }
+
+      public lnrpc.Rpc.VerifyChanBackupResponse build() {
+        lnrpc.Rpc.VerifyChanBackupResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public lnrpc.Rpc.VerifyChanBackupResponse buildPartial() {
+        lnrpc.Rpc.VerifyChanBackupResponse result = new lnrpc.Rpc.VerifyChanBackupResponse(this);
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof lnrpc.Rpc.VerifyChanBackupResponse) {
+          return mergeFrom((lnrpc.Rpc.VerifyChanBackupResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(lnrpc.Rpc.VerifyChanBackupResponse other) {
+        if (other == lnrpc.Rpc.VerifyChanBackupResponse.getDefaultInstance()) return this;
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        lnrpc.Rpc.VerifyChanBackupResponse parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (lnrpc.Rpc.VerifyChanBackupResponse) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:lnrpc.VerifyChanBackupResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:lnrpc.VerifyChanBackupResponse)
+    private static final lnrpc.Rpc.VerifyChanBackupResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new lnrpc.Rpc.VerifyChanBackupResponse();
+    }
+
+    public static lnrpc.Rpc.VerifyChanBackupResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<VerifyChanBackupResponse>
+        PARSER = new com.google.protobuf.AbstractParser<VerifyChanBackupResponse>() {
+      public VerifyChanBackupResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new VerifyChanBackupResponse(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<VerifyChanBackupResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<VerifyChanBackupResponse> getParserForType() {
+      return PARSER;
+    }
+
+    public lnrpc.Rpc.VerifyChanBackupResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_lnrpc_GenSeedRequest_descriptor;
   private static final 
@@ -98030,10 +111956,30 @@ public final class Rpc {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_lnrpc_ChannelPoint_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_lnrpc_OutPoint_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_lnrpc_OutPoint_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_lnrpc_LightningAddress_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_lnrpc_LightningAddress_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_lnrpc_EstimateFeeRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_lnrpc_EstimateFeeRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_lnrpc_EstimateFeeRequest_AddrToAmountEntry_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_lnrpc_EstimateFeeRequest_AddrToAmountEntry_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_lnrpc_EstimateFeeResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_lnrpc_EstimateFeeResponse_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_lnrpc_SendManyRequest_descriptor;
   private static final 
@@ -98265,6 +112211,16 @@ public final class Rpc {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_lnrpc_PendingChannelsResponse_ForceClosedChannel_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_lnrpc_ChannelEventSubscription_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_lnrpc_ChannelEventSubscription_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_lnrpc_ChannelEventUpdate_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_lnrpc_ChannelEventUpdate_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_lnrpc_WalletBalanceRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -98289,6 +112245,11 @@ public final class Rpc {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_lnrpc_QueryRoutesRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_lnrpc_EdgeLocator_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_lnrpc_EdgeLocator_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_lnrpc_QueryRoutesResponse_descriptor;
   private static final 
@@ -98529,6 +112490,56 @@ public final class Rpc {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_lnrpc_ForwardingHistoryResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_lnrpc_ExportChannelBackupRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_lnrpc_ExportChannelBackupRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_lnrpc_ChannelBackup_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_lnrpc_ChannelBackup_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_lnrpc_MultiChanBackup_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_lnrpc_MultiChanBackup_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_lnrpc_ChanBackupExportRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_lnrpc_ChanBackupExportRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_lnrpc_ChanBackupSnapshot_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_lnrpc_ChanBackupSnapshot_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_lnrpc_ChannelBackups_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_lnrpc_ChannelBackups_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_lnrpc_RestoreChanBackupRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_lnrpc_RestoreChanBackupRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_lnrpc_RestoreBackupResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_lnrpc_RestoreBackupResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_lnrpc_ChannelBackupSubscription_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_lnrpc_ChannelBackupSubscription_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_lnrpc_VerifyChanBackupResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_lnrpc_VerifyChanBackupResponse_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -98542,509 +112553,587 @@ public final class Rpc {
       "ns.proto\"A\n\016GenSeedRequest\022\031\n\021aezeed_pas" +
       "sphrase\030\001 \001(\014\022\024\n\014seed_entropy\030\002 \001(\014\"H\n\017G" +
       "enSeedResponse\022\034\n\024cipher_seed_mnemonic\030\001" +
-      " \003(\t\022\027\n\017enciphered_seed\030\002 \001(\014\"~\n\021InitWal" +
-      "letRequest\022\027\n\017wallet_password\030\001 \001(\014\022\034\n\024c" +
-      "ipher_seed_mnemonic\030\002 \003(\t\022\031\n\021aezeed_pass" +
-      "phrase\030\003 \001(\014\022\027\n\017recovery_window\030\004 \001(\005\"\024\n" +
-      "\022InitWalletResponse\"G\n\023UnlockWalletReque" +
-      "st\022\027\n\017wallet_password\030\001 \001(\014\022\027\n\017recovery_" +
-      "window\030\002 \001(\005\"\026\n\024UnlockWalletResponse\"G\n\025" +
-      "ChangePasswordRequest\022\030\n\020current_passwor" +
-      "d\030\001 \001(\014\022\024\n\014new_password\030\002 \001(\014\"\030\n\026ChangeP" +
-      "asswordResponse\"\355\001\n\004Utxo\022.\n\004type\030\001 \001(\0162\022" +
-      ".lnrpc.AddressTypeR\014address_type\022\030\n\007addr" +
-      "ess\030\002 \001(\tR\007address\022\036\n\namount_sat\030\003 \001(\003R\n" +
-      "amount_sat\022$\n\rscript_pubkey\030\004 \001(\tR\rscrip" +
-      "t_pubkey\022/\n\010outpoint\030\005 \001(\0132\023.lnrpc.Chann" +
-      "elPointR\010outpoint\022$\n\rconfirmations\030\006 \001(\003" +
-      "R\rconfirmations\"\231\002\n\013Transaction\022\030\n\007tx_ha" +
-      "sh\030\001 \001(\tR\007tx_hash\022\026\n\006amount\030\002 \001(\003R\006amoun" +
-      "t\022,\n\021num_confirmations\030\003 \001(\005R\021num_confir" +
-      "mations\022\036\n\nblock_hash\030\004 \001(\tR\nblock_hash\022" +
-      "\"\n\014block_height\030\005 \001(\005R\014block_height\022\036\n\nt" +
-      "ime_stamp\030\006 \001(\003R\ntime_stamp\022\036\n\ntotal_fee" +
-      "s\030\007 \001(\003R\ntotal_fees\022&\n\016dest_addresses\030\010 " +
-      "\003(\tR\016dest_addresses\"\030\n\026GetTransactionsRe" +
-      "quest\"L\n\022TransactionDetails\0226\n\014transacti" +
-      "ons\030\001 \003(\0132\022.lnrpc.TransactionR\014transacti" +
-      "ons\"7\n\010FeeLimit\022\017\n\005fixed\030\001 \001(\003H\000\022\021\n\007perc" +
-      "ent\030\002 \001(\003H\000B\007\n\005limit\"\307\001\n\013SendRequest\022\014\n\004" +
-      "dest\030\001 \001(\014\022\023\n\013dest_string\030\002 \001(\t\022\013\n\003amt\030\003" +
-      " \001(\003\022\024\n\014payment_hash\030\004 \001(\014\022\033\n\023payment_ha" +
-      "sh_string\030\005 \001(\t\022\027\n\017payment_request\030\006 \001(\t" +
-      "\022\030\n\020final_cltv_delta\030\007 \001(\005\022\"\n\tfee_limit\030" +
-      "\010 \001(\0132\017.lnrpc.FeeLimit\"\270\001\n\014SendResponse\022" +
-      "$\n\rpayment_error\030\001 \001(\tR\rpayment_error\022*\n" +
-      "\020payment_preimage\030\002 \001(\014R\020payment_preimag" +
-      "e\0222\n\rpayment_route\030\003 \001(\0132\014.lnrpc.RouteR\r" +
-      "payment_route\022\"\n\014payment_hash\030\004 \001(\014R\014pay" +
-      "ment_hash\"e\n\022SendToRouteRequest\022\024\n\014payme" +
-      "nt_hash\030\001 \001(\014\022\033\n\023payment_hash_string\030\002 \001" +
-      "(\t\022\034\n\006routes\030\003 \003(\0132\014.lnrpc.Route\"\242\001\n\014Cha" +
-      "nnelPoint\0220\n\022funding_txid_bytes\030\001 \001(\014H\000R" +
-      "\022funding_txid_bytes\022,\n\020funding_txid_str\030" +
-      "\002 \001(\tH\000R\020funding_txid_str\022\"\n\014output_inde" +
-      "x\030\003 \001(\rR\014output_indexB\016\n\014funding_txid\">\n" +
-      "\020LightningAddress\022\026\n\006pubkey\030\001 \001(\tR\006pubke" +
-      "y\022\022\n\004host\030\002 \001(\tR\004host\"\261\001\n\017SendManyReques" +
-      "t\022>\n\014AddrToAmount\030\001 \003(\0132(.lnrpc.SendMany" +
-      "Request.AddrToAmountEntry\022\023\n\013target_conf" +
-      "\030\003 \001(\005\022\024\n\014sat_per_byte\030\005 \001(\003\0323\n\021AddrToAm" +
-      "ountEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\003:\0028" +
-      "\001\"&\n\020SendManyResponse\022\022\n\004txid\030\001 \001(\tR\004txi" +
-      "d\"m\n\020SendCoinsRequest\022\014\n\004addr\030\001 \001(\t\022\016\n\006a" +
-      "mount\030\002 \001(\003\022\023\n\013target_conf\030\003 \001(\005\022\024\n\014sat_" +
-      "per_byte\030\005 \001(\003\022\020\n\010send_all\030\006 \001(\010\"\'\n\021Send" +
-      "CoinsResponse\022\022\n\004txid\030\001 \001(\tR\004txid\":\n\022Lis" +
-      "tUnspentRequest\022\021\n\tmin_confs\030\001 \001(\005\022\021\n\tma" +
-      "x_confs\030\002 \001(\005\"8\n\023ListUnspentResponse\022!\n\005" +
-      "utxos\030\001 \003(\0132\013.lnrpc.UtxoR\005utxos\"5\n\021NewAd" +
-      "dressRequest\022 \n\004type\030\001 \001(\0162\022.lnrpc.Addre" +
-      "ssType\".\n\022NewAddressResponse\022\030\n\007address\030" +
-      "\001 \001(\tR\007address\"&\n\022SignMessageRequest\022\020\n\003" +
-      "msg\030\001 \001(\014R\003msg\"3\n\023SignMessageResponse\022\034\n" +
-      "\tsignature\030\001 \001(\tR\tsignature\"F\n\024VerifyMes" +
-      "sageRequest\022\020\n\003msg\030\001 \001(\014R\003msg\022\034\n\tsignatu" +
-      "re\030\002 \001(\tR\tsignature\"E\n\025VerifyMessageResp" +
-      "onse\022\024\n\005valid\030\001 \001(\010R\005valid\022\026\n\006pubkey\030\002 \001" +
-      "(\tR\006pubkey\"I\n\022ConnectPeerRequest\022%\n\004addr" +
-      "\030\001 \001(\0132\027.lnrpc.LightningAddress\022\014\n\004perm\030" +
-      "\002 \001(\010\"\025\n\023ConnectPeerResponse\"1\n\025Disconne" +
-      "ctPeerRequest\022\030\n\007pub_key\030\001 \001(\tR\007pub_key\"" +
-      "\030\n\026DisconnectPeerResponse\"\206\001\n\004HTLC\022\032\n\010in" +
-      "coming\030\001 \001(\010R\010incoming\022\026\n\006amount\030\002 \001(\003R\006" +
-      "amount\022\034\n\thash_lock\030\003 \001(\014R\thash_lock\022,\n\021" +
-      "expiration_height\030\004 \001(\rR\021expiration_heig" +
-      "ht\"\234\005\n\007Channel\022\026\n\006active\030\001 \001(\010R\006active\022$" +
-      "\n\rremote_pubkey\030\002 \001(\tR\rremote_pubkey\022$\n\r" +
-      "channel_point\030\003 \001(\tR\rchannel_point\022\030\n\007ch" +
-      "an_id\030\004 \001(\004R\007chan_id\022\032\n\010capacity\030\005 \001(\003R\010" +
-      "capacity\022$\n\rlocal_balance\030\006 \001(\003R\rlocal_b" +
-      "alance\022&\n\016remote_balance\030\007 \001(\003R\016remote_b" +
-      "alance\022\036\n\ncommit_fee\030\010 \001(\003R\ncommit_fee\022$" +
-      "\n\rcommit_weight\030\t \001(\003R\rcommit_weight\022\036\n\n" +
-      "fee_per_kw\030\n \001(\003R\nfee_per_kw\022,\n\021unsettle" +
-      "d_balance\030\013 \001(\003R\021unsettled_balance\0220\n\023to" +
-      "tal_satoshis_sent\030\014 \001(\003R\023total_satoshis_" +
-      "sent\0228\n\027total_satoshis_received\030\r \001(\003R\027t" +
-      "otal_satoshis_received\022 \n\013num_updates\030\016 " +
-      "\001(\004R\013num_updates\0221\n\rpending_htlcs\030\017 \003(\0132" +
-      "\013.lnrpc.HTLCR\rpending_htlcs\022\034\n\tcsv_delay" +
-      "\030\020 \001(\rR\tcsv_delay\022\030\n\007private\030\021 \001(\010R\007priv" +
-      "ate\022\034\n\tinitiator\030\022 \001(\010R\tinitiator\"l\n\023Lis" +
-      "tChannelsRequest\022\023\n\013active_only\030\001 \001(\010\022\025\n" +
-      "\rinactive_only\030\002 \001(\010\022\023\n\013public_only\030\003 \001(" +
-      "\010\022\024\n\014private_only\030\004 \001(\010\"B\n\024ListChannelsR" +
-      "esponse\022*\n\010channels\030\013 \003(\0132\016.lnrpc.Channe" +
-      "lR\010channels\"\266\004\n\023ChannelCloseSummary\022$\n\rc" +
-      "hannel_point\030\001 \001(\tR\rchannel_point\022\030\n\007cha" +
-      "n_id\030\002 \001(\004R\007chan_id\022\036\n\nchain_hash\030\003 \001(\tR" +
-      "\nchain_hash\022(\n\017closing_tx_hash\030\004 \001(\tR\017cl" +
-      "osing_tx_hash\022$\n\rremote_pubkey\030\005 \001(\tR\rre" +
-      "mote_pubkey\022\032\n\010capacity\030\006 \001(\003R\010capacity\022" +
-      "\"\n\014close_height\030\007 \001(\rR\014close_height\022(\n\017s" +
-      "ettled_balance\030\010 \001(\003R\017settled_balance\0220\n" +
-      "\023time_locked_balance\030\t \001(\003R\023time_locked_" +
-      "balance\022F\n\nclose_type\030\n \001(\0162&.lnrpc.Chan" +
-      "nelCloseSummary.ClosureTypeR\nclose_type\"" +
-      "\212\001\n\013ClosureType\022\025\n\021COOPERATIVE_CLOSE\020\000\022\025" +
-      "\n\021LOCAL_FORCE_CLOSE\020\001\022\026\n\022REMOTE_FORCE_CL" +
-      "OSE\020\002\022\020\n\014BREACH_CLOSE\020\003\022\024\n\020FUNDING_CANCE" +
-      "LED\020\004\022\r\n\tABANDONED\020\005\"\224\001\n\025ClosedChannelsR" +
-      "equest\022\023\n\013cooperative\030\001 \001(\010\022\023\n\013local_for" +
-      "ce\030\002 \001(\010\022\024\n\014remote_force\030\003 \001(\010\022\016\n\006breach" +
-      "\030\004 \001(\010\022\030\n\020funding_canceled\030\005 \001(\010\022\021\n\taban" +
-      "doned\030\006 \001(\010\"P\n\026ClosedChannelsResponse\0226\n" +
-      "\010channels\030\001 \003(\0132\032.lnrpc.ChannelCloseSumm" +
-      "aryR\010channels\"\352\001\n\004Peer\022\030\n\007pub_key\030\001 \001(\tR" +
-      "\007pub_key\022\030\n\007address\030\003 \001(\tR\007address\022\036\n\nby" +
-      "tes_sent\030\004 \001(\004R\nbytes_sent\022\036\n\nbytes_recv" +
-      "\030\005 \001(\004R\nbytes_recv\022\032\n\010sat_sent\030\006 \001(\003R\010sa" +
-      "t_sent\022\032\n\010sat_recv\030\007 \001(\003R\010sat_recv\022\030\n\007in" +
-      "bound\030\010 \001(\010R\007inbound\022\034\n\tping_time\030\t \001(\003R" +
-      "\tping_time\"\022\n\020ListPeersRequest\"6\n\021ListPe" +
-      "ersResponse\022!\n\005peers\030\001 \003(\0132\013.lnrpc.PeerR" +
-      "\005peers\"\020\n\016GetInfoRequest\"\247\004\n\017GetInfoResp" +
-      "onse\022(\n\017identity_pubkey\030\001 \001(\tR\017identity_" +
-      "pubkey\022\024\n\005alias\030\002 \001(\tR\005alias\0222\n\024num_pend" +
-      "ing_channels\030\003 \001(\rR\024num_pending_channels" +
-      "\0220\n\023num_active_channels\030\004 \001(\rR\023num_activ" +
-      "e_channels\022\034\n\tnum_peers\030\005 \001(\rR\tnum_peers" +
-      "\022\"\n\014block_height\030\006 \001(\rR\014block_height\022\036\n\n" +
-      "block_hash\030\010 \001(\tR\nblock_hash\022(\n\017synced_t" +
-      "o_chain\030\t \001(\010R\017synced_to_chain\022\034\n\007testne" +
-      "t\030\n \001(\010B\002\030\001R\007testnet\022\022\n\004uris\030\014 \003(\tR\004uris" +
-      "\0224\n\025best_header_timestamp\030\r \001(\003R\025best_he" +
-      "ader_timestamp\022\030\n\007version\030\016 \001(\tR\007version" +
-      "\0224\n\025num_inactive_channels\030\017 \001(\rR\025num_ina" +
-      "ctive_channels\022$\n\006chains\030\020 \003(\0132\014.lnrpc.C" +
-      "hainR\006chainsJ\004\010\013\020\014\"7\n\005Chain\022\024\n\005chain\030\001 \001" +
-      "(\tR\005chain\022\030\n\007network\030\002 \001(\tR\007network\"U\n\022C" +
-      "onfirmationUpdate\022\021\n\tblock_sha\030\001 \001(\014\022\024\n\014" +
-      "block_height\030\002 \001(\005\022\026\n\016num_confs_left\030\003 \001" +
-      "(\r\"N\n\021ChannelOpenUpdate\0229\n\rchannel_point" +
-      "\030\001 \001(\0132\023.lnrpc.ChannelPointR\rchannel_poi" +
-      "nt\"R\n\022ChannelCloseUpdate\022\"\n\014closing_txid" +
-      "\030\001 \001(\014R\014closing_txid\022\030\n\007success\030\002 \001(\010R\007s" +
-      "uccess\"{\n\023CloseChannelRequest\022*\n\rchannel" +
-      "_point\030\001 \001(\0132\023.lnrpc.ChannelPoint\022\r\n\005for" +
-      "ce\030\002 \001(\010\022\023\n\013target_conf\030\003 \001(\005\022\024\n\014sat_per" +
-      "_byte\030\004 \001(\003\"\230\001\n\021CloseStatusUpdate\022<\n\rclo" +
-      "se_pending\030\001 \001(\0132\024.lnrpc.PendingUpdateH\000" +
-      "R\rclose_pending\022;\n\nchan_close\030\003 \001(\0132\031.ln" +
-      "rpc.ChannelCloseUpdateH\000R\nchan_closeB\010\n\006" +
-      "update\"G\n\rPendingUpdate\022\022\n\004txid\030\001 \001(\014R\004t" +
-      "xid\022\"\n\014output_index\030\002 \001(\rR\014output_index\"" +
-      "\231\003\n\022OpenChannelRequest\022 \n\013node_pubkey\030\002 " +
-      "\001(\014R\013node_pubkey\022.\n\022node_pubkey_string\030\003" +
-      " \001(\tR\022node_pubkey_string\0222\n\024local_fundin" +
-      "g_amount\030\004 \001(\003R\024local_funding_amount\022\032\n\010" +
-      "push_sat\030\005 \001(\003R\010push_sat\022\023\n\013target_conf\030" +
-      "\006 \001(\005\022\024\n\014sat_per_byte\030\007 \001(\003\022\030\n\007private\030\010" +
-      " \001(\010R\007private\022$\n\rmin_htlc_msat\030\t \001(\003R\rmi" +
-      "n_htlc_msat\022*\n\020remote_csv_delay\030\n \001(\rR\020r" +
-      "emote_csv_delay\022\034\n\tmin_confs\030\013 \001(\005R\tmin_" +
-      "confs\022,\n\021spend_unconfirmed\030\014 \001(\010R\021spend_" +
-      "unconfirmed\"\222\001\n\020OpenStatusUpdate\022:\n\014chan" +
-      "_pending\030\001 \001(\0132\024.lnrpc.PendingUpdateH\000R\014" +
-      "chan_pending\0228\n\tchan_open\030\003 \001(\0132\030.lnrpc." +
-      "ChannelOpenUpdateH\000R\tchan_openB\010\n\006update" +
-      "\"\317\001\n\013PendingHTLC\022\032\n\010incoming\030\001 \001(\010R\010inco" +
-      "ming\022\026\n\006amount\030\002 \001(\003R\006amount\022\032\n\010outpoint" +
-      "\030\003 \001(\tR\010outpoint\022(\n\017maturity_height\030\004 \001(" +
-      "\rR\017maturity_height\0220\n\023blocks_til_maturit" +
-      "y\030\005 \001(\005R\023blocks_til_maturity\022\024\n\005stage\030\006 " +
-      "\001(\rR\005stage\"\030\n\026PendingChannelsRequest\"\252\014\n" +
-      "\027PendingChannelsResponse\0220\n\023total_limbo_" +
-      "balance\030\001 \001(\003R\023total_limbo_balance\022g\n\025pe" +
-      "nding_open_channels\030\002 \003(\01321.lnrpc.Pendin" +
-      "gChannelsResponse.PendingOpenChannelR\025pe" +
-      "nding_open_channels\022h\n\030pending_closing_c" +
-      "hannels\030\003 \003(\0132,.lnrpc.PendingChannelsRes" +
-      "ponse.ClosedChannelR\030pending_closing_cha" +
-      "nnels\022y\n\036pending_force_closing_channels\030" +
-      "\004 \003(\01321.lnrpc.PendingChannelsResponse.Fo" +
-      "rceClosedChannelR\036pending_force_closing_" +
-      "channels\022j\n\026waiting_close_channels\030\005 \003(\013" +
-      "22.lnrpc.PendingChannelsResponse.Waiting" +
-      "CloseChannelR\026waiting_close_channels\032\312\001\n" +
-      "\016PendingChannel\022(\n\017remote_node_pub\030\001 \001(\t" +
-      "R\017remote_node_pub\022$\n\rchannel_point\030\002 \001(\t" +
-      "R\rchannel_point\022\032\n\010capacity\030\003 \001(\003R\010capac" +
-      "ity\022$\n\rlocal_balance\030\004 \001(\003R\rlocal_balanc" +
-      "e\022&\n\016remote_balance\030\005 \001(\003R\016remote_balanc" +
-      "e\032\365\001\n\022PendingOpenChannel\022G\n\007channel\030\001 \001(" +
-      "\0132-.lnrpc.PendingChannelsResponse.Pendin" +
-      "gChannelR\007channel\0220\n\023confirmation_height" +
-      "\030\002 \001(\rR\023confirmation_height\022\036\n\ncommit_fe" +
-      "e\030\004 \001(\003R\ncommit_fee\022$\n\rcommit_weight\030\005 \001" +
-      "(\003R\rcommit_weight\022\036\n\nfee_per_kw\030\006 \001(\003R\nf" +
-      "ee_per_kw\032{\n\023WaitingCloseChannel\022>\n\007chan" +
-      "nel\030\001 \001(\0132-.lnrpc.PendingChannelsRespons" +
-      "e.PendingChannel\022$\n\rlimbo_balance\030\002 \001(\003R" +
-      "\rlimbo_balance\032s\n\rClosedChannel\022>\n\007chann" +
-      "el\030\001 \001(\0132-.lnrpc.PendingChannelsResponse" +
-      ".PendingChannel\022\"\n\014closing_txid\030\002 \001(\tR\014c" +
-      "losing_txid\032\353\002\n\022ForceClosedChannel\022G\n\007ch" +
-      "annel\030\001 \001(\0132-.lnrpc.PendingChannelsRespo" +
-      "nse.PendingChannelR\007channel\022\"\n\014closing_t" +
-      "xid\030\002 \001(\tR\014closing_txid\022$\n\rlimbo_balance" +
-      "\030\003 \001(\003R\rlimbo_balance\022(\n\017maturity_height" +
-      "\030\004 \001(\rR\017maturity_height\0220\n\023blocks_til_ma" +
-      "turity\030\005 \001(\005R\023blocks_til_maturity\022,\n\021rec" +
-      "overed_balance\030\006 \001(\003R\021recovered_balance\022" +
-      "8\n\rpending_htlcs\030\010 \003(\0132\022.lnrpc.PendingHT" +
-      "LCR\rpending_htlcs\"\026\n\024WalletBalanceReques" +
-      "t\"\235\001\n\025WalletBalanceResponse\022$\n\rtotal_bal" +
-      "ance\030\001 \001(\003R\rtotal_balance\022,\n\021confirmed_b" +
-      "alance\030\002 \001(\003R\021confirmed_balance\0220\n\023uncon" +
-      "firmed_balance\030\003 \001(\003R\023unconfirmed_balanc" +
-      "e\"\027\n\025ChannelBalanceRequest\"f\n\026ChannelBal" +
-      "anceResponse\022\030\n\007balance\030\001 \001(\003R\007balance\0222" +
-      "\n\024pending_open_balance\030\002 \001(\003R\024pending_op" +
-      "en_balance\"\204\001\n\022QueryRoutesRequest\022\017\n\007pub" +
-      "_key\030\001 \001(\t\022\013\n\003amt\030\002 \001(\003\022\022\n\nnum_routes\030\003 " +
-      "\001(\005\022\030\n\020final_cltv_delta\030\004 \001(\005\022\"\n\tfee_lim" +
-      "it\030\005 \001(\0132\017.lnrpc.FeeLimit\";\n\023QueryRoutes" +
-      "Response\022$\n\006routes\030\001 \003(\0132\014.lnrpc.RouteR\006" +
-      "routes\"\207\002\n\003Hop\022\030\n\007chan_id\030\001 \001(\004R\007chan_id" +
-      "\022$\n\rchan_capacity\030\002 \001(\003R\rchan_capacity\022*" +
-      "\n\016amt_to_forward\030\003 \001(\003B\002\030\001R\016amt_to_forwa" +
-      "rd\022\024\n\003fee\030\004 \001(\003B\002\030\001R\003fee\022\026\n\006expiry\030\005 \001(\r" +
-      "R\006expiry\0220\n\023amt_to_forward_msat\030\006 \001(\003R\023a" +
-      "mt_to_forward_msat\022\032\n\010fee_msat\030\007 \001(\003R\010fe" +
-      "e_msat\022\030\n\007pub_key\030\010 \001(\tR\007pub_key\"\351\001\n\005Rou" +
-      "te\022(\n\017total_time_lock\030\001 \001(\rR\017total_time_" +
-      "lock\022\"\n\ntotal_fees\030\002 \001(\003B\002\030\001R\ntotal_fees" +
-      "\022 \n\ttotal_amt\030\003 \001(\003B\002\030\001R\ttotal_amt\022\036\n\004ho" +
-      "ps\030\004 \003(\0132\n.lnrpc.HopR\004hops\022(\n\017total_fees" +
-      "_msat\030\005 \001(\003R\017total_fees_msat\022&\n\016total_am" +
-      "t_msat\030\006 \001(\003R\016total_amt_msat\"\"\n\017NodeInfo" +
-      "Request\022\017\n\007pub_key\030\001 \001(\t\"\200\001\n\010NodeInfo\022(\n" +
-      "\004node\030\001 \001(\0132\024.lnrpc.LightningNodeR\004node\022" +
-      "\"\n\014num_channels\030\002 \001(\rR\014num_channels\022&\n\016t" +
-      "otal_capacity\030\003 \001(\003R\016total_capacity\"\251\001\n\r" +
-      "LightningNode\022 \n\013last_update\030\001 \001(\rR\013last" +
-      "_update\022\030\n\007pub_key\030\002 \001(\tR\007pub_key\022\024\n\005ali" +
-      "as\030\003 \001(\tR\005alias\0220\n\taddresses\030\004 \003(\0132\022.lnr" +
-      "pc.NodeAddressR\taddresses\022\024\n\005color\030\005 \001(\t" +
-      "R\005color\";\n\013NodeAddress\022\030\n\007network\030\001 \001(\tR" +
-      "\007network\022\022\n\004addr\030\002 \001(\tR\004addr\"\311\001\n\rRouting" +
-      "Policy\022(\n\017time_lock_delta\030\001 \001(\rR\017time_lo" +
-      "ck_delta\022\032\n\010min_htlc\030\002 \001(\003R\010min_htlc\022$\n\r" +
-      "fee_base_msat\030\003 \001(\003R\rfee_base_msat\0220\n\023fe" +
-      "e_rate_milli_msat\030\004 \001(\003R\023fee_rate_milli_" +
-      "msat\022\032\n\010disabled\030\005 \001(\010R\010disabled\"\273\002\n\013Cha" +
-      "nnelEdge\022\036\n\nchannel_id\030\001 \001(\004R\nchannel_id" +
-      "\022\036\n\nchan_point\030\002 \001(\tR\nchan_point\022 \n\013last" +
-      "_update\030\003 \001(\rR\013last_update\022\034\n\tnode1_pub\030" +
-      "\004 \001(\tR\tnode1_pub\022\034\n\tnode2_pub\030\005 \001(\tR\tnod" +
-      "e2_pub\022\032\n\010capacity\030\006 \001(\003R\010capacity\0228\n\014no" +
-      "de1_policy\030\007 \001(\0132\024.lnrpc.RoutingPolicyR\014" +
-      "node1_policy\0228\n\014node2_policy\030\010 \001(\0132\024.lnr" +
-      "pc.RoutingPolicyR\014node2_policy\"G\n\023Channe" +
-      "lGraphRequest\0220\n\023include_unannounced\030\001 \001" +
-      "(\010R\023include_unannounced\"d\n\014ChannelGraph\022" +
-      "*\n\005nodes\030\001 \003(\0132\024.lnrpc.LightningNodeR\005no" +
-      "des\022(\n\005edges\030\002 \003(\0132\022.lnrpc.ChannelEdgeR\005" +
-      "edges\"\"\n\017ChanInfoRequest\022\017\n\007chan_id\030\001 \001(" +
-      "\004\"\024\n\022NetworkInfoRequest\"\203\003\n\013NetworkInfo\022" +
-      "&\n\016graph_diameter\030\001 \001(\rR\016graph_diameter\022" +
-      "&\n\016avg_out_degree\030\002 \001(\001R\016avg_out_degree\022" +
-      "&\n\016max_out_degree\030\003 \001(\rR\016max_out_degree\022" +
-      "\034\n\tnum_nodes\030\004 \001(\rR\tnum_nodes\022\"\n\014num_cha" +
-      "nnels\030\005 \001(\rR\014num_channels\0226\n\026total_netwo" +
-      "rk_capacity\030\006 \001(\003R\026total_network_capacit" +
-      "y\022*\n\020avg_channel_size\030\007 \001(\001R\020avg_channel" +
-      "_size\022*\n\020min_channel_size\030\010 \001(\003R\020min_cha" +
-      "nnel_size\022*\n\020max_channel_size\030\t \001(\003R\020max" +
-      "_channel_size\"\r\n\013StopRequest\"\016\n\014StopResp" +
-      "onse\"\033\n\031GraphTopologySubscription\"\243\001\n\023Gr" +
-      "aphTopologyUpdate\022\'\n\014node_updates\030\001 \003(\0132" +
-      "\021.lnrpc.NodeUpdate\0221\n\017channel_updates\030\002 " +
-      "\003(\0132\030.lnrpc.ChannelEdgeUpdate\0220\n\014closed_" +
-      "chans\030\003 \003(\0132\032.lnrpc.ClosedChannelUpdate\"" +
-      "]\n\nNodeUpdate\022\021\n\taddresses\030\001 \003(\t\022\024\n\014iden" +
-      "tity_key\030\002 \001(\t\022\027\n\017global_features\030\003 \001(\014\022" +
-      "\r\n\005alias\030\004 \001(\t\"\300\001\n\021ChannelEdgeUpdate\022\017\n\007" +
-      "chan_id\030\001 \001(\004\022\'\n\nchan_point\030\002 \001(\0132\023.lnrp" +
-      "c.ChannelPoint\022\020\n\010capacity\030\003 \001(\003\022,\n\016rout" +
-      "ing_policy\030\004 \001(\0132\024.lnrpc.RoutingPolicy\022\030" +
-      "\n\020advertising_node\030\005 \001(\t\022\027\n\017connecting_n" +
-      "ode\030\006 \001(\t\"x\n\023ClosedChannelUpdate\022\017\n\007chan" +
-      "_id\030\001 \001(\004\022\020\n\010capacity\030\002 \001(\003\022\025\n\rclosed_he" +
-      "ight\030\003 \001(\r\022\'\n\nchan_point\030\004 \001(\0132\023.lnrpc.C" +
-      "hannelPoint\"\323\001\n\007HopHint\022\030\n\007node_id\030\001 \001(\t" +
-      "R\007node_id\022\030\n\007chan_id\030\002 \001(\004R\007chan_id\022$\n\rf" +
-      "ee_base_msat\030\003 \001(\rR\rfee_base_msat\022@\n\033fee" +
-      "_proportional_millionths\030\004 \001(\rR\033fee_prop" +
-      "ortional_millionths\022,\n\021cltv_expiry_delta" +
-      "\030\005 \001(\rR\021cltv_expiry_delta\"9\n\tRouteHint\022," +
-      "\n\thop_hints\030\001 \003(\0132\016.lnrpc.HopHintR\thop_h" +
-      "ints\"\371\005\n\007Invoice\022\022\n\004memo\030\001 \001(\tR\004memo\022\034\n\007" +
-      "receipt\030\002 \001(\014B\002\030\001R\007receipt\022\036\n\nr_preimage" +
-      "\030\003 \001(\014R\nr_preimage\022\026\n\006r_hash\030\004 \001(\014R\006r_ha" +
-      "sh\022\024\n\005value\030\005 \001(\003R\005value\022\034\n\007settled\030\006 \001(" +
-      "\010B\002\030\001R\007settled\022$\n\rcreation_date\030\007 \001(\003R\rc" +
-      "reation_date\022 \n\013settle_date\030\010 \001(\003R\013settl" +
-      "e_date\022(\n\017payment_request\030\t \001(\tR\017payment" +
-      "_request\022*\n\020description_hash\030\n \001(\014R\020desc" +
-      "ription_hash\022\026\n\006expiry\030\013 \001(\003R\006expiry\022$\n\r" +
-      "fallback_addr\030\014 \001(\tR\rfallback_addr\022 \n\013cl" +
-      "tv_expiry\030\r \001(\004R\013cltv_expiry\0222\n\013route_hi" +
-      "nts\030\016 \003(\0132\020.lnrpc.RouteHintR\013route_hints" +
-      "\022\030\n\007private\030\017 \001(\010R\007private\022\034\n\tadd_index\030" +
-      "\020 \001(\004R\tadd_index\022\"\n\014settle_index\030\021 \001(\004R\014" +
-      "settle_index\022\036\n\010amt_paid\030\022 \001(\003B\002\030\001R\010amt_" +
-      "paid\022\"\n\014amt_paid_sat\030\023 \001(\003R\014amt_paid_sat" +
-      "\022$\n\ramt_paid_msat\030\024 \001(\003R\ramt_paid_msat\0221" +
-      "\n\005state\030\025 \001(\0162\033.lnrpc.Invoice.InvoiceSta" +
-      "teR\005state\"%\n\014InvoiceState\022\010\n\004OPEN\020\000\022\013\n\007S" +
-      "ETTLED\020\001\"t\n\022AddInvoiceResponse\022\026\n\006r_hash" +
-      "\030\001 \001(\014R\006r_hash\022(\n\017payment_request\030\002 \001(\tR" +
-      "\017payment_request\022\034\n\tadd_index\030\020 \001(\004R\tadd" +
-      "_index\"E\n\013PaymentHash\022\036\n\nr_hash_str\030\001 \001(" +
-      "\tR\nr_hash_str\022\026\n\006r_hash\030\002 \001(\014R\006r_hash\"\244\001" +
-      "\n\022ListInvoiceRequest\022\"\n\014pending_only\030\001 \001" +
-      "(\010R\014pending_only\022\"\n\014index_offset\030\004 \001(\004R\014" +
-      "index_offset\022*\n\020num_max_invoices\030\005 \001(\004R\020" +
-      "num_max_invoices\022\032\n\010reversed\030\006 \001(\010R\010reve" +
-      "rsed\"\237\001\n\023ListInvoiceResponse\022*\n\010invoices" +
-      "\030\001 \003(\0132\016.lnrpc.InvoiceR\010invoices\022,\n\021last" +
-      "_index_offset\030\002 \001(\004R\021last_index_offset\022." +
-      "\n\022first_index_offset\030\003 \001(\004R\022first_index_" +
-      "offset\"W\n\023InvoiceSubscription\022\034\n\tadd_ind" +
-      "ex\030\001 \001(\004R\tadd_index\022\"\n\014settle_index\030\002 \001(" +
-      "\004R\014settle_index\"\375\001\n\007Payment\022\"\n\014payment_h" +
-      "ash\030\001 \001(\tR\014payment_hash\022\030\n\005value\030\002 \001(\003B\002" +
-      "\030\001R\005value\022$\n\rcreation_date\030\003 \001(\003R\rcreati" +
-      "on_date\022\022\n\004path\030\004 \003(\tR\004path\022\020\n\003fee\030\005 \001(\003" +
-      "R\003fee\022*\n\020payment_preimage\030\006 \001(\tR\020payment" +
-      "_preimage\022\034\n\tvalue_sat\030\007 \001(\003R\tvalue_sat\022" +
-      "\036\n\nvalue_msat\030\010 \001(\003R\nvalue_msat\"\025\n\023ListP" +
-      "aymentsRequest\"B\n\024ListPaymentsResponse\022*" +
-      "\n\010payments\030\001 \003(\0132\016.lnrpc.PaymentR\010paymen" +
-      "ts\"\032\n\030DeleteAllPaymentsRequest\"\033\n\031Delete" +
-      "AllPaymentsResponse\"C\n\025AbandonChannelReq" +
-      "uest\022*\n\rchannel_point\030\001 \001(\0132\023.lnrpc.Chan" +
-      "nelPoint\"\030\n\026AbandonChannelResponse\"5\n\021De" +
-      "bugLevelRequest\022\014\n\004show\030\001 \001(\010\022\022\n\nlevel_s" +
-      "pec\030\002 \001(\t\"6\n\022DebugLevelResponse\022 \n\013sub_s" +
-      "ystems\030\001 \001(\tR\013sub_systems\"\037\n\014PayReqStrin" +
-      "g\022\017\n\007pay_req\030\001 \001(\t\"\362\002\n\006PayReq\022 \n\013destina" +
-      "tion\030\001 \001(\tR\013destination\022\"\n\014payment_hash\030" +
-      "\002 \001(\tR\014payment_hash\022\"\n\014num_satoshis\030\003 \001(" +
-      "\003R\014num_satoshis\022\034\n\ttimestamp\030\004 \001(\003R\ttime" +
-      "stamp\022\026\n\006expiry\030\005 \001(\003R\006expiry\022 \n\013descrip" +
-      "tion\030\006 \001(\tR\013description\022*\n\020description_h" +
-      "ash\030\007 \001(\tR\020description_hash\022$\n\rfallback_" +
-      "addr\030\010 \001(\tR\rfallback_addr\022 \n\013cltv_expiry" +
-      "\030\t \001(\003R\013cltv_expiry\0222\n\013route_hints\030\n \003(\013" +
-      "2\020.lnrpc.RouteHintR\013route_hints\"\022\n\020FeeRe" +
-      "portRequest\"\231\001\n\020ChannelFeeReport\022!\n\nchan" +
-      "_point\030\001 \001(\tR\rchannel_point\022$\n\rbase_fee_" +
-      "msat\030\002 \001(\003R\rbase_fee_msat\022 \n\013fee_per_mil" +
-      "\030\003 \001(\003R\013fee_per_mil\022\032\n\010fee_rate\030\004 \001(\001R\010f" +
-      "ee_rate\"\274\001\n\021FeeReportResponse\022;\n\014channel" +
-      "_fees\030\001 \003(\0132\027.lnrpc.ChannelFeeReportR\014ch" +
-      "annel_fees\022 \n\013day_fee_sum\030\002 \001(\004R\013day_fee" +
-      "_sum\022\"\n\014week_fee_sum\030\003 \001(\004R\014week_fee_sum" +
-      "\022$\n\rmonth_fee_sum\030\004 \001(\004R\rmonth_fee_sum\"\333" +
-      "\001\n\023PolicyUpdateRequest\022\030\n\006global\030\001 \001(\010H\000" +
-      "R\006global\0225\n\nchan_point\030\002 \001(\0132\023.lnrpc.Cha" +
-      "nnelPointH\000R\nchan_point\022$\n\rbase_fee_msat" +
-      "\030\003 \001(\003R\rbase_fee_msat\022\032\n\010fee_rate\030\004 \001(\001R" +
-      "\010fee_rate\022(\n\017time_lock_delta\030\005 \001(\rR\017time" +
-      "_lock_deltaB\007\n\005scope\"\026\n\024PolicyUpdateResp" +
-      "onse\"\242\001\n\030ForwardingHistoryRequest\022\036\n\nsta" +
-      "rt_time\030\001 \001(\004R\nstart_time\022\032\n\010end_time\030\002 " +
-      "\001(\004R\010end_time\022\"\n\014index_offset\030\003 \001(\rR\014ind" +
-      "ex_offset\022&\n\016num_max_events\030\004 \001(\rR\016num_m" +
-      "ax_events\"\321\001\n\017ForwardingEvent\022\034\n\ttimesta" +
-      "mp\030\001 \001(\004R\ttimestamp\022\036\n\nchan_id_in\030\002 \001(\004R" +
-      "\nchan_id_in\022 \n\013chan_id_out\030\004 \001(\004R\013chan_i" +
-      "d_out\022\026\n\006amt_in\030\005 \001(\004R\006amt_in\022\030\n\007amt_out" +
-      "\030\006 \001(\004R\007amt_out\022\020\n\003fee\030\007 \001(\004R\003fee\022\032\n\010fee" +
-      "_msat\030\010 \001(\004R\010fee_msat\"\217\001\n\031ForwardingHist" +
-      "oryResponse\022D\n\021forwarding_events\030\001 \003(\0132\026" +
-      ".lnrpc.ForwardingEventR\021forwarding_event" +
-      "s\022,\n\021last_offset_index\030\002 \001(\rR\021last_offse" +
-      "t_index*>\n\013AddressType\022\027\n\023WITNESS_PUBKEY" +
-      "_HASH\020\000\022\026\n\022NESTED_PUBKEY_HASH\020\0012\221\003\n\016Wall" +
-      "etUnlocker\022M\n\007GenSeed\022\025.lnrpc.GenSeedReq" +
-      "uest\032\026.lnrpc.GenSeedResponse\"\023\202\323\344\223\002\r\022\013/v" +
-      "1/genseed\022\\\n\nInitWallet\022\030.lnrpc.InitWall" +
-      "etRequest\032\031.lnrpc.InitWalletResponse\"\031\202\323" +
-      "\344\223\002\023\"\016/v1/initwallet:\001*\022d\n\014UnlockWallet\022" +
-      "\032.lnrpc.UnlockWalletRequest\032\033.lnrpc.Unlo" +
-      "ckWalletResponse\"\033\202\323\344\223\002\025\"\020/v1/unlockwall",
-      "et:\001*\022l\n\016ChangePassword\022\034.lnrpc.ChangePa" +
-      "sswordRequest\032\035.lnrpc.ChangePasswordResp" +
-      "onse\"\035\202\323\344\223\002\027\"\022/v1/changepassword:\001*2\356\037\n\t" +
-      "Lightning\022j\n\rWalletBalance\022\033.lnrpc.Walle" +
-      "tBalanceRequest\032\034.lnrpc.WalletBalanceRes" +
-      "ponse\"\036\202\323\344\223\002\030\022\026/v1/balance/blockchain\022k\n" +
-      "\016ChannelBalance\022\034.lnrpc.ChannelBalanceRe" +
-      "quest\032\035.lnrpc.ChannelBalanceResponse\"\034\202\323" +
-      "\344\223\002\026\022\024/v1/balance/channels\022e\n\017GetTransac" +
-      "tions\022\035.lnrpc.GetTransactionsRequest\032\031.l" +
-      "nrpc.TransactionDetails\"\030\202\323\344\223\002\022\022\020/v1/tra" +
-      "nsactions\022[\n\tSendCoins\022\027.lnrpc.SendCoins" +
-      "Request\032\030.lnrpc.SendCoinsResponse\"\033\202\323\344\223\002" +
-      "\025\"\020/v1/transactions:\001*\022W\n\013ListUnspent\022\031." +
-      "lnrpc.ListUnspentRequest\032\032.lnrpc.ListUns" +
-      "pentResponse\"\021\202\323\344\223\002\013\022\t/v1/utxos\022L\n\025Subsc" +
-      "ribeTransactions\022\035.lnrpc.GetTransactions" +
-      "Request\032\022.lnrpc.Transaction0\001\022;\n\010SendMan" +
-      "y\022\026.lnrpc.SendManyRequest\032\027.lnrpc.SendMa" +
-      "nyResponse\022Y\n\nNewAddress\022\030.lnrpc.NewAddr" +
-      "essRequest\032\031.lnrpc.NewAddressResponse\"\026\202" +
-      "\323\344\223\002\020\022\016/v1/newaddress\022`\n\013SignMessage\022\031.l" +
-      "nrpc.SignMessageRequest\032\032.lnrpc.SignMess" +
-      "ageResponse\"\032\202\323\344\223\002\024\"\017/v1/signmessage:\001*\022" +
-      "h\n\rVerifyMessage\022\033.lnrpc.VerifyMessageRe" +
-      "quest\032\034.lnrpc.VerifyMessageResponse\"\034\202\323\344" +
-      "\223\002\026\"\021/v1/verifymessage:\001*\022Z\n\013ConnectPeer" +
-      "\022\031.lnrpc.ConnectPeerRequest\032\032.lnrpc.Conn" +
-      "ectPeerResponse\"\024\202\323\344\223\002\016\"\t/v1/peers:\001*\022j\n" +
-      "\016DisconnectPeer\022\034.lnrpc.DisconnectPeerRe" +
-      "quest\032\035.lnrpc.DisconnectPeerResponse\"\033\202\323" +
-      "\344\223\002\025*\023/v1/peers/{pub_key}\022Q\n\tListPeers\022\027" +
-      ".lnrpc.ListPeersRequest\032\030.lnrpc.ListPeer" +
-      "sResponse\"\021\202\323\344\223\002\013\022\t/v1/peers\022M\n\007GetInfo\022" +
-      "\025.lnrpc.GetInfoRequest\032\026.lnrpc.GetInfoRe" +
-      "sponse\"\023\202\323\344\223\002\r\022\013/v1/getinfo\022n\n\017PendingCh" +
-      "annels\022\035.lnrpc.PendingChannelsRequest\032\036." +
-      "lnrpc.PendingChannelsResponse\"\034\202\323\344\223\002\026\022\024/" +
-      "v1/channels/pending\022]\n\014ListChannels\022\032.ln" +
-      "rpc.ListChannelsRequest\032\033.lnrpc.ListChan" +
-      "nelsResponse\"\024\202\323\344\223\002\016\022\014/v1/channels\022j\n\016Cl" +
-      "osedChannels\022\034.lnrpc.ClosedChannelsReque" +
-      "st\032\035.lnrpc.ClosedChannelsResponse\"\033\202\323\344\223\002" +
-      "\025\022\023/v1/channels/closed\022Z\n\017OpenChannelSyn" +
-      "c\022\031.lnrpc.OpenChannelRequest\032\023.lnrpc.Cha" +
-      "nnelPoint\"\027\202\323\344\223\002\021\"\014/v1/channels:\001*\022C\n\013Op" +
-      "enChannel\022\031.lnrpc.OpenChannelRequest\032\027.l" +
-      "nrpc.OpenStatusUpdate0\001\022\232\001\n\014CloseChannel" +
-      "\022\032.lnrpc.CloseChannelRequest\032\030.lnrpc.Clo" +
-      "seStatusUpdate\"R\202\323\344\223\002L*J/v1/channels/{ch" +
-      "annel_point.funding_txid_str}/{channel_p" +
-      "oint.output_index}0\001\022\251\001\n\016AbandonChannel\022" +
-      "\034.lnrpc.AbandonChannelRequest\032\035.lnrpc.Ab" +
-      "andonChannelResponse\"Z\202\323\344\223\002T*R/v1/channe" +
-      "ls/abandon/{channel_point.funding_txid_s" +
-      "tr}/{channel_point.output_index}\022:\n\013Send" +
-      "Payment\022\022.lnrpc.SendRequest\032\023.lnrpc.Send" +
-      "Response(\0010\001\022`\n\017SendPaymentSync\022\022.lnrpc." +
-      "SendRequest\032\023.lnrpc.SendResponse\"$\202\323\344\223\002\036" +
-      "\"\031/v1/channels/transactions:\001*\022A\n\013SendTo" +
-      "Route\022\031.lnrpc.SendToRouteRequest\032\023.lnrpc" +
-      ".SendResponse(\0010\001\022m\n\017SendToRouteSync\022\031.l" +
-      "nrpc.SendToRouteRequest\032\023.lnrpc.SendResp" +
-      "onse\"*\202\323\344\223\002$\"\037/v1/channels/transactions/" +
-      "route:\001*\022P\n\nAddInvoice\022\016.lnrpc.Invoice\032\031" +
-      ".lnrpc.AddInvoiceResponse\"\027\202\323\344\223\002\021\"\014/v1/i" +
-      "nvoices:\001*\022[\n\014ListInvoices\022\031.lnrpc.ListI" +
-      "nvoiceRequest\032\032.lnrpc.ListInvoiceRespons" +
-      "e\"\024\202\323\344\223\002\016\022\014/v1/invoices\022U\n\rLookupInvoice" +
-      "\022\022.lnrpc.PaymentHash\032\016.lnrpc.Invoice\" \202\323" +
-      "\344\223\002\032\022\030/v1/invoice/{r_hash_str}\022a\n\021Subscr" +
-      "ibeInvoices\022\032.lnrpc.InvoiceSubscription\032" +
-      "\016.lnrpc.Invoice\"\036\202\323\344\223\002\030\022\026/v1/invoices/su" +
-      "bscribe0\001\022P\n\014DecodePayReq\022\023.lnrpc.PayReq" +
-      "String\032\r.lnrpc.PayReq\"\034\202\323\344\223\002\026\022\024/v1/payre" +
-      "q/{pay_req}\022]\n\014ListPayments\022\032.lnrpc.List" +
-      "PaymentsRequest\032\033.lnrpc.ListPaymentsResp" +
-      "onse\"\024\202\323\344\223\002\016\022\014/v1/payments\022l\n\021DeleteAllP" +
-      "ayments\022\037.lnrpc.DeleteAllPaymentsRequest" +
-      "\032 .lnrpc.DeleteAllPaymentsResponse\"\024\202\323\344\223" +
-      "\002\016*\014/v1/payments\022S\n\rDescribeGraph\022\032.lnrp" +
-      "c.ChannelGraphRequest\032\023.lnrpc.ChannelGra" +
-      "ph\"\021\202\323\344\223\002\013\022\t/v1/graph\022[\n\013GetChanInfo\022\026.l" +
-      "nrpc.ChanInfoRequest\032\022.lnrpc.ChannelEdge" +
-      "\" \202\323\344\223\002\032\022\030/v1/graph/edge/{chan_id}\022X\n\013Ge" +
-      "tNodeInfo\022\026.lnrpc.NodeInfoRequest\032\017.lnrp" +
-      "c.NodeInfo\" \202\323\344\223\002\032\022\030/v1/graph/node/{pub_" +
-      "key}\022n\n\013QueryRoutes\022\031.lnrpc.QueryRoutesR" +
-      "equest\032\032.lnrpc.QueryRoutesResponse\"(\202\323\344\223" +
-      "\002\"\022 /v1/graph/routes/{pub_key}/{amt}\022W\n\016" +
-      "GetNetworkInfo\022\031.lnrpc.NetworkInfoReques" +
-      "t\032\022.lnrpc.NetworkInfo\"\026\202\323\344\223\002\020\022\016/v1/graph" +
-      "/info\0225\n\nStopDaemon\022\022.lnrpc.StopRequest\032" +
-      "\023.lnrpc.StopResponse\022W\n\025SubscribeChannel" +
-      "Graph\022 .lnrpc.GraphTopologySubscription\032" +
-      "\032.lnrpc.GraphTopologyUpdate0\001\022A\n\nDebugLe" +
-      "vel\022\030.lnrpc.DebugLevelRequest\032\031.lnrpc.De" +
-      "bugLevelResponse\022P\n\tFeeReport\022\027.lnrpc.Fe" +
-      "eReportRequest\032\030.lnrpc.FeeReportResponse" +
-      "\"\020\202\323\344\223\002\n\022\010/v1/fees\022i\n\023UpdateChannelPolic" +
-      "y\022\032.lnrpc.PolicyUpdateRequest\032\033.lnrpc.Po" +
-      "licyUpdateResponse\"\031\202\323\344\223\002\023\"\016/v1/chanpoli" +
-      "cy:\001*\022m\n\021ForwardingHistory\022\037.lnrpc.Forwa" +
-      "rdingHistoryRequest\032 .lnrpc.ForwardingHi" +
-      "storyResponse\"\025\202\323\344\223\002\017\"\n/v1/switch:\001*B\'Z%" +
-      "github.com/lightningnetwork/lnd/lnrpcb\006p" +
-      "roto3"
+      " \003(\t\022\027\n\017enciphered_seed\030\002 \001(\014\"\262\001\n\021InitWa" +
+      "lletRequest\022\027\n\017wallet_password\030\001 \001(\014\022\034\n\024" +
+      "cipher_seed_mnemonic\030\002 \003(\t\022\031\n\021aezeed_pas" +
+      "sphrase\030\003 \001(\014\022\027\n\017recovery_window\030\004 \001(\005\0222" +
+      "\n\017channel_backups\030\005 \001(\0132\031.lnrpc.ChanBack" +
+      "upSnapshot\"\024\n\022InitWalletResponse\"{\n\023Unlo" +
+      "ckWalletRequest\022\027\n\017wallet_password\030\001 \001(\014" +
+      "\022\027\n\017recovery_window\030\002 \001(\005\0222\n\017channel_bac" +
+      "kups\030\003 \001(\0132\031.lnrpc.ChanBackupSnapshot\"\026\n" +
+      "\024UnlockWalletResponse\"G\n\025ChangePasswordR" +
+      "equest\022\030\n\020current_password\030\001 \001(\014\022\024\n\014new_" +
+      "password\030\002 \001(\014\"\030\n\026ChangePasswordResponse" +
+      "\"\341\001\n\004Utxo\022.\n\004type\030\001 \001(\0162\022.lnrpc.AddressT" +
+      "ypeR\014address_type\022\030\n\007address\030\002 \001(\tR\007addr" +
+      "ess\022\036\n\namount_sat\030\003 \001(\003R\namount_sat\022\034\n\tp" +
+      "k_script\030\004 \001(\tR\tpk_script\022+\n\010outpoint\030\005 " +
+      "\001(\0132\017.lnrpc.OutPointR\010outpoint\022$\n\rconfir" +
+      "mations\030\006 \001(\003R\rconfirmations\"\231\002\n\013Transac" +
+      "tion\022\030\n\007tx_hash\030\001 \001(\tR\007tx_hash\022\026\n\006amount" +
+      "\030\002 \001(\003R\006amount\022,\n\021num_confirmations\030\003 \001(" +
+      "\005R\021num_confirmations\022\036\n\nblock_hash\030\004 \001(\t" +
+      "R\nblock_hash\022\"\n\014block_height\030\005 \001(\005R\014bloc" +
+      "k_height\022\036\n\ntime_stamp\030\006 \001(\003R\ntime_stamp" +
+      "\022\036\n\ntotal_fees\030\007 \001(\003R\ntotal_fees\022&\n\016dest" +
+      "_addresses\030\010 \003(\tR\016dest_addresses\"\030\n\026GetT" +
+      "ransactionsRequest\"L\n\022TransactionDetails" +
+      "\0226\n\014transactions\030\001 \003(\0132\022.lnrpc.Transacti" +
+      "onR\014transactions\"7\n\010FeeLimit\022\017\n\005fixed\030\001 " +
+      "\001(\003H\000\022\021\n\007percent\030\002 \001(\003H\000B\007\n\005limit\"\365\001\n\013Se" +
+      "ndRequest\022\014\n\004dest\030\001 \001(\014\022\023\n\013dest_string\030\002" +
+      " \001(\t\022\013\n\003amt\030\003 \001(\003\022\024\n\014payment_hash\030\004 \001(\014\022" +
+      "\033\n\023payment_hash_string\030\005 \001(\t\022\027\n\017payment_" +
+      "request\030\006 \001(\t\022\030\n\020final_cltv_delta\030\007 \001(\005\022" +
+      "\"\n\tfee_limit\030\010 \001(\0132\017.lnrpc.FeeLimit\022\030\n\020o" +
+      "utgoing_chan_id\030\t \001(\004\022\022\n\ncltv_limit\030\n \001(" +
+      "\r\"\270\001\n\014SendResponse\022$\n\rpayment_error\030\001 \001(" +
+      "\tR\rpayment_error\022*\n\020payment_preimage\030\002 \001" +
+      "(\014R\020payment_preimage\0222\n\rpayment_route\030\003 " +
+      "\001(\0132\014.lnrpc.RouteR\rpayment_route\022\"\n\014paym" +
+      "ent_hash\030\004 \001(\014R\014payment_hash\"\206\001\n\022SendToR" +
+      "outeRequest\022\024\n\014payment_hash\030\001 \001(\014\022\033\n\023pay" +
+      "ment_hash_string\030\002 \001(\t\022 \n\006routes\030\003 \003(\0132\014" +
+      ".lnrpc.RouteB\002\030\001\022\033\n\005route\030\004 \001(\0132\014.lnrpc." +
+      "Route\"\242\001\n\014ChannelPoint\0220\n\022funding_txid_b" +
+      "ytes\030\001 \001(\014H\000R\022funding_txid_bytes\022,\n\020fund" +
+      "ing_txid_str\030\002 \001(\tH\000R\020funding_txid_str\022\"" +
+      "\n\014output_index\030\003 \001(\rR\014output_indexB\016\n\014fu" +
+      "nding_txid\"j\n\010OutPoint\022\036\n\ntxid_bytes\030\001 \001" +
+      "(\014R\ntxid_bytes\022\032\n\010txid_str\030\002 \001(\tR\010txid_s" +
+      "tr\022\"\n\014output_index\030\003 \001(\rR\014output_index\">" +
+      "\n\020LightningAddress\022\026\n\006pubkey\030\001 \001(\tR\006pubk" +
+      "ey\022\022\n\004host\030\002 \001(\tR\004host\"\241\001\n\022EstimateFeeRe" +
+      "quest\022A\n\014AddrToAmount\030\001 \003(\0132+.lnrpc.Esti" +
+      "mateFeeRequest.AddrToAmountEntry\022\023\n\013targ" +
+      "et_conf\030\002 \001(\005\0323\n\021AddrToAmountEntry\022\013\n\003ke" +
+      "y\030\001 \001(\t\022\r\n\005value\030\002 \001(\003:\0028\001\"c\n\023EstimateFe" +
+      "eResponse\022\030\n\007fee_sat\030\001 \001(\003R\007fee_sat\0222\n\024f" +
+      "eerate_sat_per_byte\030\002 \001(\003R\024feerate_sat_p" +
+      "er_byte\"\261\001\n\017SendManyRequest\022>\n\014AddrToAmo" +
+      "unt\030\001 \003(\0132(.lnrpc.SendManyRequest.AddrTo" +
+      "AmountEntry\022\023\n\013target_conf\030\003 \001(\005\022\024\n\014sat_" +
+      "per_byte\030\005 \001(\003\0323\n\021AddrToAmountEntry\022\013\n\003k" +
+      "ey\030\001 \001(\t\022\r\n\005value\030\002 \001(\003:\0028\001\"&\n\020SendManyR" +
+      "esponse\022\022\n\004txid\030\001 \001(\tR\004txid\"m\n\020SendCoins" +
+      "Request\022\014\n\004addr\030\001 \001(\t\022\016\n\006amount\030\002 \001(\003\022\023\n" +
+      "\013target_conf\030\003 \001(\005\022\024\n\014sat_per_byte\030\005 \001(\003" +
+      "\022\020\n\010send_all\030\006 \001(\010\"\'\n\021SendCoinsResponse\022" +
+      "\022\n\004txid\030\001 \001(\tR\004txid\":\n\022ListUnspentReques" +
+      "t\022\021\n\tmin_confs\030\001 \001(\005\022\021\n\tmax_confs\030\002 \001(\005\"" +
+      "8\n\023ListUnspentResponse\022!\n\005utxos\030\001 \003(\0132\013." +
+      "lnrpc.UtxoR\005utxos\"5\n\021NewAddressRequest\022 " +
+      "\n\004type\030\001 \001(\0162\022.lnrpc.AddressType\".\n\022NewA" +
+      "ddressResponse\022\030\n\007address\030\001 \001(\tR\007address" +
+      "\"&\n\022SignMessageRequest\022\020\n\003msg\030\001 \001(\014R\003msg" +
+      "\"3\n\023SignMessageResponse\022\034\n\tsignature\030\001 \001" +
+      "(\tR\tsignature\"F\n\024VerifyMessageRequest\022\020\n" +
+      "\003msg\030\001 \001(\014R\003msg\022\034\n\tsignature\030\002 \001(\tR\tsign" +
+      "ature\"E\n\025VerifyMessageResponse\022\024\n\005valid\030" +
+      "\001 \001(\010R\005valid\022\026\n\006pubkey\030\002 \001(\tR\006pubkey\"I\n\022" +
+      "ConnectPeerRequest\022%\n\004addr\030\001 \001(\0132\027.lnrpc" +
+      ".LightningAddress\022\014\n\004perm\030\002 \001(\010\"\025\n\023Conne" +
+      "ctPeerResponse\"1\n\025DisconnectPeerRequest\022" +
+      "\030\n\007pub_key\030\001 \001(\tR\007pub_key\"\030\n\026DisconnectP" +
+      "eerResponse\"\206\001\n\004HTLC\022\032\n\010incoming\030\001 \001(\010R\010" +
+      "incoming\022\026\n\006amount\030\002 \001(\003R\006amount\022\034\n\thash" +
+      "_lock\030\003 \001(\014R\thash_lock\022,\n\021expiration_hei" +
+      "ght\030\004 \001(\rR\021expiration_height\"\312\005\n\007Channel" +
+      "\022\026\n\006active\030\001 \001(\010R\006active\022$\n\rremote_pubke" +
+      "y\030\002 \001(\tR\rremote_pubkey\022$\n\rchannel_point\030" +
+      "\003 \001(\tR\rchannel_point\022\030\n\007chan_id\030\004 \001(\004R\007c" +
+      "han_id\022\032\n\010capacity\030\005 \001(\003R\010capacity\022$\n\rlo" +
+      "cal_balance\030\006 \001(\003R\rlocal_balance\022&\n\016remo" +
+      "te_balance\030\007 \001(\003R\016remote_balance\022\036\n\ncomm" +
+      "it_fee\030\010 \001(\003R\ncommit_fee\022$\n\rcommit_weigh" +
+      "t\030\t \001(\003R\rcommit_weight\022\036\n\nfee_per_kw\030\n \001" +
+      "(\003R\nfee_per_kw\022,\n\021unsettled_balance\030\013 \001(" +
+      "\003R\021unsettled_balance\0220\n\023total_satoshis_s" +
+      "ent\030\014 \001(\003R\023total_satoshis_sent\0228\n\027total_" +
+      "satoshis_received\030\r \001(\003R\027total_satoshis_" +
+      "received\022 \n\013num_updates\030\016 \001(\004R\013num_updat" +
+      "es\0221\n\rpending_htlcs\030\017 \003(\0132\013.lnrpc.HTLCR\r" +
+      "pending_htlcs\022\034\n\tcsv_delay\030\020 \001(\rR\tcsv_de" +
+      "lay\022\030\n\007private\030\021 \001(\010R\007private\022\034\n\tinitiat" +
+      "or\030\022 \001(\010R\tinitiator\022,\n\021chan_status_flags" +
+      "\030\023 \001(\tR\021chan_status_flags\"l\n\023ListChannel" +
+      "sRequest\022\023\n\013active_only\030\001 \001(\010\022\025\n\rinactiv" +
+      "e_only\030\002 \001(\010\022\023\n\013public_only\030\003 \001(\010\022\024\n\014pri" +
+      "vate_only\030\004 \001(\010\"B\n\024ListChannelsResponse\022" +
+      "*\n\010channels\030\013 \003(\0132\016.lnrpc.ChannelR\010chann" +
+      "els\"\266\004\n\023ChannelCloseSummary\022$\n\rchannel_p" +
+      "oint\030\001 \001(\tR\rchannel_point\022\030\n\007chan_id\030\002 \001" +
+      "(\004R\007chan_id\022\036\n\nchain_hash\030\003 \001(\tR\nchain_h" +
+      "ash\022(\n\017closing_tx_hash\030\004 \001(\tR\017closing_tx" +
+      "_hash\022$\n\rremote_pubkey\030\005 \001(\tR\rremote_pub" +
+      "key\022\032\n\010capacity\030\006 \001(\003R\010capacity\022\"\n\014close" +
+      "_height\030\007 \001(\rR\014close_height\022(\n\017settled_b" +
+      "alance\030\010 \001(\003R\017settled_balance\0220\n\023time_lo" +
+      "cked_balance\030\t \001(\003R\023time_locked_balance\022" +
+      "F\n\nclose_type\030\n \001(\0162&.lnrpc.ChannelClose" +
+      "Summary.ClosureTypeR\nclose_type\"\212\001\n\013Clos" +
+      "ureType\022\025\n\021COOPERATIVE_CLOSE\020\000\022\025\n\021LOCAL_" +
+      "FORCE_CLOSE\020\001\022\026\n\022REMOTE_FORCE_CLOSE\020\002\022\020\n" +
+      "\014BREACH_CLOSE\020\003\022\024\n\020FUNDING_CANCELED\020\004\022\r\n" +
+      "\tABANDONED\020\005\"\224\001\n\025ClosedChannelsRequest\022\023" +
+      "\n\013cooperative\030\001 \001(\010\022\023\n\013local_force\030\002 \001(\010" +
+      "\022\024\n\014remote_force\030\003 \001(\010\022\016\n\006breach\030\004 \001(\010\022\030" +
+      "\n\020funding_canceled\030\005 \001(\010\022\021\n\tabandoned\030\006 " +
+      "\001(\010\"P\n\026ClosedChannelsResponse\0226\n\010channel" +
+      "s\030\001 \003(\0132\032.lnrpc.ChannelCloseSummaryR\010cha" +
+      "nnels\"\337\002\n\004Peer\022\030\n\007pub_key\030\001 \001(\tR\007pub_key" +
+      "\022\030\n\007address\030\003 \001(\tR\007address\022\036\n\nbytes_sent" +
+      "\030\004 \001(\004R\nbytes_sent\022\036\n\nbytes_recv\030\005 \001(\004R\n" +
+      "bytes_recv\022\032\n\010sat_sent\030\006 \001(\003R\010sat_sent\022\032" +
+      "\n\010sat_recv\030\007 \001(\003R\010sat_recv\022\030\n\007inbound\030\010 " +
+      "\001(\010R\007inbound\022\034\n\tping_time\030\t \001(\003R\tping_ti" +
+      "me\0222\n\tsync_type\030\n \001(\0162\024.lnrpc.Peer.SyncT" +
+      "ypeR\tsync_type\"?\n\010SyncType\022\020\n\014UNKNOWN_SY" +
+      "NC\020\000\022\017\n\013ACTIVE_SYNC\020\001\022\020\n\014PASSIVE_SYNC\020\002\"" +
+      "\022\n\020ListPeersRequest\"6\n\021ListPeersResponse" +
+      "\022!\n\005peers\030\001 \003(\0132\013.lnrpc.PeerR\005peers\"\020\n\016G" +
+      "etInfoRequest\"\247\004\n\017GetInfoResponse\022(\n\017ide" +
+      "ntity_pubkey\030\001 \001(\tR\017identity_pubkey\022\024\n\005a" +
+      "lias\030\002 \001(\tR\005alias\0222\n\024num_pending_channel" +
+      "s\030\003 \001(\rR\024num_pending_channels\0220\n\023num_act" +
+      "ive_channels\030\004 \001(\rR\023num_active_channels\022" +
+      "\034\n\tnum_peers\030\005 \001(\rR\tnum_peers\022\"\n\014block_h" +
+      "eight\030\006 \001(\rR\014block_height\022\036\n\nblock_hash\030" +
+      "\010 \001(\tR\nblock_hash\022(\n\017synced_to_chain\030\t \001" +
+      "(\010R\017synced_to_chain\022\034\n\007testnet\030\n \001(\010B\002\030\001" +
+      "R\007testnet\022\022\n\004uris\030\014 \003(\tR\004uris\0224\n\025best_he" +
+      "ader_timestamp\030\r \001(\003R\025best_header_timest" +
+      "amp\022\030\n\007version\030\016 \001(\tR\007version\0224\n\025num_ina" +
+      "ctive_channels\030\017 \001(\rR\025num_inactive_chann" +
+      "els\022$\n\006chains\030\020 \003(\0132\014.lnrpc.ChainR\006chain" +
+      "sJ\004\010\013\020\014\"7\n\005Chain\022\024\n\005chain\030\001 \001(\tR\005chain\022\030" +
+      "\n\007network\030\002 \001(\tR\007network\"U\n\022Confirmation" +
+      "Update\022\021\n\tblock_sha\030\001 \001(\014\022\024\n\014block_heigh" +
+      "t\030\002 \001(\005\022\026\n\016num_confs_left\030\003 \001(\r\"N\n\021Chann" +
+      "elOpenUpdate\0229\n\rchannel_point\030\001 \001(\0132\023.ln" +
+      "rpc.ChannelPointR\rchannel_point\"R\n\022Chann" +
+      "elCloseUpdate\022\"\n\014closing_txid\030\001 \001(\014R\014clo" +
+      "sing_txid\022\030\n\007success\030\002 \001(\010R\007success\"{\n\023C" +
+      "loseChannelRequest\022*\n\rchannel_point\030\001 \001(" +
+      "\0132\023.lnrpc.ChannelPoint\022\r\n\005force\030\002 \001(\010\022\023\n" +
+      "\013target_conf\030\003 \001(\005\022\024\n\014sat_per_byte\030\004 \001(\003" +
+      "\"\230\001\n\021CloseStatusUpdate\022<\n\rclose_pending\030" +
+      "\001 \001(\0132\024.lnrpc.PendingUpdateH\000R\rclose_pen" +
+      "ding\022;\n\nchan_close\030\003 \001(\0132\031.lnrpc.Channel" +
+      "CloseUpdateH\000R\nchan_closeB\010\n\006update\"G\n\rP" +
+      "endingUpdate\022\022\n\004txid\030\001 \001(\014R\004txid\022\"\n\014outp" +
+      "ut_index\030\002 \001(\rR\014output_index\"\231\003\n\022OpenCha" +
+      "nnelRequest\022 \n\013node_pubkey\030\002 \001(\014R\013node_p" +
+      "ubkey\022.\n\022node_pubkey_string\030\003 \001(\tR\022node_" +
+      "pubkey_string\0222\n\024local_funding_amount\030\004 " +
+      "\001(\003R\024local_funding_amount\022\032\n\010push_sat\030\005 " +
+      "\001(\003R\010push_sat\022\023\n\013target_conf\030\006 \001(\005\022\024\n\014sa" +
+      "t_per_byte\030\007 \001(\003\022\030\n\007private\030\010 \001(\010R\007priva" +
+      "te\022$\n\rmin_htlc_msat\030\t \001(\003R\rmin_htlc_msat" +
+      "\022*\n\020remote_csv_delay\030\n \001(\rR\020remote_csv_d" +
+      "elay\022\034\n\tmin_confs\030\013 \001(\005R\tmin_confs\022,\n\021sp" +
+      "end_unconfirmed\030\014 \001(\010R\021spend_unconfirmed" +
+      "\"\222\001\n\020OpenStatusUpdate\022:\n\014chan_pending\030\001 " +
+      "\001(\0132\024.lnrpc.PendingUpdateH\000R\014chan_pendin" +
+      "g\0228\n\tchan_open\030\003 \001(\0132\030.lnrpc.ChannelOpen" +
+      "UpdateH\000R\tchan_openB\010\n\006update\"\317\001\n\013Pendin" +
+      "gHTLC\022\032\n\010incoming\030\001 \001(\010R\010incoming\022\026\n\006amo" +
+      "unt\030\002 \001(\003R\006amount\022\032\n\010outpoint\030\003 \001(\tR\010out" +
+      "point\022(\n\017maturity_height\030\004 \001(\rR\017maturity" +
+      "_height\0220\n\023blocks_til_maturity\030\005 \001(\005R\023bl" +
+      "ocks_til_maturity\022\024\n\005stage\030\006 \001(\rR\005stage\"" +
+      "\030\n\026PendingChannelsRequest\"\252\014\n\027PendingCha" +
+      "nnelsResponse\0220\n\023total_limbo_balance\030\001 \001" +
+      "(\003R\023total_limbo_balance\022g\n\025pending_open_" +
+      "channels\030\002 \003(\01321.lnrpc.PendingChannelsRe" +
+      "sponse.PendingOpenChannelR\025pending_open_" +
+      "channels\022h\n\030pending_closing_channels\030\003 \003" +
+      "(\0132,.lnrpc.PendingChannelsResponse.Close" +
+      "dChannelR\030pending_closing_channels\022y\n\036pe" +
+      "nding_force_closing_channels\030\004 \003(\01321.lnr" +
+      "pc.PendingChannelsResponse.ForceClosedCh" +
+      "annelR\036pending_force_closing_channels\022j\n" +
+      "\026waiting_close_channels\030\005 \003(\01322.lnrpc.Pe" +
+      "ndingChannelsResponse.WaitingCloseChanne" +
+      "lR\026waiting_close_channels\032\312\001\n\016PendingCha" +
+      "nnel\022(\n\017remote_node_pub\030\001 \001(\tR\017remote_no" +
+      "de_pub\022$\n\rchannel_point\030\002 \001(\tR\rchannel_p" +
+      "oint\022\032\n\010capacity\030\003 \001(\003R\010capacity\022$\n\rloca" +
+      "l_balance\030\004 \001(\003R\rlocal_balance\022&\n\016remote" +
+      "_balance\030\005 \001(\003R\016remote_balance\032\365\001\n\022Pendi" +
+      "ngOpenChannel\022G\n\007channel\030\001 \001(\0132-.lnrpc.P" +
+      "endingChannelsResponse.PendingChannelR\007c" +
+      "hannel\0220\n\023confirmation_height\030\002 \001(\rR\023con" +
+      "firmation_height\022\036\n\ncommit_fee\030\004 \001(\003R\nco" +
+      "mmit_fee\022$\n\rcommit_weight\030\005 \001(\003R\rcommit_" +
+      "weight\022\036\n\nfee_per_kw\030\006 \001(\003R\nfee_per_kw\032{" +
+      "\n\023WaitingCloseChannel\022>\n\007channel\030\001 \001(\0132-" +
+      ".lnrpc.PendingChannelsResponse.PendingCh" +
+      "annel\022$\n\rlimbo_balance\030\002 \001(\003R\rlimbo_bala" +
+      "nce\032s\n\rClosedChannel\022>\n\007channel\030\001 \001(\0132-." +
+      "lnrpc.PendingChannelsResponse.PendingCha" +
+      "nnel\022\"\n\014closing_txid\030\002 \001(\tR\014closing_txid" +
+      "\032\353\002\n\022ForceClosedChannel\022G\n\007channel\030\001 \001(\013" +
+      "2-.lnrpc.PendingChannelsResponse.Pending" +
+      "ChannelR\007channel\022\"\n\014closing_txid\030\002 \001(\tR\014" +
+      "closing_txid\022$\n\rlimbo_balance\030\003 \001(\003R\rlim" +
+      "bo_balance\022(\n\017maturity_height\030\004 \001(\rR\017mat" +
+      "urity_height\0220\n\023blocks_til_maturity\030\005 \001(" +
+      "\005R\023blocks_til_maturity\022,\n\021recovered_bala" +
+      "nce\030\006 \001(\003R\021recovered_balance\0228\n\rpending_" +
+      "htlcs\030\010 \003(\0132\022.lnrpc.PendingHTLCR\rpending" +
+      "_htlcs\"\032\n\030ChannelEventSubscription\"\265\003\n\022C" +
+      "hannelEventUpdate\0224\n\014open_channel\030\001 \001(\0132" +
+      "\016.lnrpc.ChannelH\000R\014open_channel\022D\n\016close" +
+      "d_channel\030\002 \001(\0132\032.lnrpc.ChannelCloseSumm" +
+      "aryH\000R\016closed_channel\022=\n\016active_channel\030" +
+      "\003 \001(\0132\023.lnrpc.ChannelPointH\000R\016active_cha" +
+      "nnel\022A\n\020inactive_channel\030\004 \001(\0132\023.lnrpc.C" +
+      "hannelPointH\000R\020inactive_channel\0228\n\004type\030" +
+      "\005 \001(\0162$.lnrpc.ChannelEventUpdate.UpdateT" +
+      "ypeR\004type\"\\\n\nUpdateType\022\020\n\014OPEN_CHANNEL\020" +
+      "\000\022\022\n\016CLOSED_CHANNEL\020\001\022\022\n\016ACTIVE_CHANNEL\020" +
+      "\002\022\024\n\020INACTIVE_CHANNEL\020\003B\t\n\007channel\"\026\n\024Wa" +
+      "lletBalanceRequest\"\235\001\n\025WalletBalanceResp" +
+      "onse\022$\n\rtotal_balance\030\001 \001(\003R\rtotal_balan" +
+      "ce\022,\n\021confirmed_balance\030\002 \001(\003R\021confirmed" +
+      "_balance\0220\n\023unconfirmed_balance\030\003 \001(\003R\023u" +
+      "nconfirmed_balance\"\027\n\025ChannelBalanceRequ" +
+      "est\"f\n\026ChannelBalanceResponse\022\030\n\007balance" +
+      "\030\001 \001(\003R\007balance\0222\n\024pending_open_balance\030" +
+      "\002 \001(\003R\024pending_open_balance\"\342\001\n\022QueryRou" +
+      "tesRequest\022\017\n\007pub_key\030\001 \001(\t\022\013\n\003amt\030\002 \001(\003" +
+      "\022\026\n\nnum_routes\030\003 \001(\005B\002\030\001\022\030\n\020final_cltv_d" +
+      "elta\030\004 \001(\005\022\"\n\tfee_limit\030\005 \001(\0132\017.lnrpc.Fe" +
+      "eLimit\022\025\n\rignored_nodes\030\006 \003(\014\022)\n\rignored" +
+      "_edges\030\007 \003(\0132\022.lnrpc.EdgeLocator\022\026\n\016sour" +
+      "ce_pub_key\030\010 \001(\t\"<\n\013EdgeLocator\022\022\n\nchann" +
+      "el_id\030\001 \001(\004\022\031\n\021direction_reverse\030\002 \001(\010\";" +
+      "\n\023QueryRoutesResponse\022$\n\006routes\030\001 \003(\0132\014." +
+      "lnrpc.RouteR\006routes\"\207\002\n\003Hop\022\030\n\007chan_id\030\001" +
+      " \001(\004R\007chan_id\022$\n\rchan_capacity\030\002 \001(\003R\rch" +
+      "an_capacity\022*\n\016amt_to_forward\030\003 \001(\003B\002\030\001R" +
+      "\016amt_to_forward\022\024\n\003fee\030\004 \001(\003B\002\030\001R\003fee\022\026\n" +
+      "\006expiry\030\005 \001(\rR\006expiry\0220\n\023amt_to_forward_" +
+      "msat\030\006 \001(\003R\023amt_to_forward_msat\022\032\n\010fee_m" +
+      "sat\030\007 \001(\003R\010fee_msat\022\030\n\007pub_key\030\010 \001(\tR\007pu" +
+      "b_key\"\351\001\n\005Route\022(\n\017total_time_lock\030\001 \001(\r" +
+      "R\017total_time_lock\022\"\n\ntotal_fees\030\002 \001(\003B\002\030" +
+      "\001R\ntotal_fees\022 \n\ttotal_amt\030\003 \001(\003B\002\030\001R\tto" +
+      "tal_amt\022\036\n\004hops\030\004 \003(\0132\n.lnrpc.HopR\004hops\022" +
+      "(\n\017total_fees_msat\030\005 \001(\003R\017total_fees_msa" +
+      "t\022&\n\016total_amt_msat\030\006 \001(\003R\016total_amt_msa" +
+      "t\"\"\n\017NodeInfoRequest\022\017\n\007pub_key\030\001 \001(\t\"\200\001" +
+      "\n\010NodeInfo\022(\n\004node\030\001 \001(\0132\024.lnrpc.Lightni" +
+      "ngNodeR\004node\022\"\n\014num_channels\030\002 \001(\rR\014num_" +
+      "channels\022&\n\016total_capacity\030\003 \001(\003R\016total_" +
+      "capacity\"\251\001\n\rLightningNode\022 \n\013last_updat" +
+      "e\030\001 \001(\rR\013last_update\022\030\n\007pub_key\030\002 \001(\tR\007p" +
+      "ub_key\022\024\n\005alias\030\003 \001(\tR\005alias\0220\n\taddresse" +
+      "s\030\004 \003(\0132\022.lnrpc.NodeAddressR\taddresses\022\024" +
+      "\n\005color\030\005 \001(\tR\005color\";\n\013NodeAddress\022\030\n\007n" +
+      "etwork\030\001 \001(\tR\007network\022\022\n\004addr\030\002 \001(\tR\004add" +
+      "r\"\357\001\n\rRoutingPolicy\022(\n\017time_lock_delta\030\001" +
+      " \001(\rR\017time_lock_delta\022\032\n\010min_htlc\030\002 \001(\003R" +
+      "\010min_htlc\022$\n\rfee_base_msat\030\003 \001(\003R\rfee_ba" +
+      "se_msat\0220\n\023fee_rate_milli_msat\030\004 \001(\003R\023fe" +
+      "e_rate_milli_msat\022\032\n\010disabled\030\005 \001(\010R\010dis" +
+      "abled\022$\n\rmax_htlc_msat\030\006 \001(\004R\rmax_htlc_m" +
+      "sat\"\273\002\n\013ChannelEdge\022\036\n\nchannel_id\030\001 \001(\004R" +
+      "\nchannel_id\022\036\n\nchan_point\030\002 \001(\tR\nchan_po" +
+      "int\022 \n\013last_update\030\003 \001(\rR\013last_update\022\034\n" +
+      "\tnode1_pub\030\004 \001(\tR\tnode1_pub\022\034\n\tnode2_pub" +
+      "\030\005 \001(\tR\tnode2_pub\022\032\n\010capacity\030\006 \001(\003R\010cap" +
+      "acity\0228\n\014node1_policy\030\007 \001(\0132\024.lnrpc.Rout" +
+      "ingPolicyR\014node1_policy\0228\n\014node2_policy\030" +
+      "\010 \001(\0132\024.lnrpc.RoutingPolicyR\014node2_polic" +
+      "y\"G\n\023ChannelGraphRequest\0220\n\023include_unan" +
+      "nounced\030\001 \001(\010R\023include_unannounced\"d\n\014Ch" +
+      "annelGraph\022*\n\005nodes\030\001 \003(\0132\024.lnrpc.Lightn" +
+      "ingNodeR\005nodes\022(\n\005edges\030\002 \003(\0132\022.lnrpc.Ch" +
+      "annelEdgeR\005edges\"\"\n\017ChanInfoRequest\022\017\n\007c" +
+      "han_id\030\001 \001(\004\"\024\n\022NetworkInfoRequest\"\275\003\n\013N" +
+      "etworkInfo\022&\n\016graph_diameter\030\001 \001(\rR\016grap" +
+      "h_diameter\022&\n\016avg_out_degree\030\002 \001(\001R\016avg_" +
+      "out_degree\022&\n\016max_out_degree\030\003 \001(\rR\016max_" +
+      "out_degree\022\034\n\tnum_nodes\030\004 \001(\rR\tnum_nodes" +
+      "\022\"\n\014num_channels\030\005 \001(\rR\014num_channels\0226\n\026" +
+      "total_network_capacity\030\006 \001(\003R\026total_netw" +
+      "ork_capacity\022*\n\020avg_channel_size\030\007 \001(\001R\020" +
+      "avg_channel_size\022*\n\020min_channel_size\030\010 \001" +
+      "(\003R\020min_channel_size\022*\n\020max_channel_size" +
+      "\030\t \001(\003R\020max_channel_size\0228\n\027median_chann" +
+      "el_size_sat\030\n \001(\003R\027median_channel_size_s" +
+      "at\"\r\n\013StopRequest\"\016\n\014StopResponse\"\033\n\031Gra" +
+      "phTopologySubscription\"\243\001\n\023GraphTopology" +
+      "Update\022\'\n\014node_updates\030\001 \003(\0132\021.lnrpc.Nod" +
+      "eUpdate\0221\n\017channel_updates\030\002 \003(\0132\030.lnrpc" +
+      ".ChannelEdgeUpdate\0220\n\014closed_chans\030\003 \003(\013" +
+      "2\032.lnrpc.ClosedChannelUpdate\"]\n\nNodeUpda" +
+      "te\022\021\n\taddresses\030\001 \003(\t\022\024\n\014identity_key\030\002 " +
+      "\001(\t\022\027\n\017global_features\030\003 \001(\014\022\r\n\005alias\030\004 " +
+      "\001(\t\"\300\001\n\021ChannelEdgeUpdate\022\017\n\007chan_id\030\001 \001" +
+      "(\004\022\'\n\nchan_point\030\002 \001(\0132\023.lnrpc.ChannelPo" +
+      "int\022\020\n\010capacity\030\003 \001(\003\022,\n\016routing_policy\030" +
+      "\004 \001(\0132\024.lnrpc.RoutingPolicy\022\030\n\020advertisi" +
+      "ng_node\030\005 \001(\t\022\027\n\017connecting_node\030\006 \001(\t\"x" +
+      "\n\023ClosedChannelUpdate\022\017\n\007chan_id\030\001 \001(\004\022\020" +
+      "\n\010capacity\030\002 \001(\003\022\025\n\rclosed_height\030\003 \001(\r\022" +
+      "\'\n\nchan_point\030\004 \001(\0132\023.lnrpc.ChannelPoint" +
+      "\"\323\001\n\007HopHint\022\030\n\007node_id\030\001 \001(\tR\007node_id\022\030" +
+      "\n\007chan_id\030\002 \001(\004R\007chan_id\022$\n\rfee_base_msa" +
+      "t\030\003 \001(\rR\rfee_base_msat\022@\n\033fee_proportion" +
+      "al_millionths\030\004 \001(\rR\033fee_proportional_mi" +
+      "llionths\022,\n\021cltv_expiry_delta\030\005 \001(\rR\021clt" +
+      "v_expiry_delta\"9\n\tRouteHint\022,\n\thop_hints" +
+      "\030\001 \003(\0132\016.lnrpc.HopHintR\thop_hints\"\225\006\n\007In" +
+      "voice\022\022\n\004memo\030\001 \001(\tR\004memo\022\034\n\007receipt\030\002 \001" +
+      "(\014B\002\030\001R\007receipt\022\036\n\nr_preimage\030\003 \001(\014R\nr_p" +
+      "reimage\022\026\n\006r_hash\030\004 \001(\014R\006r_hash\022\024\n\005value" +
+      "\030\005 \001(\003R\005value\022\034\n\007settled\030\006 \001(\010B\002\030\001R\007sett" +
+      "led\022$\n\rcreation_date\030\007 \001(\003R\rcreation_dat" +
+      "e\022 \n\013settle_date\030\010 \001(\003R\013settle_date\022(\n\017p" +
+      "ayment_request\030\t \001(\tR\017payment_request\022*\n" +
+      "\020description_hash\030\n \001(\014R\020description_has" +
+      "h\022\026\n\006expiry\030\013 \001(\003R\006expiry\022$\n\rfallback_ad" +
+      "dr\030\014 \001(\tR\rfallback_addr\022 \n\013cltv_expiry\030\r" +
+      " \001(\004R\013cltv_expiry\0222\n\013route_hints\030\016 \003(\0132\020" +
+      ".lnrpc.RouteHintR\013route_hints\022\030\n\007private" +
+      "\030\017 \001(\010R\007private\022\034\n\tadd_index\030\020 \001(\004R\tadd_" +
+      "index\022\"\n\014settle_index\030\021 \001(\004R\014settle_inde" +
+      "x\022\036\n\010amt_paid\030\022 \001(\003B\002\030\001R\010amt_paid\022\"\n\014amt" +
+      "_paid_sat\030\023 \001(\003R\014amt_paid_sat\022$\n\ramt_pai" +
+      "d_msat\030\024 \001(\003R\ramt_paid_msat\0221\n\005state\030\025 \001" +
+      "(\0162\033.lnrpc.Invoice.InvoiceStateR\005state\"A" +
+      "\n\014InvoiceState\022\010\n\004OPEN\020\000\022\013\n\007SETTLED\020\001\022\014\n" +
+      "\010CANCELED\020\002\022\014\n\010ACCEPTED\020\003\"t\n\022AddInvoiceR" +
+      "esponse\022\026\n\006r_hash\030\001 \001(\014R\006r_hash\022(\n\017payme" +
+      "nt_request\030\002 \001(\tR\017payment_request\022\034\n\tadd" +
+      "_index\030\020 \001(\004R\tadd_index\"E\n\013PaymentHash\022\036" +
+      "\n\nr_hash_str\030\001 \001(\tR\nr_hash_str\022\026\n\006r_hash" +
+      "\030\002 \001(\014R\006r_hash\"\244\001\n\022ListInvoiceRequest\022\"\n" +
+      "\014pending_only\030\001 \001(\010R\014pending_only\022\"\n\014ind" +
+      "ex_offset\030\004 \001(\004R\014index_offset\022*\n\020num_max" +
+      "_invoices\030\005 \001(\004R\020num_max_invoices\022\032\n\010rev" +
+      "ersed\030\006 \001(\010R\010reversed\"\237\001\n\023ListInvoiceRes" +
+      "ponse\022*\n\010invoices\030\001 \003(\0132\016.lnrpc.InvoiceR" +
+      "\010invoices\022,\n\021last_index_offset\030\002 \001(\004R\021la" +
+      "st_index_offset\022.\n\022first_index_offset\030\003 " +
+      "\001(\004R\022first_index_offset\"W\n\023InvoiceSubscr" +
+      "iption\022\034\n\tadd_index\030\001 \001(\004R\tadd_index\022\"\n\014" +
+      "settle_index\030\002 \001(\004R\014settle_index\"\375\001\n\007Pay" +
+      "ment\022\"\n\014payment_hash\030\001 \001(\tR\014payment_hash" +
+      "\022\030\n\005value\030\002 \001(\003B\002\030\001R\005value\022$\n\rcreation_d" +
+      "ate\030\003 \001(\003R\rcreation_date\022\022\n\004path\030\004 \003(\tR\004" +
+      "path\022\020\n\003fee\030\005 \001(\003R\003fee\022*\n\020payment_preima" +
+      "ge\030\006 \001(\tR\020payment_preimage\022\034\n\tvalue_sat\030" +
+      "\007 \001(\003R\tvalue_sat\022\036\n\nvalue_msat\030\010 \001(\003R\nva" +
+      "lue_msat\"\025\n\023ListPaymentsRequest\"B\n\024ListP" +
+      "aymentsResponse\022*\n\010payments\030\001 \003(\0132\016.lnrp" +
+      "c.PaymentR\010payments\"\032\n\030DeleteAllPayments" +
+      "Request\"\033\n\031DeleteAllPaymentsResponse\"C\n\025" +
+      "AbandonChannelRequest\022*\n\rchannel_point\030\001" +
+      " \001(\0132\023.lnrpc.ChannelPoint\"\030\n\026AbandonChan" +
+      "nelResponse\"5\n\021DebugLevelRequest\022\014\n\004show" +
+      "\030\001 \001(\010\022\022\n\nlevel_spec\030\002 \001(\t\"6\n\022DebugLevel" +
+      "Response\022 \n\013sub_systems\030\001 \001(\tR\013sub_syste" +
+      "ms\"\037\n\014PayReqString\022\017\n\007pay_req\030\001 \001(\t\"\362\002\n\006" +
+      "PayReq\022 \n\013destination\030\001 \001(\tR\013destination" +
+      "\022\"\n\014payment_hash\030\002 \001(\tR\014payment_hash\022\"\n\014" +
+      "num_satoshis\030\003 \001(\003R\014num_satoshis\022\034\n\ttime" +
+      "stamp\030\004 \001(\003R\ttimestamp\022\026\n\006expiry\030\005 \001(\003R\006" +
+      "expiry\022 \n\013description\030\006 \001(\tR\013description" +
+      "\022*\n\020description_hash\030\007 \001(\tR\020description_" +
+      "hash\022$\n\rfallback_addr\030\010 \001(\tR\rfallback_ad" +
+      "dr\022 \n\013cltv_expiry\030\t \001(\003R\013cltv_expiry\0222\n\013" +
+      "route_hints\030\n \003(\0132\020.lnrpc.RouteHintR\013rou" +
+      "te_hints\"\022\n\020FeeReportRequest\"\231\001\n\020Channel",
+      "FeeReport\022!\n\nchan_point\030\001 \001(\tR\rchannel_p" +
+      "oint\022$\n\rbase_fee_msat\030\002 \001(\003R\rbase_fee_ms" +
+      "at\022 \n\013fee_per_mil\030\003 \001(\003R\013fee_per_mil\022\032\n\010" +
+      "fee_rate\030\004 \001(\001R\010fee_rate\"\274\001\n\021FeeReportRe" +
+      "sponse\022;\n\014channel_fees\030\001 \003(\0132\027.lnrpc.Cha" +
+      "nnelFeeReportR\014channel_fees\022 \n\013day_fee_s" +
+      "um\030\002 \001(\004R\013day_fee_sum\022\"\n\014week_fee_sum\030\003 " +
+      "\001(\004R\014week_fee_sum\022$\n\rmonth_fee_sum\030\004 \001(\004" +
+      "R\rmonth_fee_sum\"\333\001\n\023PolicyUpdateRequest\022" +
+      "\030\n\006global\030\001 \001(\010H\000R\006global\0225\n\nchan_point\030" +
+      "\002 \001(\0132\023.lnrpc.ChannelPointH\000R\nchan_point" +
+      "\022$\n\rbase_fee_msat\030\003 \001(\003R\rbase_fee_msat\022\032" +
+      "\n\010fee_rate\030\004 \001(\001R\010fee_rate\022(\n\017time_lock_" +
+      "delta\030\005 \001(\rR\017time_lock_deltaB\007\n\005scope\"\026\n" +
+      "\024PolicyUpdateResponse\"\242\001\n\030ForwardingHist" +
+      "oryRequest\022\036\n\nstart_time\030\001 \001(\004R\nstart_ti" +
+      "me\022\032\n\010end_time\030\002 \001(\004R\010end_time\022\"\n\014index_" +
+      "offset\030\003 \001(\rR\014index_offset\022&\n\016num_max_ev" +
+      "ents\030\004 \001(\rR\016num_max_events\"\321\001\n\017Forwardin" +
+      "gEvent\022\034\n\ttimestamp\030\001 \001(\004R\ttimestamp\022\036\n\n" +
+      "chan_id_in\030\002 \001(\004R\nchan_id_in\022 \n\013chan_id_" +
+      "out\030\004 \001(\004R\013chan_id_out\022\026\n\006amt_in\030\005 \001(\004R\006" +
+      "amt_in\022\030\n\007amt_out\030\006 \001(\004R\007amt_out\022\020\n\003fee\030" +
+      "\007 \001(\004R\003fee\022\032\n\010fee_msat\030\010 \001(\004R\010fee_msat\"\217" +
+      "\001\n\031ForwardingHistoryResponse\022D\n\021forwardi" +
+      "ng_events\030\001 \003(\0132\026.lnrpc.ForwardingEventR" +
+      "\021forwarding_events\022,\n\021last_offset_index\030" +
+      "\002 \001(\rR\021last_offset_index\"E\n\032ExportChanne" +
+      "lBackupRequest\022\'\n\nchan_point\030\001 \001(\0132\023.lnr" +
+      "pc.ChannelPoint\"f\n\rChannelBackup\0223\n\nchan" +
+      "_point\030\001 \001(\0132\023.lnrpc.ChannelPointR\nchan_" +
+      "point\022 \n\013chan_backup\030\002 \001(\014R\013chan_backup\"" +
+      "v\n\017MultiChanBackup\0225\n\013chan_points\030\001 \003(\0132" +
+      "\023.lnrpc.ChannelPointR\013chan_points\022,\n\021mul" +
+      "ti_chan_backup\030\002 \001(\014R\021multi_chan_backup\"" +
+      "\031\n\027ChanBackupExportRequest\"\243\001\n\022ChanBacku" +
+      "pSnapshot\022G\n\023single_chan_backups\030\001 \001(\0132\025" +
+      ".lnrpc.ChannelBackupsR\023single_chan_backu" +
+      "ps\022D\n\021multi_chan_backup\030\002 \001(\0132\026.lnrpc.Mu" +
+      "ltiChanBackupR\021multi_chan_backup\"J\n\016Chan" +
+      "nelBackups\0228\n\014chan_backups\030\001 \003(\0132\024.lnrpc" +
+      ".ChannelBackupR\014chan_backups\"\221\001\n\030Restore" +
+      "ChanBackupRequest\022;\n\014chan_backups\030\001 \001(\0132" +
+      "\025.lnrpc.ChannelBackupsH\000R\014chan_backups\022." +
+      "\n\021multi_chan_backup\030\002 \001(\014H\000R\021multi_chan_" +
+      "backupB\010\n\006backup\"\027\n\025RestoreBackupRespons" +
+      "e\"\033\n\031ChannelBackupSubscription\"\032\n\030Verify" +
+      "ChanBackupResponse*}\n\013AddressType\022\027\n\023WIT" +
+      "NESS_PUBKEY_HASH\020\000\022\026\n\022NESTED_PUBKEY_HASH" +
+      "\020\001\022\036\n\032UNUSED_WITNESS_PUBKEY_HASH\020\002\022\035\n\031UN" +
+      "USED_NESTED_PUBKEY_HASH\020\0032\221\003\n\016WalletUnlo" +
+      "cker\022M\n\007GenSeed\022\025.lnrpc.GenSeedRequest\032\026" +
+      ".lnrpc.GenSeedResponse\"\023\202\323\344\223\002\r\022\013/v1/gens" +
+      "eed\022\\\n\nInitWallet\022\030.lnrpc.InitWalletRequ" +
+      "est\032\031.lnrpc.InitWalletResponse\"\031\202\323\344\223\002\023\"\016" +
+      "/v1/initwallet:\001*\022d\n\014UnlockWallet\022\032.lnrp" +
+      "c.UnlockWalletRequest\032\033.lnrpc.UnlockWall" +
+      "etResponse\"\033\202\323\344\223\002\025\"\020/v1/unlockwallet:\001*\022" +
+      "l\n\016ChangePassword\022\034.lnrpc.ChangePassword" +
+      "Request\032\035.lnrpc.ChangePasswordResponse\"\035" +
+      "\202\323\344\223\002\027\"\022/v1/changepassword:\001*2\226&\n\tLightn" +
+      "ing\022j\n\rWalletBalance\022\033.lnrpc.WalletBalan" +
+      "ceRequest\032\034.lnrpc.WalletBalanceResponse\"" +
+      "\036\202\323\344\223\002\030\022\026/v1/balance/blockchain\022k\n\016Chann" +
+      "elBalance\022\034.lnrpc.ChannelBalanceRequest\032" +
+      "\035.lnrpc.ChannelBalanceResponse\"\034\202\323\344\223\002\026\022\024" +
+      "/v1/balance/channels\022e\n\017GetTransactions\022" +
+      "\035.lnrpc.GetTransactionsRequest\032\031.lnrpc.T" +
+      "ransactionDetails\"\030\202\323\344\223\002\022\022\020/v1/transacti" +
+      "ons\022b\n\013EstimateFee\022\031.lnrpc.EstimateFeeRe" +
+      "quest\032\032.lnrpc.EstimateFeeResponse\"\034\202\323\344\223\002" +
+      "\026\022\024/v1/transactions/fee\022[\n\tSendCoins\022\027.l" +
+      "nrpc.SendCoinsRequest\032\030.lnrpc.SendCoinsR" +
+      "esponse\"\033\202\323\344\223\002\025\"\020/v1/transactions:\001*\022W\n\013" +
+      "ListUnspent\022\031.lnrpc.ListUnspentRequest\032\032" +
+      ".lnrpc.ListUnspentResponse\"\021\202\323\344\223\002\013\022\t/v1/" +
+      "utxos\022L\n\025SubscribeTransactions\022\035.lnrpc.G" +
+      "etTransactionsRequest\032\022.lnrpc.Transactio" +
+      "n0\001\022;\n\010SendMany\022\026.lnrpc.SendManyRequest\032" +
+      "\027.lnrpc.SendManyResponse\022Y\n\nNewAddress\022\030" +
+      ".lnrpc.NewAddressRequest\032\031.lnrpc.NewAddr" +
+      "essResponse\"\026\202\323\344\223\002\020\022\016/v1/newaddress\022`\n\013S" +
+      "ignMessage\022\031.lnrpc.SignMessageRequest\032\032." +
+      "lnrpc.SignMessageResponse\"\032\202\323\344\223\002\024\"\017/v1/s" +
+      "ignmessage:\001*\022h\n\rVerifyMessage\022\033.lnrpc.V" +
+      "erifyMessageRequest\032\034.lnrpc.VerifyMessag" +
+      "eResponse\"\034\202\323\344\223\002\026\"\021/v1/verifymessage:\001*\022" +
+      "Z\n\013ConnectPeer\022\031.lnrpc.ConnectPeerReques" +
+      "t\032\032.lnrpc.ConnectPeerResponse\"\024\202\323\344\223\002\016\"\t/" +
+      "v1/peers:\001*\022j\n\016DisconnectPeer\022\034.lnrpc.Di" +
+      "sconnectPeerRequest\032\035.lnrpc.DisconnectPe" +
+      "erResponse\"\033\202\323\344\223\002\025*\023/v1/peers/{pub_key}\022" +
+      "Q\n\tListPeers\022\027.lnrpc.ListPeersRequest\032\030." +
+      "lnrpc.ListPeersResponse\"\021\202\323\344\223\002\013\022\t/v1/pee" +
+      "rs\022M\n\007GetInfo\022\025.lnrpc.GetInfoRequest\032\026.l" +
+      "nrpc.GetInfoResponse\"\023\202\323\344\223\002\r\022\013/v1/getinf" +
+      "o\022n\n\017PendingChannels\022\035.lnrpc.PendingChan" +
+      "nelsRequest\032\036.lnrpc.PendingChannelsRespo" +
+      "nse\"\034\202\323\344\223\002\026\022\024/v1/channels/pending\022]\n\014Lis" +
+      "tChannels\022\032.lnrpc.ListChannelsRequest\032\033." +
+      "lnrpc.ListChannelsResponse\"\024\202\323\344\223\002\016\022\014/v1/" +
+      "channels\022V\n\026SubscribeChannelEvents\022\037.lnr" +
+      "pc.ChannelEventSubscription\032\031.lnrpc.Chan" +
+      "nelEventUpdate0\001\022j\n\016ClosedChannels\022\034.lnr" +
+      "pc.ClosedChannelsRequest\032\035.lnrpc.ClosedC" +
+      "hannelsResponse\"\033\202\323\344\223\002\025\022\023/v1/channels/cl" +
+      "osed\022Z\n\017OpenChannelSync\022\031.lnrpc.OpenChan" +
+      "nelRequest\032\023.lnrpc.ChannelPoint\"\027\202\323\344\223\002\021\"" +
+      "\014/v1/channels:\001*\022C\n\013OpenChannel\022\031.lnrpc." +
+      "OpenChannelRequest\032\027.lnrpc.OpenStatusUpd" +
+      "ate0\001\022\232\001\n\014CloseChannel\022\032.lnrpc.CloseChan" +
+      "nelRequest\032\030.lnrpc.CloseStatusUpdate\"R\202\323" +
+      "\344\223\002L*J/v1/channels/{channel_point.fundin" +
+      "g_txid_str}/{channel_point.output_index}" +
+      "0\001\022\251\001\n\016AbandonChannel\022\034.lnrpc.AbandonCha" +
+      "nnelRequest\032\035.lnrpc.AbandonChannelRespon" +
+      "se\"Z\202\323\344\223\002T*R/v1/channels/abandon/{channe" +
+      "l_point.funding_txid_str}/{channel_point" +
+      ".output_index}\022:\n\013SendPayment\022\022.lnrpc.Se" +
+      "ndRequest\032\023.lnrpc.SendResponse(\0010\001\022`\n\017Se" +
+      "ndPaymentSync\022\022.lnrpc.SendRequest\032\023.lnrp" +
+      "c.SendResponse\"$\202\323\344\223\002\036\"\031/v1/channels/tra" +
+      "nsactions:\001*\022A\n\013SendToRoute\022\031.lnrpc.Send" +
+      "ToRouteRequest\032\023.lnrpc.SendResponse(\0010\001\022" +
+      "m\n\017SendToRouteSync\022\031.lnrpc.SendToRouteRe" +
+      "quest\032\023.lnrpc.SendResponse\"*\202\323\344\223\002$\"\037/v1/" +
+      "channels/transactions/route:\001*\022P\n\nAddInv" +
+      "oice\022\016.lnrpc.Invoice\032\031.lnrpc.AddInvoiceR" +
+      "esponse\"\027\202\323\344\223\002\021\"\014/v1/invoices:\001*\022[\n\014List" +
+      "Invoices\022\031.lnrpc.ListInvoiceRequest\032\032.ln" +
+      "rpc.ListInvoiceResponse\"\024\202\323\344\223\002\016\022\014/v1/inv" +
+      "oices\022U\n\rLookupInvoice\022\022.lnrpc.PaymentHa" +
+      "sh\032\016.lnrpc.Invoice\" \202\323\344\223\002\032\022\030/v1/invoice/" +
+      "{r_hash_str}\022a\n\021SubscribeInvoices\022\032.lnrp" +
+      "c.InvoiceSubscription\032\016.lnrpc.Invoice\"\036\202" +
+      "\323\344\223\002\030\022\026/v1/invoices/subscribe0\001\022P\n\014Decod" +
+      "ePayReq\022\023.lnrpc.PayReqString\032\r.lnrpc.Pay" +
+      "Req\"\034\202\323\344\223\002\026\022\024/v1/payreq/{pay_req}\022]\n\014Lis" +
+      "tPayments\022\032.lnrpc.ListPaymentsRequest\032\033." +
+      "lnrpc.ListPaymentsResponse\"\024\202\323\344\223\002\016\022\014/v1/" +
+      "payments\022l\n\021DeleteAllPayments\022\037.lnrpc.De" +
+      "leteAllPaymentsRequest\032 .lnrpc.DeleteAll" +
+      "PaymentsResponse\"\024\202\323\344\223\002\016*\014/v1/payments\022S" +
+      "\n\rDescribeGraph\022\032.lnrpc.ChannelGraphRequ" +
+      "est\032\023.lnrpc.ChannelGraph\"\021\202\323\344\223\002\013\022\t/v1/gr" +
+      "aph\022[\n\013GetChanInfo\022\026.lnrpc.ChanInfoReque" +
+      "st\032\022.lnrpc.ChannelEdge\" \202\323\344\223\002\032\022\030/v1/grap" +
+      "h/edge/{chan_id}\022X\n\013GetNodeInfo\022\026.lnrpc." +
+      "NodeInfoRequest\032\017.lnrpc.NodeInfo\" \202\323\344\223\002\032" +
+      "\022\030/v1/graph/node/{pub_key}\022n\n\013QueryRoute" +
+      "s\022\031.lnrpc.QueryRoutesRequest\032\032.lnrpc.Que" +
+      "ryRoutesResponse\"(\202\323\344\223\002\"\022 /v1/graph/rout" +
+      "es/{pub_key}/{amt}\022W\n\016GetNetworkInfo\022\031.l" +
+      "nrpc.NetworkInfoRequest\032\022.lnrpc.NetworkI" +
+      "nfo\"\026\202\323\344\223\002\020\022\016/v1/graph/info\0225\n\nStopDaemo" +
+      "n\022\022.lnrpc.StopRequest\032\023.lnrpc.StopRespon" +
+      "se\022W\n\025SubscribeChannelGraph\022 .lnrpc.Grap" +
+      "hTopologySubscription\032\032.lnrpc.GraphTopol" +
+      "ogyUpdate0\001\022A\n\nDebugLevel\022\030.lnrpc.DebugL" +
+      "evelRequest\032\031.lnrpc.DebugLevelResponse\022P" +
+      "\n\tFeeReport\022\027.lnrpc.FeeReportRequest\032\030.l" +
+      "nrpc.FeeReportResponse\"\020\202\323\344\223\002\n\022\010/v1/fees" +
+      "\022i\n\023UpdateChannelPolicy\022\032.lnrpc.PolicyUp" +
+      "dateRequest\032\033.lnrpc.PolicyUpdateResponse" +
+      "\"\031\202\323\344\223\002\023\"\016/v1/chanpolicy:\001*\022m\n\021Forwardin" +
+      "gHistory\022\037.lnrpc.ForwardingHistoryReques" +
+      "t\032 .lnrpc.ForwardingHistoryResponse\"\025\202\323\344" +
+      "\223\002\017\"\n/v1/switch:\001*\022\243\001\n\023ExportChannelBack" +
+      "up\022!.lnrpc.ExportChannelBackupRequest\032\024." +
+      "lnrpc.ChannelBackup\"S\202\323\344\223\002M\022K/v1/channel" +
+      "s/backup/{chan_point.funding_txid_str}/{" +
+      "chan_point.output_index}\022q\n\027ExportAllCha" +
+      "nnelBackups\022\036.lnrpc.ChanBackupExportRequ" +
+      "est\032\031.lnrpc.ChanBackupSnapshot\"\033\202\323\344\223\002\025\022\023" +
+      "/v1/channels/backup\022u\n\020VerifyChanBackup\022" +
+      "\031.lnrpc.ChanBackupSnapshot\032\037.lnrpc.Verif" +
+      "yChanBackupResponse\"%\202\323\344\223\002\037\"\032/v1/channel" +
+      "s/backup/verify:\001*\022~\n\025RestoreChannelBack" +
+      "ups\022\037.lnrpc.RestoreChanBackupRequest\032\034.l" +
+      "nrpc.RestoreBackupResponse\"&\202\323\344\223\002 \"\033/v1/" +
+      "channels/backup/restore:\001*\022Z\n\027SubscribeC" +
+      "hannelBackups\022 .lnrpc.ChannelBackupSubsc" +
+      "ription\032\031.lnrpc.ChanBackupSnapshot\"\0000\001B\'" +
+      "Z%github.com/lightningnetwork/lnd/lnrpcb" +
+      "\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -99076,7 +113165,7 @@ public final class Rpc {
     internal_static_lnrpc_InitWalletRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_InitWalletRequest_descriptor,
-        new java.lang.String[] { "WalletPassword", "CipherSeedMnemonic", "AezeedPassphrase", "RecoveryWindow", });
+        new java.lang.String[] { "WalletPassword", "CipherSeedMnemonic", "AezeedPassphrase", "RecoveryWindow", "ChannelBackups", });
     internal_static_lnrpc_InitWalletResponse_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_lnrpc_InitWalletResponse_fieldAccessorTable = new
@@ -99088,7 +113177,7 @@ public final class Rpc {
     internal_static_lnrpc_UnlockWalletRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_UnlockWalletRequest_descriptor,
-        new java.lang.String[] { "WalletPassword", "RecoveryWindow", });
+        new java.lang.String[] { "WalletPassword", "RecoveryWindow", "ChannelBackups", });
     internal_static_lnrpc_UnlockWalletResponse_descriptor =
       getDescriptor().getMessageTypes().get(5);
     internal_static_lnrpc_UnlockWalletResponse_fieldAccessorTable = new
@@ -99112,7 +113201,7 @@ public final class Rpc {
     internal_static_lnrpc_Utxo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_Utxo_descriptor,
-        new java.lang.String[] { "Type", "Address", "AmountSat", "ScriptPubkey", "Outpoint", "Confirmations", });
+        new java.lang.String[] { "Type", "Address", "AmountSat", "PkScript", "Outpoint", "Confirmations", });
     internal_static_lnrpc_Transaction_descriptor =
       getDescriptor().getMessageTypes().get(9);
     internal_static_lnrpc_Transaction_fieldAccessorTable = new
@@ -99142,7 +113231,7 @@ public final class Rpc {
     internal_static_lnrpc_SendRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_SendRequest_descriptor,
-        new java.lang.String[] { "Dest", "DestString", "Amt", "PaymentHash", "PaymentHashString", "PaymentRequest", "FinalCltvDelta", "FeeLimit", });
+        new java.lang.String[] { "Dest", "DestString", "Amt", "PaymentHash", "PaymentHashString", "PaymentRequest", "FinalCltvDelta", "FeeLimit", "OutgoingChanId", "CltvLimit", });
     internal_static_lnrpc_SendResponse_descriptor =
       getDescriptor().getMessageTypes().get(14);
     internal_static_lnrpc_SendResponse_fieldAccessorTable = new
@@ -99154,21 +113243,45 @@ public final class Rpc {
     internal_static_lnrpc_SendToRouteRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_SendToRouteRequest_descriptor,
-        new java.lang.String[] { "PaymentHash", "PaymentHashString", "Routes", });
+        new java.lang.String[] { "PaymentHash", "PaymentHashString", "Routes", "Route", });
     internal_static_lnrpc_ChannelPoint_descriptor =
       getDescriptor().getMessageTypes().get(16);
     internal_static_lnrpc_ChannelPoint_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ChannelPoint_descriptor,
         new java.lang.String[] { "FundingTxidBytes", "FundingTxidStr", "OutputIndex", "FundingTxid", });
-    internal_static_lnrpc_LightningAddress_descriptor =
+    internal_static_lnrpc_OutPoint_descriptor =
       getDescriptor().getMessageTypes().get(17);
+    internal_static_lnrpc_OutPoint_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_lnrpc_OutPoint_descriptor,
+        new java.lang.String[] { "TxidBytes", "TxidStr", "OutputIndex", });
+    internal_static_lnrpc_LightningAddress_descriptor =
+      getDescriptor().getMessageTypes().get(18);
     internal_static_lnrpc_LightningAddress_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_LightningAddress_descriptor,
         new java.lang.String[] { "Pubkey", "Host", });
+    internal_static_lnrpc_EstimateFeeRequest_descriptor =
+      getDescriptor().getMessageTypes().get(19);
+    internal_static_lnrpc_EstimateFeeRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_lnrpc_EstimateFeeRequest_descriptor,
+        new java.lang.String[] { "AddrToAmount", "TargetConf", });
+    internal_static_lnrpc_EstimateFeeRequest_AddrToAmountEntry_descriptor =
+      internal_static_lnrpc_EstimateFeeRequest_descriptor.getNestedTypes().get(0);
+    internal_static_lnrpc_EstimateFeeRequest_AddrToAmountEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_lnrpc_EstimateFeeRequest_AddrToAmountEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
+    internal_static_lnrpc_EstimateFeeResponse_descriptor =
+      getDescriptor().getMessageTypes().get(20);
+    internal_static_lnrpc_EstimateFeeResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_lnrpc_EstimateFeeResponse_descriptor,
+        new java.lang.String[] { "FeeSat", "FeerateSatPerByte", });
     internal_static_lnrpc_SendManyRequest_descriptor =
-      getDescriptor().getMessageTypes().get(18);
+      getDescriptor().getMessageTypes().get(21);
     internal_static_lnrpc_SendManyRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_SendManyRequest_descriptor,
@@ -99180,235 +113293,235 @@ public final class Rpc {
         internal_static_lnrpc_SendManyRequest_AddrToAmountEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_lnrpc_SendManyResponse_descriptor =
-      getDescriptor().getMessageTypes().get(19);
+      getDescriptor().getMessageTypes().get(22);
     internal_static_lnrpc_SendManyResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_SendManyResponse_descriptor,
         new java.lang.String[] { "Txid", });
     internal_static_lnrpc_SendCoinsRequest_descriptor =
-      getDescriptor().getMessageTypes().get(20);
+      getDescriptor().getMessageTypes().get(23);
     internal_static_lnrpc_SendCoinsRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_SendCoinsRequest_descriptor,
         new java.lang.String[] { "Addr", "Amount", "TargetConf", "SatPerByte", "SendAll", });
     internal_static_lnrpc_SendCoinsResponse_descriptor =
-      getDescriptor().getMessageTypes().get(21);
+      getDescriptor().getMessageTypes().get(24);
     internal_static_lnrpc_SendCoinsResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_SendCoinsResponse_descriptor,
         new java.lang.String[] { "Txid", });
     internal_static_lnrpc_ListUnspentRequest_descriptor =
-      getDescriptor().getMessageTypes().get(22);
+      getDescriptor().getMessageTypes().get(25);
     internal_static_lnrpc_ListUnspentRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ListUnspentRequest_descriptor,
         new java.lang.String[] { "MinConfs", "MaxConfs", });
     internal_static_lnrpc_ListUnspentResponse_descriptor =
-      getDescriptor().getMessageTypes().get(23);
+      getDescriptor().getMessageTypes().get(26);
     internal_static_lnrpc_ListUnspentResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ListUnspentResponse_descriptor,
         new java.lang.String[] { "Utxos", });
     internal_static_lnrpc_NewAddressRequest_descriptor =
-      getDescriptor().getMessageTypes().get(24);
+      getDescriptor().getMessageTypes().get(27);
     internal_static_lnrpc_NewAddressRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_NewAddressRequest_descriptor,
         new java.lang.String[] { "Type", });
     internal_static_lnrpc_NewAddressResponse_descriptor =
-      getDescriptor().getMessageTypes().get(25);
+      getDescriptor().getMessageTypes().get(28);
     internal_static_lnrpc_NewAddressResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_NewAddressResponse_descriptor,
         new java.lang.String[] { "Address", });
     internal_static_lnrpc_SignMessageRequest_descriptor =
-      getDescriptor().getMessageTypes().get(26);
+      getDescriptor().getMessageTypes().get(29);
     internal_static_lnrpc_SignMessageRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_SignMessageRequest_descriptor,
         new java.lang.String[] { "Msg", });
     internal_static_lnrpc_SignMessageResponse_descriptor =
-      getDescriptor().getMessageTypes().get(27);
+      getDescriptor().getMessageTypes().get(30);
     internal_static_lnrpc_SignMessageResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_SignMessageResponse_descriptor,
         new java.lang.String[] { "Signature", });
     internal_static_lnrpc_VerifyMessageRequest_descriptor =
-      getDescriptor().getMessageTypes().get(28);
+      getDescriptor().getMessageTypes().get(31);
     internal_static_lnrpc_VerifyMessageRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_VerifyMessageRequest_descriptor,
         new java.lang.String[] { "Msg", "Signature", });
     internal_static_lnrpc_VerifyMessageResponse_descriptor =
-      getDescriptor().getMessageTypes().get(29);
+      getDescriptor().getMessageTypes().get(32);
     internal_static_lnrpc_VerifyMessageResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_VerifyMessageResponse_descriptor,
         new java.lang.String[] { "Valid", "Pubkey", });
     internal_static_lnrpc_ConnectPeerRequest_descriptor =
-      getDescriptor().getMessageTypes().get(30);
+      getDescriptor().getMessageTypes().get(33);
     internal_static_lnrpc_ConnectPeerRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ConnectPeerRequest_descriptor,
         new java.lang.String[] { "Addr", "Perm", });
     internal_static_lnrpc_ConnectPeerResponse_descriptor =
-      getDescriptor().getMessageTypes().get(31);
+      getDescriptor().getMessageTypes().get(34);
     internal_static_lnrpc_ConnectPeerResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ConnectPeerResponse_descriptor,
         new java.lang.String[] { });
     internal_static_lnrpc_DisconnectPeerRequest_descriptor =
-      getDescriptor().getMessageTypes().get(32);
+      getDescriptor().getMessageTypes().get(35);
     internal_static_lnrpc_DisconnectPeerRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_DisconnectPeerRequest_descriptor,
         new java.lang.String[] { "PubKey", });
     internal_static_lnrpc_DisconnectPeerResponse_descriptor =
-      getDescriptor().getMessageTypes().get(33);
+      getDescriptor().getMessageTypes().get(36);
     internal_static_lnrpc_DisconnectPeerResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_DisconnectPeerResponse_descriptor,
         new java.lang.String[] { });
     internal_static_lnrpc_HTLC_descriptor =
-      getDescriptor().getMessageTypes().get(34);
+      getDescriptor().getMessageTypes().get(37);
     internal_static_lnrpc_HTLC_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_HTLC_descriptor,
         new java.lang.String[] { "Incoming", "Amount", "HashLock", "ExpirationHeight", });
     internal_static_lnrpc_Channel_descriptor =
-      getDescriptor().getMessageTypes().get(35);
+      getDescriptor().getMessageTypes().get(38);
     internal_static_lnrpc_Channel_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_Channel_descriptor,
-        new java.lang.String[] { "Active", "RemotePubkey", "ChannelPoint", "ChanId", "Capacity", "LocalBalance", "RemoteBalance", "CommitFee", "CommitWeight", "FeePerKw", "UnsettledBalance", "TotalSatoshisSent", "TotalSatoshisReceived", "NumUpdates", "PendingHtlcs", "CsvDelay", "Private", "Initiator", });
+        new java.lang.String[] { "Active", "RemotePubkey", "ChannelPoint", "ChanId", "Capacity", "LocalBalance", "RemoteBalance", "CommitFee", "CommitWeight", "FeePerKw", "UnsettledBalance", "TotalSatoshisSent", "TotalSatoshisReceived", "NumUpdates", "PendingHtlcs", "CsvDelay", "Private", "Initiator", "ChanStatusFlags", });
     internal_static_lnrpc_ListChannelsRequest_descriptor =
-      getDescriptor().getMessageTypes().get(36);
+      getDescriptor().getMessageTypes().get(39);
     internal_static_lnrpc_ListChannelsRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ListChannelsRequest_descriptor,
         new java.lang.String[] { "ActiveOnly", "InactiveOnly", "PublicOnly", "PrivateOnly", });
     internal_static_lnrpc_ListChannelsResponse_descriptor =
-      getDescriptor().getMessageTypes().get(37);
+      getDescriptor().getMessageTypes().get(40);
     internal_static_lnrpc_ListChannelsResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ListChannelsResponse_descriptor,
         new java.lang.String[] { "Channels", });
     internal_static_lnrpc_ChannelCloseSummary_descriptor =
-      getDescriptor().getMessageTypes().get(38);
+      getDescriptor().getMessageTypes().get(41);
     internal_static_lnrpc_ChannelCloseSummary_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ChannelCloseSummary_descriptor,
         new java.lang.String[] { "ChannelPoint", "ChanId", "ChainHash", "ClosingTxHash", "RemotePubkey", "Capacity", "CloseHeight", "SettledBalance", "TimeLockedBalance", "CloseType", });
     internal_static_lnrpc_ClosedChannelsRequest_descriptor =
-      getDescriptor().getMessageTypes().get(39);
+      getDescriptor().getMessageTypes().get(42);
     internal_static_lnrpc_ClosedChannelsRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ClosedChannelsRequest_descriptor,
         new java.lang.String[] { "Cooperative", "LocalForce", "RemoteForce", "Breach", "FundingCanceled", "Abandoned", });
     internal_static_lnrpc_ClosedChannelsResponse_descriptor =
-      getDescriptor().getMessageTypes().get(40);
+      getDescriptor().getMessageTypes().get(43);
     internal_static_lnrpc_ClosedChannelsResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ClosedChannelsResponse_descriptor,
         new java.lang.String[] { "Channels", });
     internal_static_lnrpc_Peer_descriptor =
-      getDescriptor().getMessageTypes().get(41);
+      getDescriptor().getMessageTypes().get(44);
     internal_static_lnrpc_Peer_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_Peer_descriptor,
-        new java.lang.String[] { "PubKey", "Address", "BytesSent", "BytesRecv", "SatSent", "SatRecv", "Inbound", "PingTime", });
+        new java.lang.String[] { "PubKey", "Address", "BytesSent", "BytesRecv", "SatSent", "SatRecv", "Inbound", "PingTime", "SyncType", });
     internal_static_lnrpc_ListPeersRequest_descriptor =
-      getDescriptor().getMessageTypes().get(42);
+      getDescriptor().getMessageTypes().get(45);
     internal_static_lnrpc_ListPeersRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ListPeersRequest_descriptor,
         new java.lang.String[] { });
     internal_static_lnrpc_ListPeersResponse_descriptor =
-      getDescriptor().getMessageTypes().get(43);
+      getDescriptor().getMessageTypes().get(46);
     internal_static_lnrpc_ListPeersResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ListPeersResponse_descriptor,
         new java.lang.String[] { "Peers", });
     internal_static_lnrpc_GetInfoRequest_descriptor =
-      getDescriptor().getMessageTypes().get(44);
+      getDescriptor().getMessageTypes().get(47);
     internal_static_lnrpc_GetInfoRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_GetInfoRequest_descriptor,
         new java.lang.String[] { });
     internal_static_lnrpc_GetInfoResponse_descriptor =
-      getDescriptor().getMessageTypes().get(45);
+      getDescriptor().getMessageTypes().get(48);
     internal_static_lnrpc_GetInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_GetInfoResponse_descriptor,
         new java.lang.String[] { "IdentityPubkey", "Alias", "NumPendingChannels", "NumActiveChannels", "NumPeers", "BlockHeight", "BlockHash", "SyncedToChain", "Testnet", "Uris", "BestHeaderTimestamp", "Version", "NumInactiveChannels", "Chains", });
     internal_static_lnrpc_Chain_descriptor =
-      getDescriptor().getMessageTypes().get(46);
+      getDescriptor().getMessageTypes().get(49);
     internal_static_lnrpc_Chain_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_Chain_descriptor,
         new java.lang.String[] { "Chain", "Network", });
     internal_static_lnrpc_ConfirmationUpdate_descriptor =
-      getDescriptor().getMessageTypes().get(47);
+      getDescriptor().getMessageTypes().get(50);
     internal_static_lnrpc_ConfirmationUpdate_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ConfirmationUpdate_descriptor,
         new java.lang.String[] { "BlockSha", "BlockHeight", "NumConfsLeft", });
     internal_static_lnrpc_ChannelOpenUpdate_descriptor =
-      getDescriptor().getMessageTypes().get(48);
+      getDescriptor().getMessageTypes().get(51);
     internal_static_lnrpc_ChannelOpenUpdate_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ChannelOpenUpdate_descriptor,
         new java.lang.String[] { "ChannelPoint", });
     internal_static_lnrpc_ChannelCloseUpdate_descriptor =
-      getDescriptor().getMessageTypes().get(49);
+      getDescriptor().getMessageTypes().get(52);
     internal_static_lnrpc_ChannelCloseUpdate_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ChannelCloseUpdate_descriptor,
         new java.lang.String[] { "ClosingTxid", "Success", });
     internal_static_lnrpc_CloseChannelRequest_descriptor =
-      getDescriptor().getMessageTypes().get(50);
+      getDescriptor().getMessageTypes().get(53);
     internal_static_lnrpc_CloseChannelRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_CloseChannelRequest_descriptor,
         new java.lang.String[] { "ChannelPoint", "Force", "TargetConf", "SatPerByte", });
     internal_static_lnrpc_CloseStatusUpdate_descriptor =
-      getDescriptor().getMessageTypes().get(51);
+      getDescriptor().getMessageTypes().get(54);
     internal_static_lnrpc_CloseStatusUpdate_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_CloseStatusUpdate_descriptor,
         new java.lang.String[] { "ClosePending", "ChanClose", "Update", });
     internal_static_lnrpc_PendingUpdate_descriptor =
-      getDescriptor().getMessageTypes().get(52);
+      getDescriptor().getMessageTypes().get(55);
     internal_static_lnrpc_PendingUpdate_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_PendingUpdate_descriptor,
         new java.lang.String[] { "Txid", "OutputIndex", });
     internal_static_lnrpc_OpenChannelRequest_descriptor =
-      getDescriptor().getMessageTypes().get(53);
+      getDescriptor().getMessageTypes().get(56);
     internal_static_lnrpc_OpenChannelRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_OpenChannelRequest_descriptor,
         new java.lang.String[] { "NodePubkey", "NodePubkeyString", "LocalFundingAmount", "PushSat", "TargetConf", "SatPerByte", "Private", "MinHtlcMsat", "RemoteCsvDelay", "MinConfs", "SpendUnconfirmed", });
     internal_static_lnrpc_OpenStatusUpdate_descriptor =
-      getDescriptor().getMessageTypes().get(54);
+      getDescriptor().getMessageTypes().get(57);
     internal_static_lnrpc_OpenStatusUpdate_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_OpenStatusUpdate_descriptor,
         new java.lang.String[] { "ChanPending", "ChanOpen", "Update", });
     internal_static_lnrpc_PendingHTLC_descriptor =
-      getDescriptor().getMessageTypes().get(55);
+      getDescriptor().getMessageTypes().get(58);
     internal_static_lnrpc_PendingHTLC_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_PendingHTLC_descriptor,
         new java.lang.String[] { "Incoming", "Amount", "Outpoint", "MaturityHeight", "BlocksTilMaturity", "Stage", });
     internal_static_lnrpc_PendingChannelsRequest_descriptor =
-      getDescriptor().getMessageTypes().get(56);
+      getDescriptor().getMessageTypes().get(59);
     internal_static_lnrpc_PendingChannelsRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_PendingChannelsRequest_descriptor,
         new java.lang.String[] { });
     internal_static_lnrpc_PendingChannelsResponse_descriptor =
-      getDescriptor().getMessageTypes().get(57);
+      getDescriptor().getMessageTypes().get(60);
     internal_static_lnrpc_PendingChannelsResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_PendingChannelsResponse_descriptor,
@@ -99443,324 +113556,402 @@ public final class Rpc {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_PendingChannelsResponse_ForceClosedChannel_descriptor,
         new java.lang.String[] { "Channel", "ClosingTxid", "LimboBalance", "MaturityHeight", "BlocksTilMaturity", "RecoveredBalance", "PendingHtlcs", });
+    internal_static_lnrpc_ChannelEventSubscription_descriptor =
+      getDescriptor().getMessageTypes().get(61);
+    internal_static_lnrpc_ChannelEventSubscription_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_lnrpc_ChannelEventSubscription_descriptor,
+        new java.lang.String[] { });
+    internal_static_lnrpc_ChannelEventUpdate_descriptor =
+      getDescriptor().getMessageTypes().get(62);
+    internal_static_lnrpc_ChannelEventUpdate_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_lnrpc_ChannelEventUpdate_descriptor,
+        new java.lang.String[] { "OpenChannel", "ClosedChannel", "ActiveChannel", "InactiveChannel", "Type", "Channel", });
     internal_static_lnrpc_WalletBalanceRequest_descriptor =
-      getDescriptor().getMessageTypes().get(58);
+      getDescriptor().getMessageTypes().get(63);
     internal_static_lnrpc_WalletBalanceRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_WalletBalanceRequest_descriptor,
         new java.lang.String[] { });
     internal_static_lnrpc_WalletBalanceResponse_descriptor =
-      getDescriptor().getMessageTypes().get(59);
+      getDescriptor().getMessageTypes().get(64);
     internal_static_lnrpc_WalletBalanceResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_WalletBalanceResponse_descriptor,
         new java.lang.String[] { "TotalBalance", "ConfirmedBalance", "UnconfirmedBalance", });
     internal_static_lnrpc_ChannelBalanceRequest_descriptor =
-      getDescriptor().getMessageTypes().get(60);
+      getDescriptor().getMessageTypes().get(65);
     internal_static_lnrpc_ChannelBalanceRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ChannelBalanceRequest_descriptor,
         new java.lang.String[] { });
     internal_static_lnrpc_ChannelBalanceResponse_descriptor =
-      getDescriptor().getMessageTypes().get(61);
+      getDescriptor().getMessageTypes().get(66);
     internal_static_lnrpc_ChannelBalanceResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ChannelBalanceResponse_descriptor,
         new java.lang.String[] { "Balance", "PendingOpenBalance", });
     internal_static_lnrpc_QueryRoutesRequest_descriptor =
-      getDescriptor().getMessageTypes().get(62);
+      getDescriptor().getMessageTypes().get(67);
     internal_static_lnrpc_QueryRoutesRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_QueryRoutesRequest_descriptor,
-        new java.lang.String[] { "PubKey", "Amt", "NumRoutes", "FinalCltvDelta", "FeeLimit", });
+        new java.lang.String[] { "PubKey", "Amt", "NumRoutes", "FinalCltvDelta", "FeeLimit", "IgnoredNodes", "IgnoredEdges", "SourcePubKey", });
+    internal_static_lnrpc_EdgeLocator_descriptor =
+      getDescriptor().getMessageTypes().get(68);
+    internal_static_lnrpc_EdgeLocator_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_lnrpc_EdgeLocator_descriptor,
+        new java.lang.String[] { "ChannelId", "DirectionReverse", });
     internal_static_lnrpc_QueryRoutesResponse_descriptor =
-      getDescriptor().getMessageTypes().get(63);
+      getDescriptor().getMessageTypes().get(69);
     internal_static_lnrpc_QueryRoutesResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_QueryRoutesResponse_descriptor,
         new java.lang.String[] { "Routes", });
     internal_static_lnrpc_Hop_descriptor =
-      getDescriptor().getMessageTypes().get(64);
+      getDescriptor().getMessageTypes().get(70);
     internal_static_lnrpc_Hop_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_Hop_descriptor,
         new java.lang.String[] { "ChanId", "ChanCapacity", "AmtToForward", "Fee", "Expiry", "AmtToForwardMsat", "FeeMsat", "PubKey", });
     internal_static_lnrpc_Route_descriptor =
-      getDescriptor().getMessageTypes().get(65);
+      getDescriptor().getMessageTypes().get(71);
     internal_static_lnrpc_Route_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_Route_descriptor,
         new java.lang.String[] { "TotalTimeLock", "TotalFees", "TotalAmt", "Hops", "TotalFeesMsat", "TotalAmtMsat", });
     internal_static_lnrpc_NodeInfoRequest_descriptor =
-      getDescriptor().getMessageTypes().get(66);
+      getDescriptor().getMessageTypes().get(72);
     internal_static_lnrpc_NodeInfoRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_NodeInfoRequest_descriptor,
         new java.lang.String[] { "PubKey", });
     internal_static_lnrpc_NodeInfo_descriptor =
-      getDescriptor().getMessageTypes().get(67);
+      getDescriptor().getMessageTypes().get(73);
     internal_static_lnrpc_NodeInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_NodeInfo_descriptor,
         new java.lang.String[] { "Node", "NumChannels", "TotalCapacity", });
     internal_static_lnrpc_LightningNode_descriptor =
-      getDescriptor().getMessageTypes().get(68);
+      getDescriptor().getMessageTypes().get(74);
     internal_static_lnrpc_LightningNode_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_LightningNode_descriptor,
         new java.lang.String[] { "LastUpdate", "PubKey", "Alias", "Addresses", "Color", });
     internal_static_lnrpc_NodeAddress_descriptor =
-      getDescriptor().getMessageTypes().get(69);
+      getDescriptor().getMessageTypes().get(75);
     internal_static_lnrpc_NodeAddress_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_NodeAddress_descriptor,
         new java.lang.String[] { "Network", "Addr", });
     internal_static_lnrpc_RoutingPolicy_descriptor =
-      getDescriptor().getMessageTypes().get(70);
+      getDescriptor().getMessageTypes().get(76);
     internal_static_lnrpc_RoutingPolicy_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_RoutingPolicy_descriptor,
-        new java.lang.String[] { "TimeLockDelta", "MinHtlc", "FeeBaseMsat", "FeeRateMilliMsat", "Disabled", });
+        new java.lang.String[] { "TimeLockDelta", "MinHtlc", "FeeBaseMsat", "FeeRateMilliMsat", "Disabled", "MaxHtlcMsat", });
     internal_static_lnrpc_ChannelEdge_descriptor =
-      getDescriptor().getMessageTypes().get(71);
+      getDescriptor().getMessageTypes().get(77);
     internal_static_lnrpc_ChannelEdge_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ChannelEdge_descriptor,
         new java.lang.String[] { "ChannelId", "ChanPoint", "LastUpdate", "Node1Pub", "Node2Pub", "Capacity", "Node1Policy", "Node2Policy", });
     internal_static_lnrpc_ChannelGraphRequest_descriptor =
-      getDescriptor().getMessageTypes().get(72);
+      getDescriptor().getMessageTypes().get(78);
     internal_static_lnrpc_ChannelGraphRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ChannelGraphRequest_descriptor,
         new java.lang.String[] { "IncludeUnannounced", });
     internal_static_lnrpc_ChannelGraph_descriptor =
-      getDescriptor().getMessageTypes().get(73);
+      getDescriptor().getMessageTypes().get(79);
     internal_static_lnrpc_ChannelGraph_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ChannelGraph_descriptor,
         new java.lang.String[] { "Nodes", "Edges", });
     internal_static_lnrpc_ChanInfoRequest_descriptor =
-      getDescriptor().getMessageTypes().get(74);
+      getDescriptor().getMessageTypes().get(80);
     internal_static_lnrpc_ChanInfoRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ChanInfoRequest_descriptor,
         new java.lang.String[] { "ChanId", });
     internal_static_lnrpc_NetworkInfoRequest_descriptor =
-      getDescriptor().getMessageTypes().get(75);
+      getDescriptor().getMessageTypes().get(81);
     internal_static_lnrpc_NetworkInfoRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_NetworkInfoRequest_descriptor,
         new java.lang.String[] { });
     internal_static_lnrpc_NetworkInfo_descriptor =
-      getDescriptor().getMessageTypes().get(76);
+      getDescriptor().getMessageTypes().get(82);
     internal_static_lnrpc_NetworkInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_NetworkInfo_descriptor,
-        new java.lang.String[] { "GraphDiameter", "AvgOutDegree", "MaxOutDegree", "NumNodes", "NumChannels", "TotalNetworkCapacity", "AvgChannelSize", "MinChannelSize", "MaxChannelSize", });
+        new java.lang.String[] { "GraphDiameter", "AvgOutDegree", "MaxOutDegree", "NumNodes", "NumChannels", "TotalNetworkCapacity", "AvgChannelSize", "MinChannelSize", "MaxChannelSize", "MedianChannelSizeSat", });
     internal_static_lnrpc_StopRequest_descriptor =
-      getDescriptor().getMessageTypes().get(77);
+      getDescriptor().getMessageTypes().get(83);
     internal_static_lnrpc_StopRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_StopRequest_descriptor,
         new java.lang.String[] { });
     internal_static_lnrpc_StopResponse_descriptor =
-      getDescriptor().getMessageTypes().get(78);
+      getDescriptor().getMessageTypes().get(84);
     internal_static_lnrpc_StopResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_StopResponse_descriptor,
         new java.lang.String[] { });
     internal_static_lnrpc_GraphTopologySubscription_descriptor =
-      getDescriptor().getMessageTypes().get(79);
+      getDescriptor().getMessageTypes().get(85);
     internal_static_lnrpc_GraphTopologySubscription_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_GraphTopologySubscription_descriptor,
         new java.lang.String[] { });
     internal_static_lnrpc_GraphTopologyUpdate_descriptor =
-      getDescriptor().getMessageTypes().get(80);
+      getDescriptor().getMessageTypes().get(86);
     internal_static_lnrpc_GraphTopologyUpdate_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_GraphTopologyUpdate_descriptor,
         new java.lang.String[] { "NodeUpdates", "ChannelUpdates", "ClosedChans", });
     internal_static_lnrpc_NodeUpdate_descriptor =
-      getDescriptor().getMessageTypes().get(81);
+      getDescriptor().getMessageTypes().get(87);
     internal_static_lnrpc_NodeUpdate_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_NodeUpdate_descriptor,
         new java.lang.String[] { "Addresses", "IdentityKey", "GlobalFeatures", "Alias", });
     internal_static_lnrpc_ChannelEdgeUpdate_descriptor =
-      getDescriptor().getMessageTypes().get(82);
+      getDescriptor().getMessageTypes().get(88);
     internal_static_lnrpc_ChannelEdgeUpdate_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ChannelEdgeUpdate_descriptor,
         new java.lang.String[] { "ChanId", "ChanPoint", "Capacity", "RoutingPolicy", "AdvertisingNode", "ConnectingNode", });
     internal_static_lnrpc_ClosedChannelUpdate_descriptor =
-      getDescriptor().getMessageTypes().get(83);
+      getDescriptor().getMessageTypes().get(89);
     internal_static_lnrpc_ClosedChannelUpdate_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ClosedChannelUpdate_descriptor,
         new java.lang.String[] { "ChanId", "Capacity", "ClosedHeight", "ChanPoint", });
     internal_static_lnrpc_HopHint_descriptor =
-      getDescriptor().getMessageTypes().get(84);
+      getDescriptor().getMessageTypes().get(90);
     internal_static_lnrpc_HopHint_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_HopHint_descriptor,
         new java.lang.String[] { "NodeId", "ChanId", "FeeBaseMsat", "FeeProportionalMillionths", "CltvExpiryDelta", });
     internal_static_lnrpc_RouteHint_descriptor =
-      getDescriptor().getMessageTypes().get(85);
+      getDescriptor().getMessageTypes().get(91);
     internal_static_lnrpc_RouteHint_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_RouteHint_descriptor,
         new java.lang.String[] { "HopHints", });
     internal_static_lnrpc_Invoice_descriptor =
-      getDescriptor().getMessageTypes().get(86);
+      getDescriptor().getMessageTypes().get(92);
     internal_static_lnrpc_Invoice_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_Invoice_descriptor,
         new java.lang.String[] { "Memo", "Receipt", "RPreimage", "RHash", "Value", "Settled", "CreationDate", "SettleDate", "PaymentRequest", "DescriptionHash", "Expiry", "FallbackAddr", "CltvExpiry", "RouteHints", "Private", "AddIndex", "SettleIndex", "AmtPaid", "AmtPaidSat", "AmtPaidMsat", "State", });
     internal_static_lnrpc_AddInvoiceResponse_descriptor =
-      getDescriptor().getMessageTypes().get(87);
+      getDescriptor().getMessageTypes().get(93);
     internal_static_lnrpc_AddInvoiceResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_AddInvoiceResponse_descriptor,
         new java.lang.String[] { "RHash", "PaymentRequest", "AddIndex", });
     internal_static_lnrpc_PaymentHash_descriptor =
-      getDescriptor().getMessageTypes().get(88);
+      getDescriptor().getMessageTypes().get(94);
     internal_static_lnrpc_PaymentHash_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_PaymentHash_descriptor,
         new java.lang.String[] { "RHashStr", "RHash", });
     internal_static_lnrpc_ListInvoiceRequest_descriptor =
-      getDescriptor().getMessageTypes().get(89);
+      getDescriptor().getMessageTypes().get(95);
     internal_static_lnrpc_ListInvoiceRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ListInvoiceRequest_descriptor,
         new java.lang.String[] { "PendingOnly", "IndexOffset", "NumMaxInvoices", "Reversed", });
     internal_static_lnrpc_ListInvoiceResponse_descriptor =
-      getDescriptor().getMessageTypes().get(90);
+      getDescriptor().getMessageTypes().get(96);
     internal_static_lnrpc_ListInvoiceResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ListInvoiceResponse_descriptor,
         new java.lang.String[] { "Invoices", "LastIndexOffset", "FirstIndexOffset", });
     internal_static_lnrpc_InvoiceSubscription_descriptor =
-      getDescriptor().getMessageTypes().get(91);
+      getDescriptor().getMessageTypes().get(97);
     internal_static_lnrpc_InvoiceSubscription_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_InvoiceSubscription_descriptor,
         new java.lang.String[] { "AddIndex", "SettleIndex", });
     internal_static_lnrpc_Payment_descriptor =
-      getDescriptor().getMessageTypes().get(92);
+      getDescriptor().getMessageTypes().get(98);
     internal_static_lnrpc_Payment_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_Payment_descriptor,
         new java.lang.String[] { "PaymentHash", "Value", "CreationDate", "Path", "Fee", "PaymentPreimage", "ValueSat", "ValueMsat", });
     internal_static_lnrpc_ListPaymentsRequest_descriptor =
-      getDescriptor().getMessageTypes().get(93);
+      getDescriptor().getMessageTypes().get(99);
     internal_static_lnrpc_ListPaymentsRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ListPaymentsRequest_descriptor,
         new java.lang.String[] { });
     internal_static_lnrpc_ListPaymentsResponse_descriptor =
-      getDescriptor().getMessageTypes().get(94);
+      getDescriptor().getMessageTypes().get(100);
     internal_static_lnrpc_ListPaymentsResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ListPaymentsResponse_descriptor,
         new java.lang.String[] { "Payments", });
     internal_static_lnrpc_DeleteAllPaymentsRequest_descriptor =
-      getDescriptor().getMessageTypes().get(95);
+      getDescriptor().getMessageTypes().get(101);
     internal_static_lnrpc_DeleteAllPaymentsRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_DeleteAllPaymentsRequest_descriptor,
         new java.lang.String[] { });
     internal_static_lnrpc_DeleteAllPaymentsResponse_descriptor =
-      getDescriptor().getMessageTypes().get(96);
+      getDescriptor().getMessageTypes().get(102);
     internal_static_lnrpc_DeleteAllPaymentsResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_DeleteAllPaymentsResponse_descriptor,
         new java.lang.String[] { });
     internal_static_lnrpc_AbandonChannelRequest_descriptor =
-      getDescriptor().getMessageTypes().get(97);
+      getDescriptor().getMessageTypes().get(103);
     internal_static_lnrpc_AbandonChannelRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_AbandonChannelRequest_descriptor,
         new java.lang.String[] { "ChannelPoint", });
     internal_static_lnrpc_AbandonChannelResponse_descriptor =
-      getDescriptor().getMessageTypes().get(98);
+      getDescriptor().getMessageTypes().get(104);
     internal_static_lnrpc_AbandonChannelResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_AbandonChannelResponse_descriptor,
         new java.lang.String[] { });
     internal_static_lnrpc_DebugLevelRequest_descriptor =
-      getDescriptor().getMessageTypes().get(99);
+      getDescriptor().getMessageTypes().get(105);
     internal_static_lnrpc_DebugLevelRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_DebugLevelRequest_descriptor,
         new java.lang.String[] { "Show", "LevelSpec", });
     internal_static_lnrpc_DebugLevelResponse_descriptor =
-      getDescriptor().getMessageTypes().get(100);
+      getDescriptor().getMessageTypes().get(106);
     internal_static_lnrpc_DebugLevelResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_DebugLevelResponse_descriptor,
         new java.lang.String[] { "SubSystems", });
     internal_static_lnrpc_PayReqString_descriptor =
-      getDescriptor().getMessageTypes().get(101);
+      getDescriptor().getMessageTypes().get(107);
     internal_static_lnrpc_PayReqString_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_PayReqString_descriptor,
         new java.lang.String[] { "PayReq", });
     internal_static_lnrpc_PayReq_descriptor =
-      getDescriptor().getMessageTypes().get(102);
+      getDescriptor().getMessageTypes().get(108);
     internal_static_lnrpc_PayReq_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_PayReq_descriptor,
         new java.lang.String[] { "Destination", "PaymentHash", "NumSatoshis", "Timestamp", "Expiry", "Description", "DescriptionHash", "FallbackAddr", "CltvExpiry", "RouteHints", });
     internal_static_lnrpc_FeeReportRequest_descriptor =
-      getDescriptor().getMessageTypes().get(103);
+      getDescriptor().getMessageTypes().get(109);
     internal_static_lnrpc_FeeReportRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_FeeReportRequest_descriptor,
         new java.lang.String[] { });
     internal_static_lnrpc_ChannelFeeReport_descriptor =
-      getDescriptor().getMessageTypes().get(104);
+      getDescriptor().getMessageTypes().get(110);
     internal_static_lnrpc_ChannelFeeReport_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ChannelFeeReport_descriptor,
         new java.lang.String[] { "ChanPoint", "BaseFeeMsat", "FeePerMil", "FeeRate", });
     internal_static_lnrpc_FeeReportResponse_descriptor =
-      getDescriptor().getMessageTypes().get(105);
+      getDescriptor().getMessageTypes().get(111);
     internal_static_lnrpc_FeeReportResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_FeeReportResponse_descriptor,
         new java.lang.String[] { "ChannelFees", "DayFeeSum", "WeekFeeSum", "MonthFeeSum", });
     internal_static_lnrpc_PolicyUpdateRequest_descriptor =
-      getDescriptor().getMessageTypes().get(106);
+      getDescriptor().getMessageTypes().get(112);
     internal_static_lnrpc_PolicyUpdateRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_PolicyUpdateRequest_descriptor,
         new java.lang.String[] { "Global", "ChanPoint", "BaseFeeMsat", "FeeRate", "TimeLockDelta", "Scope", });
     internal_static_lnrpc_PolicyUpdateResponse_descriptor =
-      getDescriptor().getMessageTypes().get(107);
+      getDescriptor().getMessageTypes().get(113);
     internal_static_lnrpc_PolicyUpdateResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_PolicyUpdateResponse_descriptor,
         new java.lang.String[] { });
     internal_static_lnrpc_ForwardingHistoryRequest_descriptor =
-      getDescriptor().getMessageTypes().get(108);
+      getDescriptor().getMessageTypes().get(114);
     internal_static_lnrpc_ForwardingHistoryRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ForwardingHistoryRequest_descriptor,
         new java.lang.String[] { "StartTime", "EndTime", "IndexOffset", "NumMaxEvents", });
     internal_static_lnrpc_ForwardingEvent_descriptor =
-      getDescriptor().getMessageTypes().get(109);
+      getDescriptor().getMessageTypes().get(115);
     internal_static_lnrpc_ForwardingEvent_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ForwardingEvent_descriptor,
         new java.lang.String[] { "Timestamp", "ChanIdIn", "ChanIdOut", "AmtIn", "AmtOut", "Fee", "FeeMsat", });
     internal_static_lnrpc_ForwardingHistoryResponse_descriptor =
-      getDescriptor().getMessageTypes().get(110);
+      getDescriptor().getMessageTypes().get(116);
     internal_static_lnrpc_ForwardingHistoryResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lnrpc_ForwardingHistoryResponse_descriptor,
         new java.lang.String[] { "ForwardingEvents", "LastOffsetIndex", });
+    internal_static_lnrpc_ExportChannelBackupRequest_descriptor =
+      getDescriptor().getMessageTypes().get(117);
+    internal_static_lnrpc_ExportChannelBackupRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_lnrpc_ExportChannelBackupRequest_descriptor,
+        new java.lang.String[] { "ChanPoint", });
+    internal_static_lnrpc_ChannelBackup_descriptor =
+      getDescriptor().getMessageTypes().get(118);
+    internal_static_lnrpc_ChannelBackup_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_lnrpc_ChannelBackup_descriptor,
+        new java.lang.String[] { "ChanPoint", "ChanBackup", });
+    internal_static_lnrpc_MultiChanBackup_descriptor =
+      getDescriptor().getMessageTypes().get(119);
+    internal_static_lnrpc_MultiChanBackup_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_lnrpc_MultiChanBackup_descriptor,
+        new java.lang.String[] { "ChanPoints", "MultiChanBackup", });
+    internal_static_lnrpc_ChanBackupExportRequest_descriptor =
+      getDescriptor().getMessageTypes().get(120);
+    internal_static_lnrpc_ChanBackupExportRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_lnrpc_ChanBackupExportRequest_descriptor,
+        new java.lang.String[] { });
+    internal_static_lnrpc_ChanBackupSnapshot_descriptor =
+      getDescriptor().getMessageTypes().get(121);
+    internal_static_lnrpc_ChanBackupSnapshot_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_lnrpc_ChanBackupSnapshot_descriptor,
+        new java.lang.String[] { "SingleChanBackups", "MultiChanBackup", });
+    internal_static_lnrpc_ChannelBackups_descriptor =
+      getDescriptor().getMessageTypes().get(122);
+    internal_static_lnrpc_ChannelBackups_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_lnrpc_ChannelBackups_descriptor,
+        new java.lang.String[] { "ChanBackups", });
+    internal_static_lnrpc_RestoreChanBackupRequest_descriptor =
+      getDescriptor().getMessageTypes().get(123);
+    internal_static_lnrpc_RestoreChanBackupRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_lnrpc_RestoreChanBackupRequest_descriptor,
+        new java.lang.String[] { "ChanBackups", "MultiChanBackup", "Backup", });
+    internal_static_lnrpc_RestoreBackupResponse_descriptor =
+      getDescriptor().getMessageTypes().get(124);
+    internal_static_lnrpc_RestoreBackupResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_lnrpc_RestoreBackupResponse_descriptor,
+        new java.lang.String[] { });
+    internal_static_lnrpc_ChannelBackupSubscription_descriptor =
+      getDescriptor().getMessageTypes().get(125);
+    internal_static_lnrpc_ChannelBackupSubscription_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_lnrpc_ChannelBackupSubscription_descriptor,
+        new java.lang.String[] { });
+    internal_static_lnrpc_VerifyChanBackupResponse_descriptor =
+      getDescriptor().getMessageTypes().get(126);
+    internal_static_lnrpc_VerifyChanBackupResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_lnrpc_VerifyChanBackupResponse_descriptor,
+        new java.lang.String[] { });
     com.google.protobuf.ExtensionRegistry registry =
         com.google.protobuf.ExtensionRegistry.newInstance();
     registry.add(com.google.api.AnnotationsProto.http);

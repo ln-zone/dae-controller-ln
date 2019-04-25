@@ -47,8 +47,8 @@
 			<artifactId>lib-commands-ln</artifactId>
 			<version>0.1</version>
 		</dependency>
-		
-				<dependency>
+
+		<dependency>
 			<groupId>bittech</groupId>
 			<artifactId>lib-commands-lnzone</artifactId>
 			<version>0.1</version>
@@ -174,12 +174,12 @@
 					</execution>
 				</executions>
 			</plugin>
+
 			<!-- <plugin> <groupId>org.xolstice.maven.plugins</groupId> <artifactId>protobuf-maven-plugin</artifactId> 
 				<version>0.5.1</version> <configuration> <protocArtifact>com.google.protobuf:protoc:3.5.1-1:exe:${os.detected.classifier}</protocArtifact> 
 				<pluginId>grpc-java</pluginId> <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.18.0:exe:${os.detected.classifier}</pluginArtifact> 
 				</configuration> <executions> <execution> <goals> <goal>compile</goal> <goal>compile-custom</goal> 
 				</goals> </execution> </executions> </plugin> -->
-
 		</plugins>
 
 	</build>

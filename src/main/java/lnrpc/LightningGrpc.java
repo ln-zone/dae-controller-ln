@@ -123,6 +123,38 @@ public final class LightningGrpc {
      return getGetTransactionsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<lnrpc.Rpc.EstimateFeeRequest,
+      lnrpc.Rpc.EstimateFeeResponse> getEstimateFeeMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "EstimateFee",
+      requestType = lnrpc.Rpc.EstimateFeeRequest.class,
+      responseType = lnrpc.Rpc.EstimateFeeResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<lnrpc.Rpc.EstimateFeeRequest,
+      lnrpc.Rpc.EstimateFeeResponse> getEstimateFeeMethod() {
+    io.grpc.MethodDescriptor<lnrpc.Rpc.EstimateFeeRequest, lnrpc.Rpc.EstimateFeeResponse> getEstimateFeeMethod;
+    if ((getEstimateFeeMethod = LightningGrpc.getEstimateFeeMethod) == null) {
+      synchronized (LightningGrpc.class) {
+        if ((getEstimateFeeMethod = LightningGrpc.getEstimateFeeMethod) == null) {
+          LightningGrpc.getEstimateFeeMethod = getEstimateFeeMethod = 
+              io.grpc.MethodDescriptor.<lnrpc.Rpc.EstimateFeeRequest, lnrpc.Rpc.EstimateFeeResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "lnrpc.Lightning", "EstimateFee"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.EstimateFeeRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.EstimateFeeResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new LightningMethodDescriptorSupplier("EstimateFee"))
+                  .build();
+          }
+        }
+     }
+     return getEstimateFeeMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<lnrpc.Rpc.SendCoinsRequest,
       lnrpc.Rpc.SendCoinsResponse> getSendCoinsMethod;
 
@@ -537,6 +569,38 @@ public final class LightningGrpc {
         }
      }
      return getListChannelsMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<lnrpc.Rpc.ChannelEventSubscription,
+      lnrpc.Rpc.ChannelEventUpdate> getSubscribeChannelEventsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SubscribeChannelEvents",
+      requestType = lnrpc.Rpc.ChannelEventSubscription.class,
+      responseType = lnrpc.Rpc.ChannelEventUpdate.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+  public static io.grpc.MethodDescriptor<lnrpc.Rpc.ChannelEventSubscription,
+      lnrpc.Rpc.ChannelEventUpdate> getSubscribeChannelEventsMethod() {
+    io.grpc.MethodDescriptor<lnrpc.Rpc.ChannelEventSubscription, lnrpc.Rpc.ChannelEventUpdate> getSubscribeChannelEventsMethod;
+    if ((getSubscribeChannelEventsMethod = LightningGrpc.getSubscribeChannelEventsMethod) == null) {
+      synchronized (LightningGrpc.class) {
+        if ((getSubscribeChannelEventsMethod = LightningGrpc.getSubscribeChannelEventsMethod) == null) {
+          LightningGrpc.getSubscribeChannelEventsMethod = getSubscribeChannelEventsMethod = 
+              io.grpc.MethodDescriptor.<lnrpc.Rpc.ChannelEventSubscription, lnrpc.Rpc.ChannelEventUpdate>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+              .setFullMethodName(generateFullMethodName(
+                  "lnrpc.Lightning", "SubscribeChannelEvents"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.ChannelEventSubscription.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.ChannelEventUpdate.getDefaultInstance()))
+                  .setSchemaDescriptor(new LightningMethodDescriptorSupplier("SubscribeChannelEvents"))
+                  .build();
+          }
+        }
+     }
+     return getSubscribeChannelEventsMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<lnrpc.Rpc.ClosedChannelsRequest,
@@ -1403,6 +1467,166 @@ public final class LightningGrpc {
      return getForwardingHistoryMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<lnrpc.Rpc.ExportChannelBackupRequest,
+      lnrpc.Rpc.ChannelBackup> getExportChannelBackupMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ExportChannelBackup",
+      requestType = lnrpc.Rpc.ExportChannelBackupRequest.class,
+      responseType = lnrpc.Rpc.ChannelBackup.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<lnrpc.Rpc.ExportChannelBackupRequest,
+      lnrpc.Rpc.ChannelBackup> getExportChannelBackupMethod() {
+    io.grpc.MethodDescriptor<lnrpc.Rpc.ExportChannelBackupRequest, lnrpc.Rpc.ChannelBackup> getExportChannelBackupMethod;
+    if ((getExportChannelBackupMethod = LightningGrpc.getExportChannelBackupMethod) == null) {
+      synchronized (LightningGrpc.class) {
+        if ((getExportChannelBackupMethod = LightningGrpc.getExportChannelBackupMethod) == null) {
+          LightningGrpc.getExportChannelBackupMethod = getExportChannelBackupMethod = 
+              io.grpc.MethodDescriptor.<lnrpc.Rpc.ExportChannelBackupRequest, lnrpc.Rpc.ChannelBackup>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "lnrpc.Lightning", "ExportChannelBackup"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.ExportChannelBackupRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.ChannelBackup.getDefaultInstance()))
+                  .setSchemaDescriptor(new LightningMethodDescriptorSupplier("ExportChannelBackup"))
+                  .build();
+          }
+        }
+     }
+     return getExportChannelBackupMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<lnrpc.Rpc.ChanBackupExportRequest,
+      lnrpc.Rpc.ChanBackupSnapshot> getExportAllChannelBackupsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ExportAllChannelBackups",
+      requestType = lnrpc.Rpc.ChanBackupExportRequest.class,
+      responseType = lnrpc.Rpc.ChanBackupSnapshot.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<lnrpc.Rpc.ChanBackupExportRequest,
+      lnrpc.Rpc.ChanBackupSnapshot> getExportAllChannelBackupsMethod() {
+    io.grpc.MethodDescriptor<lnrpc.Rpc.ChanBackupExportRequest, lnrpc.Rpc.ChanBackupSnapshot> getExportAllChannelBackupsMethod;
+    if ((getExportAllChannelBackupsMethod = LightningGrpc.getExportAllChannelBackupsMethod) == null) {
+      synchronized (LightningGrpc.class) {
+        if ((getExportAllChannelBackupsMethod = LightningGrpc.getExportAllChannelBackupsMethod) == null) {
+          LightningGrpc.getExportAllChannelBackupsMethod = getExportAllChannelBackupsMethod = 
+              io.grpc.MethodDescriptor.<lnrpc.Rpc.ChanBackupExportRequest, lnrpc.Rpc.ChanBackupSnapshot>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "lnrpc.Lightning", "ExportAllChannelBackups"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.ChanBackupExportRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.ChanBackupSnapshot.getDefaultInstance()))
+                  .setSchemaDescriptor(new LightningMethodDescriptorSupplier("ExportAllChannelBackups"))
+                  .build();
+          }
+        }
+     }
+     return getExportAllChannelBackupsMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<lnrpc.Rpc.ChanBackupSnapshot,
+      lnrpc.Rpc.VerifyChanBackupResponse> getVerifyChanBackupMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "VerifyChanBackup",
+      requestType = lnrpc.Rpc.ChanBackupSnapshot.class,
+      responseType = lnrpc.Rpc.VerifyChanBackupResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<lnrpc.Rpc.ChanBackupSnapshot,
+      lnrpc.Rpc.VerifyChanBackupResponse> getVerifyChanBackupMethod() {
+    io.grpc.MethodDescriptor<lnrpc.Rpc.ChanBackupSnapshot, lnrpc.Rpc.VerifyChanBackupResponse> getVerifyChanBackupMethod;
+    if ((getVerifyChanBackupMethod = LightningGrpc.getVerifyChanBackupMethod) == null) {
+      synchronized (LightningGrpc.class) {
+        if ((getVerifyChanBackupMethod = LightningGrpc.getVerifyChanBackupMethod) == null) {
+          LightningGrpc.getVerifyChanBackupMethod = getVerifyChanBackupMethod = 
+              io.grpc.MethodDescriptor.<lnrpc.Rpc.ChanBackupSnapshot, lnrpc.Rpc.VerifyChanBackupResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "lnrpc.Lightning", "VerifyChanBackup"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.ChanBackupSnapshot.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.VerifyChanBackupResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new LightningMethodDescriptorSupplier("VerifyChanBackup"))
+                  .build();
+          }
+        }
+     }
+     return getVerifyChanBackupMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<lnrpc.Rpc.RestoreChanBackupRequest,
+      lnrpc.Rpc.RestoreBackupResponse> getRestoreChannelBackupsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "RestoreChannelBackups",
+      requestType = lnrpc.Rpc.RestoreChanBackupRequest.class,
+      responseType = lnrpc.Rpc.RestoreBackupResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<lnrpc.Rpc.RestoreChanBackupRequest,
+      lnrpc.Rpc.RestoreBackupResponse> getRestoreChannelBackupsMethod() {
+    io.grpc.MethodDescriptor<lnrpc.Rpc.RestoreChanBackupRequest, lnrpc.Rpc.RestoreBackupResponse> getRestoreChannelBackupsMethod;
+    if ((getRestoreChannelBackupsMethod = LightningGrpc.getRestoreChannelBackupsMethod) == null) {
+      synchronized (LightningGrpc.class) {
+        if ((getRestoreChannelBackupsMethod = LightningGrpc.getRestoreChannelBackupsMethod) == null) {
+          LightningGrpc.getRestoreChannelBackupsMethod = getRestoreChannelBackupsMethod = 
+              io.grpc.MethodDescriptor.<lnrpc.Rpc.RestoreChanBackupRequest, lnrpc.Rpc.RestoreBackupResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "lnrpc.Lightning", "RestoreChannelBackups"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.RestoreChanBackupRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.RestoreBackupResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new LightningMethodDescriptorSupplier("RestoreChannelBackups"))
+                  .build();
+          }
+        }
+     }
+     return getRestoreChannelBackupsMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<lnrpc.Rpc.ChannelBackupSubscription,
+      lnrpc.Rpc.ChanBackupSnapshot> getSubscribeChannelBackupsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SubscribeChannelBackups",
+      requestType = lnrpc.Rpc.ChannelBackupSubscription.class,
+      responseType = lnrpc.Rpc.ChanBackupSnapshot.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+  public static io.grpc.MethodDescriptor<lnrpc.Rpc.ChannelBackupSubscription,
+      lnrpc.Rpc.ChanBackupSnapshot> getSubscribeChannelBackupsMethod() {
+    io.grpc.MethodDescriptor<lnrpc.Rpc.ChannelBackupSubscription, lnrpc.Rpc.ChanBackupSnapshot> getSubscribeChannelBackupsMethod;
+    if ((getSubscribeChannelBackupsMethod = LightningGrpc.getSubscribeChannelBackupsMethod) == null) {
+      synchronized (LightningGrpc.class) {
+        if ((getSubscribeChannelBackupsMethod = LightningGrpc.getSubscribeChannelBackupsMethod) == null) {
+          LightningGrpc.getSubscribeChannelBackupsMethod = getSubscribeChannelBackupsMethod = 
+              io.grpc.MethodDescriptor.<lnrpc.Rpc.ChannelBackupSubscription, lnrpc.Rpc.ChanBackupSnapshot>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+              .setFullMethodName(generateFullMethodName(
+                  "lnrpc.Lightning", "SubscribeChannelBackups"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.ChannelBackupSubscription.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.ChanBackupSnapshot.getDefaultInstance()))
+                  .setSchemaDescriptor(new LightningMethodDescriptorSupplier("SubscribeChannelBackups"))
+                  .build();
+          }
+        }
+     }
+     return getSubscribeChannelBackupsMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -1465,6 +1689,18 @@ public final class LightningGrpc {
     public void getTransactions(lnrpc.Rpc.GetTransactionsRequest request,
         io.grpc.stub.StreamObserver<lnrpc.Rpc.TransactionDetails> responseObserver) {
       asyncUnimplementedUnaryCall(getGetTransactionsMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     ** lncli: `estimatefee`
+     *EstimateFee asks the chain backend to estimate the fee rate and total fees
+     *for a transaction that pays to multiple specified outputs.
+     * </pre>
+     */
+    public void estimateFee(lnrpc.Rpc.EstimateFeeRequest request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.EstimateFeeResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getEstimateFeeMethod(), responseObserver);
     }
 
     /**
@@ -1633,6 +1869,20 @@ public final class LightningGrpc {
     public void listChannels(lnrpc.Rpc.ListChannelsRequest request,
         io.grpc.stub.StreamObserver<lnrpc.Rpc.ListChannelsResponse> responseObserver) {
       asyncUnimplementedUnaryCall(getListChannelsMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     ** lncli: `subscribechannelevents`
+     *SubscribeChannelEvents creates a uni-directional stream from the server to
+     *the client in which any updates relevant to the state of the channels are
+     *sent over. Events include new active channels, inactive channels, and closed
+     *channels.
+     * </pre>
+     */
+    public void subscribeChannelEvents(lnrpc.Rpc.ChannelEventSubscription request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.ChannelEventUpdate> responseObserver) {
+      asyncUnimplementedUnaryCall(getSubscribeChannelEventsMethod(), responseObserver);
     }
 
     /**
@@ -1997,7 +2247,7 @@ public final class LightningGrpc {
      * <pre>
      ** lncli: `fwdinghistory`
      *ForwardingHistory allows the caller to query the htlcswitch for a record of
-     *all HTLC's forwarded within the target time range, and integer offset
+     *all HTLCs forwarded within the target time range, and integer offset
      *within that time range. If no time-range is specified, then the first chunk
      *of the past 24 hrs of forwarding history are returned.
      *A list of forwarding events are returned. The size of each forwarding event
@@ -2010,6 +2260,81 @@ public final class LightningGrpc {
     public void forwardingHistory(lnrpc.Rpc.ForwardingHistoryRequest request,
         io.grpc.stub.StreamObserver<lnrpc.Rpc.ForwardingHistoryResponse> responseObserver) {
       asyncUnimplementedUnaryCall(getForwardingHistoryMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     ** lncli: `exportchanbackup`
+     *ExportChannelBackup attempts to return an encrypted static channel backup
+     *for the target channel identified by it channel point. The backup is
+     *encrypted with a key generated from the aezeed seed of the user. The
+     *returned backup can either be restored using the RestoreChannelBackup
+     *method once lnd is running, or via the InitWallet and UnlockWallet methods
+     *from the WalletUnlocker service.
+     * </pre>
+     */
+    public void exportChannelBackup(lnrpc.Rpc.ExportChannelBackupRequest request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.ChannelBackup> responseObserver) {
+      asyncUnimplementedUnaryCall(getExportChannelBackupMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     **
+     *ExportAllChannelBackups returns static channel backups for all existing
+     *channels known to lnd. A set of regular singular static channel backups for
+     *each channel are returned. Additionally, a multi-channel backup is returned
+     *as well, which contains a single encrypted blob containing the backups of
+     *each channel.
+     * </pre>
+     */
+    public void exportAllChannelBackups(lnrpc.Rpc.ChanBackupExportRequest request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.ChanBackupSnapshot> responseObserver) {
+      asyncUnimplementedUnaryCall(getExportAllChannelBackupsMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     **
+     *VerifyChanBackup allows a caller to verify the integrity of a channel backup
+     *snapshot. This method will accept either a packed Single or a packed Multi.
+     *Specifying both will result in an error.
+     * </pre>
+     */
+    public void verifyChanBackup(lnrpc.Rpc.ChanBackupSnapshot request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.VerifyChanBackupResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getVerifyChanBackupMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     ** lncli: `restorechanbackup`
+     *RestoreChannelBackups accepts a set of singular channel backups, or a
+     *single encrypted multi-chan backup and attempts to recover any funds
+     *remaining within the channel. If we are able to unpack the backup, then the
+     *new channel will be shown under listchannels, as well as pending channels.
+     * </pre>
+     */
+    public void restoreChannelBackups(lnrpc.Rpc.RestoreChanBackupRequest request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.RestoreBackupResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getRestoreChannelBackupsMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     **
+     *SubscribeChannelBackups allows a client to sub-subscribe to the most up to
+     *date information concerning the state of all channel backups. Each time a
+     *new channel is added, we return the new set of channels, along with a
+     *multi-chan backup containing the backup info for all channels. Each time a
+     *channel is closed, we send a new update, which contains new new chan back
+     *ups, but the updated set of encrypted multi-chan backups with the closed
+     *channel(s) removed.
+     * </pre>
+     */
+    public void subscribeChannelBackups(lnrpc.Rpc.ChannelBackupSubscription request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.ChanBackupSnapshot> responseObserver) {
+      asyncUnimplementedUnaryCall(getSubscribeChannelBackupsMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
@@ -2035,6 +2360,13 @@ public final class LightningGrpc {
                 lnrpc.Rpc.GetTransactionsRequest,
                 lnrpc.Rpc.TransactionDetails>(
                   this, METHODID_GET_TRANSACTIONS)))
+          .addMethod(
+            getEstimateFeeMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                lnrpc.Rpc.EstimateFeeRequest,
+                lnrpc.Rpc.EstimateFeeResponse>(
+                  this, METHODID_ESTIMATE_FEE)))
           .addMethod(
             getSendCoinsMethod(),
             asyncUnaryCall(
@@ -2126,6 +2458,13 @@ public final class LightningGrpc {
                 lnrpc.Rpc.ListChannelsRequest,
                 lnrpc.Rpc.ListChannelsResponse>(
                   this, METHODID_LIST_CHANNELS)))
+          .addMethod(
+            getSubscribeChannelEventsMethod(),
+            asyncServerStreamingCall(
+              new MethodHandlers<
+                lnrpc.Rpc.ChannelEventSubscription,
+                lnrpc.Rpc.ChannelEventUpdate>(
+                  this, METHODID_SUBSCRIBE_CHANNEL_EVENTS)))
           .addMethod(
             getClosedChannelsMethod(),
             asyncUnaryCall(
@@ -2315,6 +2654,41 @@ public final class LightningGrpc {
                 lnrpc.Rpc.ForwardingHistoryRequest,
                 lnrpc.Rpc.ForwardingHistoryResponse>(
                   this, METHODID_FORWARDING_HISTORY)))
+          .addMethod(
+            getExportChannelBackupMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                lnrpc.Rpc.ExportChannelBackupRequest,
+                lnrpc.Rpc.ChannelBackup>(
+                  this, METHODID_EXPORT_CHANNEL_BACKUP)))
+          .addMethod(
+            getExportAllChannelBackupsMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                lnrpc.Rpc.ChanBackupExportRequest,
+                lnrpc.Rpc.ChanBackupSnapshot>(
+                  this, METHODID_EXPORT_ALL_CHANNEL_BACKUPS)))
+          .addMethod(
+            getVerifyChanBackupMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                lnrpc.Rpc.ChanBackupSnapshot,
+                lnrpc.Rpc.VerifyChanBackupResponse>(
+                  this, METHODID_VERIFY_CHAN_BACKUP)))
+          .addMethod(
+            getRestoreChannelBackupsMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                lnrpc.Rpc.RestoreChanBackupRequest,
+                lnrpc.Rpc.RestoreBackupResponse>(
+                  this, METHODID_RESTORE_CHANNEL_BACKUPS)))
+          .addMethod(
+            getSubscribeChannelBackupsMethod(),
+            asyncServerStreamingCall(
+              new MethodHandlers<
+                lnrpc.Rpc.ChannelBackupSubscription,
+                lnrpc.Rpc.ChanBackupSnapshot>(
+                  this, METHODID_SUBSCRIBE_CHANNEL_BACKUPS)))
           .build();
     }
   }
@@ -2375,6 +2749,19 @@ public final class LightningGrpc {
         io.grpc.stub.StreamObserver<lnrpc.Rpc.TransactionDetails> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getGetTransactionsMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     ** lncli: `estimatefee`
+     *EstimateFee asks the chain backend to estimate the fee rate and total fees
+     *for a transaction that pays to multiple specified outputs.
+     * </pre>
+     */
+    public void estimateFee(lnrpc.Rpc.EstimateFeeRequest request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.EstimateFeeResponse> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getEstimateFeeMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -2556,6 +2943,21 @@ public final class LightningGrpc {
         io.grpc.stub.StreamObserver<lnrpc.Rpc.ListChannelsResponse> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getListChannelsMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     ** lncli: `subscribechannelevents`
+     *SubscribeChannelEvents creates a uni-directional stream from the server to
+     *the client in which any updates relevant to the state of the channels are
+     *sent over. Events include new active channels, inactive channels, and closed
+     *channels.
+     * </pre>
+     */
+    public void subscribeChannelEvents(lnrpc.Rpc.ChannelEventSubscription request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.ChannelEventUpdate> responseObserver) {
+      asyncServerStreamingCall(
+          getChannel().newCall(getSubscribeChannelEventsMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -2946,7 +3348,7 @@ public final class LightningGrpc {
      * <pre>
      ** lncli: `fwdinghistory`
      *ForwardingHistory allows the caller to query the htlcswitch for a record of
-     *all HTLC's forwarded within the target time range, and integer offset
+     *all HTLCs forwarded within the target time range, and integer offset
      *within that time range. If no time-range is specified, then the first chunk
      *of the past 24 hrs of forwarding history are returned.
      *A list of forwarding events are returned. The size of each forwarding event
@@ -2960,6 +3362,86 @@ public final class LightningGrpc {
         io.grpc.stub.StreamObserver<lnrpc.Rpc.ForwardingHistoryResponse> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getForwardingHistoryMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     ** lncli: `exportchanbackup`
+     *ExportChannelBackup attempts to return an encrypted static channel backup
+     *for the target channel identified by it channel point. The backup is
+     *encrypted with a key generated from the aezeed seed of the user. The
+     *returned backup can either be restored using the RestoreChannelBackup
+     *method once lnd is running, or via the InitWallet and UnlockWallet methods
+     *from the WalletUnlocker service.
+     * </pre>
+     */
+    public void exportChannelBackup(lnrpc.Rpc.ExportChannelBackupRequest request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.ChannelBackup> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getExportChannelBackupMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     **
+     *ExportAllChannelBackups returns static channel backups for all existing
+     *channels known to lnd. A set of regular singular static channel backups for
+     *each channel are returned. Additionally, a multi-channel backup is returned
+     *as well, which contains a single encrypted blob containing the backups of
+     *each channel.
+     * </pre>
+     */
+    public void exportAllChannelBackups(lnrpc.Rpc.ChanBackupExportRequest request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.ChanBackupSnapshot> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getExportAllChannelBackupsMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     **
+     *VerifyChanBackup allows a caller to verify the integrity of a channel backup
+     *snapshot. This method will accept either a packed Single or a packed Multi.
+     *Specifying both will result in an error.
+     * </pre>
+     */
+    public void verifyChanBackup(lnrpc.Rpc.ChanBackupSnapshot request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.VerifyChanBackupResponse> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getVerifyChanBackupMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     ** lncli: `restorechanbackup`
+     *RestoreChannelBackups accepts a set of singular channel backups, or a
+     *single encrypted multi-chan backup and attempts to recover any funds
+     *remaining within the channel. If we are able to unpack the backup, then the
+     *new channel will be shown under listchannels, as well as pending channels.
+     * </pre>
+     */
+    public void restoreChannelBackups(lnrpc.Rpc.RestoreChanBackupRequest request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.RestoreBackupResponse> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getRestoreChannelBackupsMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     **
+     *SubscribeChannelBackups allows a client to sub-subscribe to the most up to
+     *date information concerning the state of all channel backups. Each time a
+     *new channel is added, we return the new set of channels, along with a
+     *multi-chan backup containing the backup info for all channels. Each time a
+     *channel is closed, we send a new update, which contains new new chan back
+     *ups, but the updated set of encrypted multi-chan backups with the closed
+     *channel(s) removed.
+     * </pre>
+     */
+    public void subscribeChannelBackups(lnrpc.Rpc.ChannelBackupSubscription request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.ChanBackupSnapshot> responseObserver) {
+      asyncServerStreamingCall(
+          getChannel().newCall(getSubscribeChannelBackupsMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
@@ -3016,6 +3498,18 @@ public final class LightningGrpc {
     public lnrpc.Rpc.TransactionDetails getTransactions(lnrpc.Rpc.GetTransactionsRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetTransactionsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     ** lncli: `estimatefee`
+     *EstimateFee asks the chain backend to estimate the fee rate and total fees
+     *for a transaction that pays to multiple specified outputs.
+     * </pre>
+     */
+    public lnrpc.Rpc.EstimateFeeResponse estimateFee(lnrpc.Rpc.EstimateFeeRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getEstimateFeeMethod(), getCallOptions(), request);
     }
 
     /**
@@ -3185,6 +3679,21 @@ public final class LightningGrpc {
     public lnrpc.Rpc.ListChannelsResponse listChannels(lnrpc.Rpc.ListChannelsRequest request) {
       return blockingUnaryCall(
           getChannel(), getListChannelsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     ** lncli: `subscribechannelevents`
+     *SubscribeChannelEvents creates a uni-directional stream from the server to
+     *the client in which any updates relevant to the state of the channels are
+     *sent over. Events include new active channels, inactive channels, and closed
+     *channels.
+     * </pre>
+     */
+    public java.util.Iterator<lnrpc.Rpc.ChannelEventUpdate> subscribeChannelEvents(
+        lnrpc.Rpc.ChannelEventSubscription request) {
+      return blockingServerStreamingCall(
+          getChannel(), getSubscribeChannelEventsMethod(), getCallOptions(), request);
     }
 
     /**
@@ -3525,7 +4034,7 @@ public final class LightningGrpc {
      * <pre>
      ** lncli: `fwdinghistory`
      *ForwardingHistory allows the caller to query the htlcswitch for a record of
-     *all HTLC's forwarded within the target time range, and integer offset
+     *all HTLCs forwarded within the target time range, and integer offset
      *within that time range. If no time-range is specified, then the first chunk
      *of the past 24 hrs of forwarding history are returned.
      *A list of forwarding events are returned. The size of each forwarding event
@@ -3538,6 +4047,82 @@ public final class LightningGrpc {
     public lnrpc.Rpc.ForwardingHistoryResponse forwardingHistory(lnrpc.Rpc.ForwardingHistoryRequest request) {
       return blockingUnaryCall(
           getChannel(), getForwardingHistoryMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     ** lncli: `exportchanbackup`
+     *ExportChannelBackup attempts to return an encrypted static channel backup
+     *for the target channel identified by it channel point. The backup is
+     *encrypted with a key generated from the aezeed seed of the user. The
+     *returned backup can either be restored using the RestoreChannelBackup
+     *method once lnd is running, or via the InitWallet and UnlockWallet methods
+     *from the WalletUnlocker service.
+     * </pre>
+     */
+    public lnrpc.Rpc.ChannelBackup exportChannelBackup(lnrpc.Rpc.ExportChannelBackupRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getExportChannelBackupMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     **
+     *ExportAllChannelBackups returns static channel backups for all existing
+     *channels known to lnd. A set of regular singular static channel backups for
+     *each channel are returned. Additionally, a multi-channel backup is returned
+     *as well, which contains a single encrypted blob containing the backups of
+     *each channel.
+     * </pre>
+     */
+    public lnrpc.Rpc.ChanBackupSnapshot exportAllChannelBackups(lnrpc.Rpc.ChanBackupExportRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getExportAllChannelBackupsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     **
+     *VerifyChanBackup allows a caller to verify the integrity of a channel backup
+     *snapshot. This method will accept either a packed Single or a packed Multi.
+     *Specifying both will result in an error.
+     * </pre>
+     */
+    public lnrpc.Rpc.VerifyChanBackupResponse verifyChanBackup(lnrpc.Rpc.ChanBackupSnapshot request) {
+      return blockingUnaryCall(
+          getChannel(), getVerifyChanBackupMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     ** lncli: `restorechanbackup`
+     *RestoreChannelBackups accepts a set of singular channel backups, or a
+     *single encrypted multi-chan backup and attempts to recover any funds
+     *remaining within the channel. If we are able to unpack the backup, then the
+     *new channel will be shown under listchannels, as well as pending channels.
+     * </pre>
+     */
+    public lnrpc.Rpc.RestoreBackupResponse restoreChannelBackups(lnrpc.Rpc.RestoreChanBackupRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getRestoreChannelBackupsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     **
+     *SubscribeChannelBackups allows a client to sub-subscribe to the most up to
+     *date information concerning the state of all channel backups. Each time a
+     *new channel is added, we return the new set of channels, along with a
+     *multi-chan backup containing the backup info for all channels. Each time a
+     *channel is closed, we send a new update, which contains new new chan back
+     *ups, but the updated set of encrypted multi-chan backups with the closed
+     *channel(s) removed.
+     * </pre>
+     */
+    public java.util.Iterator<lnrpc.Rpc.ChanBackupSnapshot> subscribeChannelBackups(
+        lnrpc.Rpc.ChannelBackupSubscription request) {
+      return blockingServerStreamingCall(
+          getChannel(), getSubscribeChannelBackupsMethod(), getCallOptions(), request);
     }
   }
 
@@ -3597,6 +4182,19 @@ public final class LightningGrpc {
         lnrpc.Rpc.GetTransactionsRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getGetTransactionsMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     ** lncli: `estimatefee`
+     *EstimateFee asks the chain backend to estimate the fee rate and total fees
+     *for a transaction that pays to multiple specified outputs.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<lnrpc.Rpc.EstimateFeeResponse> estimateFee(
+        lnrpc.Rpc.EstimateFeeRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getEstimateFeeMethod(), getCallOptions()), request);
     }
 
     /**
@@ -4053,7 +4651,7 @@ public final class LightningGrpc {
      * <pre>
      ** lncli: `fwdinghistory`
      *ForwardingHistory allows the caller to query the htlcswitch for a record of
-     *all HTLC's forwarded within the target time range, and integer offset
+     *all HTLCs forwarded within the target time range, and integer offset
      *within that time range. If no time-range is specified, then the first chunk
      *of the past 24 hrs of forwarding history are returned.
      *A list of forwarding events are returned. The size of each forwarding event
@@ -4068,51 +4666,120 @@ public final class LightningGrpc {
       return futureUnaryCall(
           getChannel().newCall(getForwardingHistoryMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     ** lncli: `exportchanbackup`
+     *ExportChannelBackup attempts to return an encrypted static channel backup
+     *for the target channel identified by it channel point. The backup is
+     *encrypted with a key generated from the aezeed seed of the user. The
+     *returned backup can either be restored using the RestoreChannelBackup
+     *method once lnd is running, or via the InitWallet and UnlockWallet methods
+     *from the WalletUnlocker service.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<lnrpc.Rpc.ChannelBackup> exportChannelBackup(
+        lnrpc.Rpc.ExportChannelBackupRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getExportChannelBackupMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     **
+     *ExportAllChannelBackups returns static channel backups for all existing
+     *channels known to lnd. A set of regular singular static channel backups for
+     *each channel are returned. Additionally, a multi-channel backup is returned
+     *as well, which contains a single encrypted blob containing the backups of
+     *each channel.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<lnrpc.Rpc.ChanBackupSnapshot> exportAllChannelBackups(
+        lnrpc.Rpc.ChanBackupExportRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getExportAllChannelBackupsMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     **
+     *VerifyChanBackup allows a caller to verify the integrity of a channel backup
+     *snapshot. This method will accept either a packed Single or a packed Multi.
+     *Specifying both will result in an error.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<lnrpc.Rpc.VerifyChanBackupResponse> verifyChanBackup(
+        lnrpc.Rpc.ChanBackupSnapshot request) {
+      return futureUnaryCall(
+          getChannel().newCall(getVerifyChanBackupMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     ** lncli: `restorechanbackup`
+     *RestoreChannelBackups accepts a set of singular channel backups, or a
+     *single encrypted multi-chan backup and attempts to recover any funds
+     *remaining within the channel. If we are able to unpack the backup, then the
+     *new channel will be shown under listchannels, as well as pending channels.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<lnrpc.Rpc.RestoreBackupResponse> restoreChannelBackups(
+        lnrpc.Rpc.RestoreChanBackupRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getRestoreChannelBackupsMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_WALLET_BALANCE = 0;
   private static final int METHODID_CHANNEL_BALANCE = 1;
   private static final int METHODID_GET_TRANSACTIONS = 2;
-  private static final int METHODID_SEND_COINS = 3;
-  private static final int METHODID_LIST_UNSPENT = 4;
-  private static final int METHODID_SUBSCRIBE_TRANSACTIONS = 5;
-  private static final int METHODID_SEND_MANY = 6;
-  private static final int METHODID_NEW_ADDRESS = 7;
-  private static final int METHODID_SIGN_MESSAGE = 8;
-  private static final int METHODID_VERIFY_MESSAGE = 9;
-  private static final int METHODID_CONNECT_PEER = 10;
-  private static final int METHODID_DISCONNECT_PEER = 11;
-  private static final int METHODID_LIST_PEERS = 12;
-  private static final int METHODID_GET_INFO = 13;
-  private static final int METHODID_PENDING_CHANNELS = 14;
-  private static final int METHODID_LIST_CHANNELS = 15;
-  private static final int METHODID_CLOSED_CHANNELS = 16;
-  private static final int METHODID_OPEN_CHANNEL_SYNC = 17;
-  private static final int METHODID_OPEN_CHANNEL = 18;
-  private static final int METHODID_CLOSE_CHANNEL = 19;
-  private static final int METHODID_ABANDON_CHANNEL = 20;
-  private static final int METHODID_SEND_PAYMENT_SYNC = 21;
-  private static final int METHODID_SEND_TO_ROUTE_SYNC = 22;
-  private static final int METHODID_ADD_INVOICE = 23;
-  private static final int METHODID_LIST_INVOICES = 24;
-  private static final int METHODID_LOOKUP_INVOICE = 25;
-  private static final int METHODID_SUBSCRIBE_INVOICES = 26;
-  private static final int METHODID_DECODE_PAY_REQ = 27;
-  private static final int METHODID_LIST_PAYMENTS = 28;
-  private static final int METHODID_DELETE_ALL_PAYMENTS = 29;
-  private static final int METHODID_DESCRIBE_GRAPH = 30;
-  private static final int METHODID_GET_CHAN_INFO = 31;
-  private static final int METHODID_GET_NODE_INFO = 32;
-  private static final int METHODID_QUERY_ROUTES = 33;
-  private static final int METHODID_GET_NETWORK_INFO = 34;
-  private static final int METHODID_STOP_DAEMON = 35;
-  private static final int METHODID_SUBSCRIBE_CHANNEL_GRAPH = 36;
-  private static final int METHODID_DEBUG_LEVEL = 37;
-  private static final int METHODID_FEE_REPORT = 38;
-  private static final int METHODID_UPDATE_CHANNEL_POLICY = 39;
-  private static final int METHODID_FORWARDING_HISTORY = 40;
-  private static final int METHODID_SEND_PAYMENT = 41;
-  private static final int METHODID_SEND_TO_ROUTE = 42;
+  private static final int METHODID_ESTIMATE_FEE = 3;
+  private static final int METHODID_SEND_COINS = 4;
+  private static final int METHODID_LIST_UNSPENT = 5;
+  private static final int METHODID_SUBSCRIBE_TRANSACTIONS = 6;
+  private static final int METHODID_SEND_MANY = 7;
+  private static final int METHODID_NEW_ADDRESS = 8;
+  private static final int METHODID_SIGN_MESSAGE = 9;
+  private static final int METHODID_VERIFY_MESSAGE = 10;
+  private static final int METHODID_CONNECT_PEER = 11;
+  private static final int METHODID_DISCONNECT_PEER = 12;
+  private static final int METHODID_LIST_PEERS = 13;
+  private static final int METHODID_GET_INFO = 14;
+  private static final int METHODID_PENDING_CHANNELS = 15;
+  private static final int METHODID_LIST_CHANNELS = 16;
+  private static final int METHODID_SUBSCRIBE_CHANNEL_EVENTS = 17;
+  private static final int METHODID_CLOSED_CHANNELS = 18;
+  private static final int METHODID_OPEN_CHANNEL_SYNC = 19;
+  private static final int METHODID_OPEN_CHANNEL = 20;
+  private static final int METHODID_CLOSE_CHANNEL = 21;
+  private static final int METHODID_ABANDON_CHANNEL = 22;
+  private static final int METHODID_SEND_PAYMENT_SYNC = 23;
+  private static final int METHODID_SEND_TO_ROUTE_SYNC = 24;
+  private static final int METHODID_ADD_INVOICE = 25;
+  private static final int METHODID_LIST_INVOICES = 26;
+  private static final int METHODID_LOOKUP_INVOICE = 27;
+  private static final int METHODID_SUBSCRIBE_INVOICES = 28;
+  private static final int METHODID_DECODE_PAY_REQ = 29;
+  private static final int METHODID_LIST_PAYMENTS = 30;
+  private static final int METHODID_DELETE_ALL_PAYMENTS = 31;
+  private static final int METHODID_DESCRIBE_GRAPH = 32;
+  private static final int METHODID_GET_CHAN_INFO = 33;
+  private static final int METHODID_GET_NODE_INFO = 34;
+  private static final int METHODID_QUERY_ROUTES = 35;
+  private static final int METHODID_GET_NETWORK_INFO = 36;
+  private static final int METHODID_STOP_DAEMON = 37;
+  private static final int METHODID_SUBSCRIBE_CHANNEL_GRAPH = 38;
+  private static final int METHODID_DEBUG_LEVEL = 39;
+  private static final int METHODID_FEE_REPORT = 40;
+  private static final int METHODID_UPDATE_CHANNEL_POLICY = 41;
+  private static final int METHODID_FORWARDING_HISTORY = 42;
+  private static final int METHODID_EXPORT_CHANNEL_BACKUP = 43;
+  private static final int METHODID_EXPORT_ALL_CHANNEL_BACKUPS = 44;
+  private static final int METHODID_VERIFY_CHAN_BACKUP = 45;
+  private static final int METHODID_RESTORE_CHANNEL_BACKUPS = 46;
+  private static final int METHODID_SUBSCRIBE_CHANNEL_BACKUPS = 47;
+  private static final int METHODID_SEND_PAYMENT = 48;
+  private static final int METHODID_SEND_TO_ROUTE = 49;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -4142,6 +4809,10 @@ public final class LightningGrpc {
         case METHODID_GET_TRANSACTIONS:
           serviceImpl.getTransactions((lnrpc.Rpc.GetTransactionsRequest) request,
               (io.grpc.stub.StreamObserver<lnrpc.Rpc.TransactionDetails>) responseObserver);
+          break;
+        case METHODID_ESTIMATE_FEE:
+          serviceImpl.estimateFee((lnrpc.Rpc.EstimateFeeRequest) request,
+              (io.grpc.stub.StreamObserver<lnrpc.Rpc.EstimateFeeResponse>) responseObserver);
           break;
         case METHODID_SEND_COINS:
           serviceImpl.sendCoins((lnrpc.Rpc.SendCoinsRequest) request,
@@ -4194,6 +4865,10 @@ public final class LightningGrpc {
         case METHODID_LIST_CHANNELS:
           serviceImpl.listChannels((lnrpc.Rpc.ListChannelsRequest) request,
               (io.grpc.stub.StreamObserver<lnrpc.Rpc.ListChannelsResponse>) responseObserver);
+          break;
+        case METHODID_SUBSCRIBE_CHANNEL_EVENTS:
+          serviceImpl.subscribeChannelEvents((lnrpc.Rpc.ChannelEventSubscription) request,
+              (io.grpc.stub.StreamObserver<lnrpc.Rpc.ChannelEventUpdate>) responseObserver);
           break;
         case METHODID_CLOSED_CHANNELS:
           serviceImpl.closedChannels((lnrpc.Rpc.ClosedChannelsRequest) request,
@@ -4295,6 +4970,26 @@ public final class LightningGrpc {
           serviceImpl.forwardingHistory((lnrpc.Rpc.ForwardingHistoryRequest) request,
               (io.grpc.stub.StreamObserver<lnrpc.Rpc.ForwardingHistoryResponse>) responseObserver);
           break;
+        case METHODID_EXPORT_CHANNEL_BACKUP:
+          serviceImpl.exportChannelBackup((lnrpc.Rpc.ExportChannelBackupRequest) request,
+              (io.grpc.stub.StreamObserver<lnrpc.Rpc.ChannelBackup>) responseObserver);
+          break;
+        case METHODID_EXPORT_ALL_CHANNEL_BACKUPS:
+          serviceImpl.exportAllChannelBackups((lnrpc.Rpc.ChanBackupExportRequest) request,
+              (io.grpc.stub.StreamObserver<lnrpc.Rpc.ChanBackupSnapshot>) responseObserver);
+          break;
+        case METHODID_VERIFY_CHAN_BACKUP:
+          serviceImpl.verifyChanBackup((lnrpc.Rpc.ChanBackupSnapshot) request,
+              (io.grpc.stub.StreamObserver<lnrpc.Rpc.VerifyChanBackupResponse>) responseObserver);
+          break;
+        case METHODID_RESTORE_CHANNEL_BACKUPS:
+          serviceImpl.restoreChannelBackups((lnrpc.Rpc.RestoreChanBackupRequest) request,
+              (io.grpc.stub.StreamObserver<lnrpc.Rpc.RestoreBackupResponse>) responseObserver);
+          break;
+        case METHODID_SUBSCRIBE_CHANNEL_BACKUPS:
+          serviceImpl.subscribeChannelBackups((lnrpc.Rpc.ChannelBackupSubscription) request,
+              (io.grpc.stub.StreamObserver<lnrpc.Rpc.ChanBackupSnapshot>) responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -4365,6 +5060,7 @@ public final class LightningGrpc {
               .addMethod(getWalletBalanceMethod())
               .addMethod(getChannelBalanceMethod())
               .addMethod(getGetTransactionsMethod())
+              .addMethod(getEstimateFeeMethod())
               .addMethod(getSendCoinsMethod())
               .addMethod(getListUnspentMethod())
               .addMethod(getSubscribeTransactionsMethod())
@@ -4378,6 +5074,7 @@ public final class LightningGrpc {
               .addMethod(getGetInfoMethod())
               .addMethod(getPendingChannelsMethod())
               .addMethod(getListChannelsMethod())
+              .addMethod(getSubscribeChannelEventsMethod())
               .addMethod(getClosedChannelsMethod())
               .addMethod(getOpenChannelSyncMethod())
               .addMethod(getOpenChannelMethod())
@@ -4405,6 +5102,11 @@ public final class LightningGrpc {
               .addMethod(getFeeReportMethod())
               .addMethod(getUpdateChannelPolicyMethod())
               .addMethod(getForwardingHistoryMethod())
+              .addMethod(getExportChannelBackupMethod())
+              .addMethod(getExportAllChannelBackupsMethod())
+              .addMethod(getVerifyChanBackupMethod())
+              .addMethod(getRestoreChannelBackupsMethod())
+              .addMethod(getSubscribeChannelBackupsMethod())
               .build();
         }
       }
