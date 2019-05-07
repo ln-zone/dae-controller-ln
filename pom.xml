@@ -63,12 +63,6 @@
 		<!-- <dependency> <groupId>btcduke</groupId> <artifactId>lib-ln-zone-commands</artifactId> 
 			<version>0.1</version> </dependency> -->
 
-		<dependency>
-			<groupId>bittech</groupId>
-			<artifactId>lib-lnd-commands</artifactId>
-			<version>0.1</version>
-		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>
 			<groupId>junit</groupId>
