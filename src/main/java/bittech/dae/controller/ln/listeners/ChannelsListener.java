@@ -10,6 +10,7 @@ import bittech.lib.commands.ln.channels.ListChannelsResponse;
 import bittech.lib.commands.ln.channels.ListChannelsResponse.ActiveChannel;
 import bittech.lib.commands.ln.channels.ListPendingChannelsCommand;
 import bittech.lib.commands.ln.channels.OpenChannelCommand;
+import bittech.lib.commands.ln.channels.PayToRouteCommand;
 import bittech.lib.commands.ln.channels.RegisterChannelsListenerCommand;
 import bittech.lib.manager.ManagerDataProvider;
 import bittech.lib.manager.commands.GetNodeDetailsResponse;
@@ -100,7 +101,7 @@ public class ChannelsListener implements Listener, ManagerDataProvider, AutoClos
 	public Class<?>[] getListeningCommands() {
 		return new Class<?>[] { OpenChannelCommand.class, CloseChannelCommand.class, ListChannelsCommand.class,
 				ListPendingChannelsCommand.class, RegisterChannelsListenerCommand.class, FindRouteCommand.class,
-				DescribeGraphCommand.class };
+				DescribeGraphCommand.class, PayToRouteCommand.class };
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 
 import bittech.lib.commands.ln.GetInfoCommand;
 import bittech.lib.commands.ln.GetInfoResponse;
@@ -61,6 +62,7 @@ import bittech.lib.utils.Btc;
 import bittech.lib.utils.Require;
 import bittech.lib.utils.exceptions.StoredException;
 import bittech.lib.utils.json.JsonBuilder;
+import bittech.lib.utils.logs.Log;
 import io.grpc.ManagedChannel;
 import lnrpc.LightningGrpc;
 import lnrpc.Rpc;
@@ -282,7 +284,7 @@ public class LndCommandsExecutor {
 				cmd.response.cltv_expiry = response.getCltvExpiry();
 				cmd.response.description = response.getDescription();
 				cmd.response.description_hash = response.getDescriptionHash();
-				cmd.response.destination = response.getDescription();
+				cmd.response.destination = response.getDestination();
 				cmd.response.expiry = response.getExpiry();
 				cmd.response.fallback_addr = response.getFallbackAddr();
 				cmd.response.payment_hash = response.getPaymentHash();
@@ -557,37 +559,42 @@ public class LndCommandsExecutor {
 			} else if (command instanceof PayToRouteCommand) {
 
 				PayToRouteCommand cmd = (PayToRouteCommand) command;
-				Rpc.SendToRouteRequest.Builder builder = Rpc.SendToRouteRequest.newBuilder();
-				builder.setPaymentHashString("abcde");
 				
-				/*
-				builder.setFinalCltvDelta(cmd.getRequest().finalCltvDelta);
-				builder.setNumRoutes(1);
-				builder.setPubKey(cmd.getRequest().destId);
-*/
-//				Rpc.QueryRoutesResponse response = blockingStub.queryRoutes(builder.build());
-//
-//				if (response.getRoutesCount() == 0) {
-//					cmd.error = new ErrorResponse("No route found", 0L);
-//				} else {
-//					Rpc.Route rpcRoute = response.getRoutes(0);
-//					cmd.response = new FindRouteResponse();
-//					cmd.response.route = new Route();
-//					cmd.response.route.totalTimeLock = rpcRoute.getTotalTimeLock();
-//					cmd.response.route.totalAmount = Btc.fromMsat(rpcRoute.getTotalAmtMsat());
-//					cmd.response.route.totalFees = Btc.fromMsat(rpcRoute.getTotalFeesMsat());
-//					cmd.response.route.hops = new ArrayList<Hop>(rpcRoute.getHopsCount());
-//					for (Rpc.Hop rpcHop : rpcRoute.getHopsList()) {
-//						Hop hop = new Hop();
-//						hop.amountToForward = Btc.fromMsat(rpcHop.getAmtToForwardMsat());
-//						hop.channelCapacity = Btc.fromSat(rpcHop.getChanCapacity());
-//						hop.channelId = rpcHop.getChanId();
-//						hop.expiry = rpcHop.getExpiry();
-//						hop.fee = Btc.fromMsat(rpcHop.getFeeMsat());
-//						hop.pubKey = rpcHop.getPubKey();
-//						cmd.response.route.hops.add(hop);
-//					}
-//				}
+				Rpc.SendToRouteRequest.Builder builder = Rpc.SendToRouteRequest.newBuilder();				
+				builder.setPaymentHashString(cmd.getRequest().paymentHash);
+				
+				Rpc.Route.Builder rpcRouteBuilder =  Rpc.Route.newBuilder()
+						.setTotalAmtMsat(cmd.getRequest().route.totalAmount.toMsat())
+						.setTotalFeesMsat(cmd.getRequest().route.totalFees.toMsat())
+						.setTotalTimeLock(cmd.getRequest().route.totalTimeLock);
+				
+				for(Hop hop : cmd.getRequest().route.hops) {
+					Rpc.Hop.Builder rpcBuilder = Rpc.Hop.newBuilder();
+					rpcBuilder.setAmtToForwardMsat(hop.amountToForward.toMsat());
+//					rpcBuilder.setChanCapacity(value) Do we need this?
+					rpcBuilder.setChanId(hop.channelId);
+					rpcBuilder.setExpiry(hop.expiry);
+					rpcBuilder.setFeeMsat(hop.fee.toMsat());
+					rpcBuilder.setPubKey(hop.pubKey);
+					
+					rpcRouteBuilder.addHops(rpcBuilder.build());
+				}
+
+//				builder.setRoute(rpcRouteBuilder.build());
+				builder.addRoutes(rpcRouteBuilder.build());
+
+				Rpc.SendToRouteRequest req = builder.build();
+				Log.build().param("req", req).event("Sending to route");
+				Rpc.SendResponse response = blockingStub.sendToRouteSync(req);
+				
+				if(!StringUtils.isEmpty(response.getPaymentError())) {
+					throw new StoredException("Executing rpc on lnd failed", new Exception(response.getPaymentError()));
+				}
+				
+//				Log.build().param("response", response).event("Send to route executed");
+				
+				cmd.response = new NoDataResponse(); // TODO: Tmp
+
 
 			} else {
 

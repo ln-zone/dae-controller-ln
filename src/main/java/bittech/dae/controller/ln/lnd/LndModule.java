@@ -1,5 +1,6 @@
 package bittech.dae.controller.ln.lnd;
 
+import bittech.dae.controller.ln.fastpay.FastPayListener;
 import bittech.dae.controller.ln.general.MixListener;
 import bittech.dae.controller.ln.listeners.ChannelsListener;
 import bittech.dae.controller.ln.listeners.InfoListener;
@@ -19,12 +20,13 @@ public class LndModule implements AutoCloseable {
 	private final LndRpc lndRpc;
 	private final LndCommandsExecutor executor;
 	
-	private final  MixListener mixListener;
+	private final MixListener mixListener;
 	private final InfoListener infoListener;
 	private final OnChainListener onChainListener;
 	private final PeersListener peersListener;
 	private final ChannelsListener channelsListener;
 	private final InvoicesListener invoicesListener;
+	private final FastPayListener fastPayListener;
 	
 	public LndModule(String configEntryName) {
 		
@@ -40,7 +42,7 @@ public class LndModule implements AutoCloseable {
 		peersListener = new PeersListener(executor);
 		channelsListener = new ChannelsListener(node, lndRpc.getChannel(), executor);
 		invoicesListener = new InvoicesListener(node, lndRpc.getChannel());
-		
+		fastPayListener = new FastPayListener(executor);
 		
 		ManagerModule managerNotifier = new ManagerModule(node, config.moduleName);
 		managerNotifier.addDetailsProvider(infoListener);
@@ -53,6 +55,7 @@ public class LndModule implements AutoCloseable {
 		node.registerListener(peersListener);
 		node.registerListener(channelsListener);
 		node.registerListener(invoicesListener);
+		node.registerListener(fastPayListener);
 		
 		onChainListener.start();
 		channelsListener.start();
