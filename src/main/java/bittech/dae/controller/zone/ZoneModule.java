@@ -109,7 +109,7 @@ public class ZoneModule implements ManagerDataProvider, AutoCloseable {
 
 		this.standardChannelChangedListener = new StandardChannelChangedListener(this.controllerConnection);
 
-		this.offerListener = new OfferListener(this.zoneChannels, this.controllerConnection, this.listeningPort);
+		this.offerListener = new OfferListener(this.zoneChannels, this.listeningPort);
 		this.zoneChannelsListener = new ZoneChannelsListener(this.zoneChannels);
 		this.zoneListener = new ClientZoneListener(this.zoneChannels, this.controllerConnection);
 		this.feeListener = new FeeListener(this.zoneChannels, this.controllerConnection);

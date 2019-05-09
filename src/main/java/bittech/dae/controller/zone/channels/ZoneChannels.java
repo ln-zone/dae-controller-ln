@@ -143,8 +143,25 @@ public class ZoneChannels {
 
 	public synchronized void setOffer(final Offer offer) {
 
+		try {
 		Require.notNull(offer, "offer");
 
+		if (offer.feeBase == null || offer.feeBase.hasValue() == false) {
+			throw new StoredException("Fee base not specified for offer", null);
+		}
+
+		if (offer.feeBase.toMsat() < 0) {
+			throw new StoredException("Fee base cannot be negative value", null);
+		}
+		
+		if (offer.feePerSatoshi == null || offer.feePerSatoshi.hasValue() == false) {
+			throw new StoredException("Fee per satoshi not specified for offer", null);
+		}
+
+		if (offer.feePerSatoshi.toMsat() < 0) {
+			throw new StoredException("Fee per satoshi cannot be negative value", null);
+		}
+		
 		if (offer.fixedCost == null || offer.fixedCost.hasValue() == false) {
 			throw new StoredException("Fixed cost not specified for offer", null);
 		}
@@ -163,6 +180,9 @@ public class ZoneChannels {
 
 		data.offer = Utils.deepCopy(offer, offer.getClass());
 
+		} catch(Exception ex) {
+			throw new StoredException("Cannot set new offer", ex);
+		}
 	}
 
 	public synchronized ZoneChannel findByTxId(String txId) {
