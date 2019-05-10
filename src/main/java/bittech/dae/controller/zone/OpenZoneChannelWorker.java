@@ -7,14 +7,12 @@ import bittech.lib.commands.ln.channels.ChannelChangedRequest;
 import bittech.lib.commands.ln.channels.OpenChannelCommand;
 import bittech.lib.commands.ln.channels.OpenChannelResponse;
 import bittech.lib.commands.ln.invoices.AddInvoiceRequest;
-import bittech.lib.commands.ln.invoices.DecodeInvoiceCommand;
-import bittech.lib.commands.ln.invoices.DecodeInvoiceResponse;
 import bittech.lib.commands.ln.invoices.PayInvoiceCommand;
 import bittech.lib.commands.ln.invoices.PaymentReceivedRequest;
 import bittech.lib.commands.ln.peers.ConnectPeerCommand;
 import bittech.lib.commands.ln.peers.ListPeersWithChannelsCommand;
 import bittech.lib.commands.ln.peers.ListPeersWithChannelsResponse.Peer;
-import bittech.lib.commands.lnzone.commans.OpenZoneChannelRequest;
+import bittech.lib.commands.lnzone.external.OpenZoneChannelRequest;
 import bittech.lib.protocol.Connection;
 import bittech.lib.utils.Btc;
 import bittech.lib.utils.Require;
@@ -64,34 +62,14 @@ public class OpenZoneChannelWorker implements StandardChannelChangeObserver, Pay
 
 	}
 
-	private DecodeInvoiceResponse verifyInvoice(OpenZoneChannelRequest request) {
-
-		// LOGGER.info("------------ Verify invoice");
-		Require.notNull(request.invoice, "invoice");
-
-		DecodeInvoiceCommand decodePayCmd = new DecodeInvoiceCommand(request.invoice);
-		controllerConnection.execute(decodePayCmd);
-		if (decodePayCmd.getError() != null) {
-			throw new StoredException("Given invoice not correct", decodePayCmd.getError().toException());
-		}
-
-		Require.notNull(decodePayCmd.getResponse(), "decodePayCmd.getResponse()");
-		Require.notNull(request.myAmount, "clientSide");
-		if (!decodePayCmd.getResponse().amount.equals(request.myAmount)) {
-			throw new StoredException("Given invoice has wrong amount. Should be " + request.myAmount + " but there is "
-					+ decodePayCmd.getResponse().amount, null);
-		}
-		return decodePayCmd.getResponse();
-	}
-
 	private void verifyUri(OpenZoneChannelRequest request) {
 
-		Require.notNull(request.invoice, "invoice");
+		Require.notNull(request.peerUri, "peerUri");
 
 		ConnectPeerCommand connectCommand = new ConnectPeerCommand(request.peerUri);
 		controllerConnection.execute(connectCommand);
 		if (connectCommand.getError() != null) {
-			throw new StoredException("Cannot connect to uri: " + request.peerUri, null);
+			throw new StoredException("Cannot connect to uri: " + request.peerUri, connectCommand.getError().toException());
 		}
 
 	}
@@ -103,7 +81,6 @@ public class OpenZoneChannelWorker implements StandardChannelChangeObserver, Pay
 
 			verifyOffer(request);
 			verifyIfNoChannelYet(request);
-			DecodeInvoiceResponse decPayResp = verifyInvoice(request);
 			verifyUri(request);
 
 			Btc costs = request.offer.fixedCost.add(request.feeReserve).add(request.myAmount);
@@ -111,14 +88,14 @@ public class OpenZoneChannelWorker implements StandardChannelChangeObserver, Pay
 			String label = "lnzone" + (long) (Math.random() * Long.MAX_VALUE);
 			AddInvoiceRequest invRequest = new AddInvoiceRequest(costs, label, "Open lnzone channel");
 
-			return channels.newChannel(request, invRequest, decPayResp);
+			return channels.newChannel(request, invRequest);
 
 		} catch (Exception ex) {
 			throw new StoredException("Open channel request failed", ex);
 		}
 
 	}
-	
+
 	@Override
 	public synchronized void onStandardChannelChanged(ChannelChangedRequest request) {
 		try {
@@ -131,59 +108,54 @@ public class OpenZoneChannelWorker implements StandardChannelChangeObserver, Pay
 				log.event("This is not ln.zone channel");
 				return;
 			}
-			
+
 			Utils.prn(request.state);
 			if (!"CHANNELD_NORMAL".equals(request.state)) {
 				log.event("Channel is NOT in CHANNELD_NORMAL state");
 				return; // Channel not ready yet
 			}
-			
+
 			Utils.prn(channel.establishedChannel.owner);
 			if (channel.establishedChannel.owner == false) {
 				log.event("We are not owner of this channel");
 				return;
 			}
-			
-			if (channel.establishedChannel.status.equalOrAfter(bittech.lib.commands.lnzone.EstablishedChannel.Status.SENDING_CLIENT_PART)) {
+
+			if (channel.establishedChannel.status
+					.equalOrAfter(bittech.lib.commands.lnzone.EstablishedChannel.Status.SENDING_CLIENT_PART)) {
 				log.event("Client part already sending or already sent");
 				return; // Channel not ready yet
-			}			
-			
-			if (channel.getOpenChannelRequest().invoice == null) {
-				new StoredException("Invoice is null", null);
-				return; // no need to trasfer amount. Client wants to have zero at the beginnig
 			}
-			
+
 			channel.establishedChannel.status = bittech.lib.commands.lnzone.EstablishedChannel.Status.SENDING_CLIENT_PART;
 			channels.update(channel);
-			
-			PayInvoiceCommand cmd = new PayInvoiceCommand(channel.getDecodedInvoice().payment_hash, new Btc(), new Btc());
+
+			PayInvoiceCommand cmd = new PayInvoiceCommand(channel.getDecodedInvoice().payment_hash, new Btc(),
+					new Btc());
 			controllerConnection.execute(cmd);
 			if (cmd.getError() != null) {
 				throw new StoredException("Send pay invoice failed", cmd.getError().toException());
 			}
-			
-/*
-			List<RouteElement> route = new LinkedList<RouteElement>();
-			RouteElement rel = new RouteElement();
-			rel.channel = request.shortChannelId;
-			rel.id = channel.getDecodedInvoice().payee;
-			rel.delay = 9;
-			rel.msatoshi = channel.getDecodedInvoice().msatoshi;
-			route.add(rel);
 
-			SendPayCommand sendPayCommand = new SendPayCommand(route, channel.getDecodedInvoice().payment_hash);
-			controllerConnection.execute(sendPayCommand);
-			if (sendPayCommand.getError() != null) {
-				throw new StoredException("Send pay invoice failed", sendPayCommand.getError().toException());
-			}
-			
-			WaitSendPayCommand waitSendPayCommand = new WaitSendPayCommand(channel.getDecodedInvoice().payment_hash, 5);
-			controllerConnection.execute(waitSendPayCommand);
-			if (waitSendPayCommand.getError() != null) {
-				throw new StoredException("Wait for pay invoice failed", waitSendPayCommand.getError().toException());
-			}
-*/
+			/*
+			 * List<RouteElement> route = new LinkedList<RouteElement>(); RouteElement rel =
+			 * new RouteElement(); rel.channel = request.shortChannelId; rel.id =
+			 * channel.getDecodedInvoice().payee; rel.delay = 9; rel.msatoshi =
+			 * channel.getDecodedInvoice().msatoshi; route.add(rel);
+			 * 
+			 * SendPayCommand sendPayCommand = new SendPayCommand(route,
+			 * channel.getDecodedInvoice().payment_hash);
+			 * controllerConnection.execute(sendPayCommand); if (sendPayCommand.getError()
+			 * != null) { throw new StoredException("Send pay invoice failed",
+			 * sendPayCommand.getError().toException()); }
+			 * 
+			 * WaitSendPayCommand waitSendPayCommand = new
+			 * WaitSendPayCommand(channel.getDecodedInvoice().payment_hash, 5);
+			 * controllerConnection.execute(waitSendPayCommand); if
+			 * (waitSendPayCommand.getError() != null) { throw new
+			 * StoredException("Wait for pay invoice failed",
+			 * waitSendPayCommand.getError().toException()); }
+			 */
 			channel.establishedChannel.status = bittech.lib.commands.lnzone.EstablishedChannel.Status.ACTIVE;
 			channels.update(channel);
 		} catch (Exception ex) {
@@ -231,7 +203,7 @@ public class OpenZoneChannelWorker implements StandardChannelChangeObserver, Pay
 		if (connectCommand.getError() != null) {
 			throw new StoredException("Cannot connect to URI: " + uri, connectCommand.getError().toException());
 		}
-		
+
 		return uri.split("@")[0]; // TODO: Not very clear
 	}
 
@@ -254,5 +226,4 @@ public class OpenZoneChannelWorker implements StandardChannelChangeObserver, Pay
 		return fundChannelCommand.getResponse();
 	}
 
-	
 }

@@ -5,11 +5,11 @@ import java.util.Date;
 import bittech.lib.commands.ln.invoices.AddInvoiceCommand;
 import bittech.lib.commands.lnzone.commans.GetChannelStatusCommand;
 import bittech.lib.commands.lnzone.commans.GetChannelStatusResponse;
-import bittech.lib.commands.lnzone.commans.OpenZoneChannelCommand;
-import bittech.lib.commands.lnzone.commans.OpenZoneChannelRequest;
-import bittech.lib.commands.lnzone.commans.OpenZoneChannelResponse;
 import bittech.lib.commands.lnzone.commans.WaitForChannelFundedCommand;
 import bittech.lib.commands.lnzone.commans.WaitForChannelFundedResponse;
+import bittech.lib.commands.lnzone.external.OpenZoneChannelCommand;
+import bittech.lib.commands.lnzone.external.OpenZoneChannelRequest;
+import bittech.lib.commands.lnzone.external.OpenZoneChannelResponse;
 import bittech.lib.protocol.Command;
 import bittech.lib.protocol.Connection;
 import bittech.lib.protocol.ErrorResponse;
@@ -40,6 +40,11 @@ public abstract class ChannelsListener implements Listener {
 	}
 
 	@Override
+	public void responseSent(String serviceName, Command<?, ?> command) {
+		// Nothing here
+	}
+
+	@Override
 	public void commandReceived(String fromServiceName, Command<?, ?> command) throws StoredException {
 		if (command instanceof OpenZoneChannelCommand) {
 
@@ -52,11 +57,11 @@ public abstract class ChannelsListener implements Listener {
 				AddInvoiceCommand invoiceCmd = new AddInvoiceCommand(channel.getInvoiceRequest());
 
 				controllerConnection.execute(invoiceCmd);
-				
-				if(invoiceCmd.getResponse().payment_request == null) {
+
+				if (invoiceCmd.getResponse().payment_request == null) {
 					throw new Exception("Controller returned null bolt11 after call invoice command");
 				}
-				
+
 				if (invoiceCmd.getError() != null) {
 					cmd.error = invoiceCmd.getError();
 				} else {
@@ -92,8 +97,9 @@ public abstract class ChannelsListener implements Listener {
 
 				channel = channels.findZoneChannelById(cmd.getRequest().zoneChannelId);
 
-				if(channel == null) {
-					throw new StoredException("No channel with zoneChannelId = '" + cmd.getRequest().zoneChannelId + "'", null);
+				if (channel == null) {
+					throw new StoredException(
+							"No channel with zoneChannelId = '" + cmd.getRequest().zoneChannelId + "'", null);
 				}
 
 				if (channel.establishedChannel.fundingTxId != null) {

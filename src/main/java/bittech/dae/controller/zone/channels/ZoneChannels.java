@@ -15,7 +15,8 @@ import bittech.lib.commands.ln.invoices.AddInvoiceRequest;
 import bittech.lib.commands.ln.invoices.DecodeInvoiceResponse;
 import bittech.lib.commands.lnzone.EstablishedChannel;
 import bittech.lib.commands.lnzone.commans.Offer;
-import bittech.lib.commands.lnzone.commans.OpenZoneChannelRequest;
+import bittech.lib.commands.lnzone.commans.OpenPeerChannelRequest;
+import bittech.lib.commands.lnzone.external.OpenZoneChannelRequest;
 import bittech.lib.utils.Config;
 import bittech.lib.utils.Notificator;
 import bittech.lib.utils.Require;
@@ -87,12 +88,10 @@ public class ZoneChannels {
 		changeNotificator.register(chageObserver);
 	}
 
-	public synchronized ZoneChannel newChannel(OpenZoneChannelRequest openChannelRequest, AddInvoiceRequest invoiceRequest,
-			DecodeInvoiceResponse decodedInvoice) {
+	public synchronized ZoneChannel newChannel(OpenZoneChannelRequest openChannelRequest, AddInvoiceRequest invoiceRequest) {
 		ZoneChannel ch = new ZoneChannel(true);
 		ch.setOpenChannelRequest(Require.notNull(openChannelRequest, "openChannelRequest"));
 		ch.setInvoiceRequest(Require.notNull(invoiceRequest, "invoiceRequest"));
-		ch.setDecodedInvoice(Require.notNull(decodedInvoice, "decodedInvoice"));
 		ch.establishedChannel.status = bittech.lib.commands.lnzone.EstablishedChannel.Status.WAITING_FOR_PAYMENT;
 		put(ch);
 		return ch;

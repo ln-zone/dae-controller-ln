@@ -4,17 +4,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import bittech.lib.commands.ln.GetInfoCommand;
-import bittech.lib.commands.ln.invoices.AddInvoiceCommand;
 import bittech.lib.commands.ln.invoices.PayInvoiceCommand;
 import bittech.lib.commands.lnzone.EstablishedChannel.Status;
 import bittech.lib.commands.lnzone.commans.GetChannelStatusCommand;
 import bittech.lib.commands.lnzone.commans.Offer;
-import bittech.lib.commands.lnzone.commans.OpenZoneChannelCommand;
-import bittech.lib.commands.lnzone.commans.OpenZoneChannelRequest;
-import bittech.lib.commands.lnzone.commans.OpenZoneChannelResponse;
+import bittech.lib.commands.lnzone.commans.OpenPeerChannelCommand;
+import bittech.lib.commands.lnzone.commans.OpenPeerChannelRequest;
+import bittech.lib.commands.lnzone.commans.OpenPeerChannelResponse;
 import bittech.lib.commands.lnzone.commans.WaitForChannelFundedCommand;
+import bittech.lib.commands.lnzone.external.OpenZoneChannelCommand;
+import bittech.lib.commands.lnzone.external.OpenZoneChannelResponse;
 import bittech.lib.commands.lnzone.internal.GetOfferCommand;
-import bittech.lib.commands.lnzone.internal.GetOfferResponse;
 import bittech.lib.protocol.Command;
 import bittech.lib.protocol.Connection;
 import bittech.lib.protocol.Listener;
@@ -23,7 +23,6 @@ import bittech.lib.utils.Btc;
 import bittech.lib.utils.Require;
 import bittech.lib.utils.exceptions.StoredException;
 import bittech.lib.utils.logs.Log;
-
 
 public class ClientZoneListener implements Listener {
 
@@ -40,7 +39,7 @@ public class ClientZoneListener implements Listener {
 
 	@Override
 	public Class<?>[] getListeningCommands() {
-		return new Class<?>[] { /*GetOfferCommand.class,*/ /*OpenZoneChannelCommand.class*/ };
+		return new Class<?>[] { /* GetOfferCommand.class, */ OpenPeerChannelCommand.class };
 	}
 
 	@Override
@@ -87,20 +86,6 @@ public class ClientZoneListener implements Listener {
 //		cmd.response = new GetOfferResponse(getZoneOffer(cmd.getRequest().uri));
 //	}
 
-	private String newInvoice(Btc value) {
-		String msat = Long.toString(value.toMsat());
-		String label = "inv" + (long) (Math.random() * Long.MAX_VALUE);
-		AddInvoiceCommand cmd = new AddInvoiceCommand(value, label, "Client side funds");
-
-		controllerConnection.execute(cmd);
-
-		if (cmd.getError() != null) {
-			throw new StoredException("Cannot create invoice", cmd.getError().toException());
-		}
-
-		return cmd.getResponse().payment_request;
-	}
-
 	private String getUri() {
 
 		GetInfoCommand cmd = new GetInfoCommand();
@@ -111,7 +96,6 @@ public class ClientZoneListener implements Listener {
 			throw new StoredException("Cannot get info", cmd.getError().toException());
 		}
 
-		
 		if (cmd.getResponse().uris.size() == 0) {
 			throw new StoredException("Cannot get uri", new Exception("No address assigned to node"));
 		}
@@ -120,12 +104,12 @@ public class ClientZoneListener implements Listener {
 	}
 
 	private OpenZoneChannelResponse callOpenZoneChannelOnPeer(ZoneChannel channel, Connection peerZoneConnection,
-			OpenZoneChannelRequest request, String uri, String invoice) {
+			OpenPeerChannelRequest request, String uri) {
 
 		try {
 
-			OpenZoneChannelCommand cmd = new OpenZoneChannelCommand(request.peerAmount, request.feeReserve, request.myAmount,
-					request.offer, uri, invoice);
+			OpenZoneChannelCommand cmd = new OpenZoneChannelCommand(request.peerAmount, request.feeReserve,
+					request.myAmount, request.offer, uri);
 
 			channel.setOpenChannelRequest(cmd.getRequest());
 			peerZoneConnection.execute(cmd);
@@ -137,11 +121,11 @@ public class ClientZoneListener implements Listener {
 			channel.establishedChannel.zoneChannelId = cmd.getResponse().zoneChannelId;
 			channel.establishedChannel.status = Status.FUNDING;
 			channels.update(channel);
-			
+
 			return cmd.getResponse();
 
 		} catch (Exception ex) {
-			throw new StoredException("Cannot get zone offer", ex);
+			throw new StoredException("Cannot open zone channel on peer", ex);
 		}
 	}
 
@@ -183,7 +167,7 @@ public class ClientZoneListener implements Listener {
 		return peerZoneConnection;
 	}
 
-	private void execOpenNotOwnerChannelCommand(OpenZoneChannelCommand cmd) {
+	private void execOpenNotOwnerChannelCommand(OpenPeerChannelCommand cmd) {
 
 		Node node = null;
 
@@ -203,11 +187,10 @@ public class ClientZoneListener implements Listener {
 
 			log.event("Creaing new invoice");
 			String myUri = getUri();
-			String myInvoice = newInvoice(cmd.getRequest().myAmount);
 
 			log.event("1. Call OpenChannelCommand on for given zone uri");
-			OpenZoneChannelResponse resp = callOpenZoneChannelOnPeer(channel, peerZoneConnection, cmd.getRequest(), myUri,
-					myInvoice);
+			OpenZoneChannelResponse resp = callOpenZoneChannelOnPeer(channel, peerZoneConnection, cmd.getRequest(),
+					myUri);
 
 			log.event("2. Pay received invoice");
 			payInvoice(resp.invoice);
@@ -235,9 +218,9 @@ public class ClientZoneListener implements Listener {
 			channels.update(channel);
 
 			log.event("6. Return response with zoneChannelId");
-			cmd.response = new OpenZoneChannelResponse();
+			cmd.response = new OpenPeerChannelResponse();
 			cmd.response.zoneChannelId = resp.zoneChannelId;
-		} catch(Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 			throw new StoredException("Cannot establish zone channel", ex);
 		} finally {
@@ -255,9 +238,9 @@ public class ClientZoneListener implements Listener {
 //			execGetZoneOfferCommand((GetOfferCommand) command);
 //
 //		} else 
-			if (command instanceof OpenZoneChannelCommand) {
+		if (command instanceof OpenPeerChannelCommand) {
 
-			execOpenNotOwnerChannelCommand((OpenZoneChannelCommand) command);
+			execOpenNotOwnerChannelCommand((OpenPeerChannelCommand) command);
 
 		} else {
 			throw new StoredException("Usupported command type: " + command, null);

@@ -7,7 +7,8 @@ import bittech.lib.commands.ln.invoices.AddInvoiceRequest;
 import bittech.lib.commands.ln.invoices.DecodeInvoiceResponse;
 import bittech.lib.commands.lnzone.EstablishedChannel;
 import bittech.lib.commands.lnzone.EstablishedChannel.Status;
-import bittech.lib.commands.lnzone.commans.OpenZoneChannelRequest;
+import bittech.lib.commands.lnzone.commans.OpenPeerChannelRequest;
+import bittech.lib.commands.lnzone.external.OpenZoneChannelRequest;
 
 public class ZoneChannel {
 

@@ -9,16 +9,16 @@ import bittech.dae.controller.zone.channels.ChannelsListener;
 import bittech.dae.controller.zone.channels.ClientZoneListener;
 import bittech.dae.controller.zone.channels.CompoundChannels;
 import bittech.dae.controller.zone.channels.CompoundChannelsListener;
+import bittech.dae.controller.zone.channels.OpenPeerChannelListener;
 import bittech.dae.controller.zone.channels.StandardChannelChangedListener;
 import bittech.dae.controller.zone.channels.ZoneChannel;
 import bittech.dae.controller.zone.channels.ZoneChannels;
 import bittech.lib.commands.lnzone.EstablishedChannel;
 import bittech.lib.commands.lnzone.commans.Offer;
-import bittech.lib.commands.lnzone.commans.OpenZoneChannelRequest;
+import bittech.lib.commands.lnzone.external.OpenZoneChannelRequest;
 import bittech.lib.manager.ManagerDataProvider;
 import bittech.lib.manager.ManagerModule;
 import bittech.lib.manager.commands.GetNodeDetailsResponse;
-import bittech.lib.protocol.Command;
 import bittech.lib.protocol.Connection;
 import bittech.lib.protocol.Node;
 import bittech.lib.utils.Config;
@@ -36,6 +36,7 @@ public class ZoneModule implements ManagerDataProvider, AutoCloseable {
 	private Connection controllerConnection;
 
 	private OfferListener offerListener;
+	private OpenPeerChannelListener openPeerChannelListener;
 	private ChannelsListener channelsListener;
 	private PaymentReceivedListener paymentReceivedListener;
 	private ZoneChannelsListener zoneChannelsListener;
@@ -110,6 +111,7 @@ public class ZoneModule implements ManagerDataProvider, AutoCloseable {
 		this.standardChannelChangedListener = new StandardChannelChangedListener(this.controllerConnection);
 
 		this.offerListener = new OfferListener(this.zoneChannels, this.listeningPort);
+		this.openPeerChannelListener = new OpenPeerChannelListener(this.controllerConnection);
 		this.zoneChannelsListener = new ZoneChannelsListener(this.zoneChannels);
 		this.zoneListener = new ClientZoneListener(this.zoneChannels, this.controllerConnection);
 		this.feeListener = new FeeListener(this.zoneChannels, this.controllerConnection);
@@ -126,11 +128,6 @@ public class ZoneModule implements ManagerDataProvider, AutoCloseable {
 				return openZoneChannelWorker.onOpenChannel(request);
 			}
 
-			@Override
-			public void responseSent(String serviceName, Command<?, ?> command) {
-				// Nothing here
-			}
-
 		};
 
 		this.paymentReceivedListener = new PaymentReceivedListener(this.controllerConnection);
@@ -144,6 +141,7 @@ public class ZoneModule implements ManagerDataProvider, AutoCloseable {
 
 	public void apply(Node node) {
 		node.registerListener(offerListener);
+//		node.registerListener(openPeerChannelListener);
 		node.registerListener(allChannelsListener);
 		node.registerListener(channelsListener);
 		node.registerListener(paymentReceivedListener);
