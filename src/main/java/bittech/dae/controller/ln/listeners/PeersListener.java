@@ -20,8 +20,10 @@ import bittech.lib.commands.ln.peers.ListPeersWithChannelsResponse;
 import bittech.lib.commands.ln.peers.ListPeersWithChannelsResponse.Peer;
 import bittech.lib.protocol.Command;
 import bittech.lib.protocol.Listener;
+import bittech.lib.protocol.common.NoDataResponse;
 import bittech.lib.utils.Require;
 import bittech.lib.utils.exceptions.StoredException;
+import bittech.lib.utils.logs.Log;
 
 public class PeersListener implements Listener {
 
@@ -45,6 +47,32 @@ public class PeersListener implements Listener {
 	public void commandReceived(String fromServiceName, Command<?, ?> command) throws StoredException {
 		if (command instanceof ListPeersWithChannelsCommand) {
 			executeListPeersCommand((ListPeersWithChannelsCommand) command);
+		} else if (command instanceof ConnectPeerCommand) {
+			ConnectPeerCommand cmd = (ConnectPeerCommand) command;
+
+			ConnectPeerCommand cmd2 = new ConnectPeerCommand(cmd.getRequest().uri);
+			try {
+				Log.build().event("1");
+				executor.execute(cmd2);
+				Log.build().event("2");
+			} catch (Exception ex) {
+				Log.build().event("3");
+				if (cmd2.getError() != null) {
+					if (cmd2.getError().containsMessage("already connected to peer")) {
+						Log.build().event("replaceing");
+						cmd.response = new NoDataResponse();
+						Log.build().event("4");
+					} else {
+						cmd.error = cmd2.getError();
+						Log.build().event("5");
+					}
+					Log.build().event("6");
+					return;
+				}
+			}
+			Log.build().event("7");
+			cmd.response = new NoDataResponse();
+			Log.build().event("8");
 		} else {
 			executor.execute(command);
 		}

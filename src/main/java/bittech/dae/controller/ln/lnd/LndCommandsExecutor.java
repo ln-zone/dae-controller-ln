@@ -36,10 +36,13 @@ import bittech.lib.commands.ln.invoices.AddInvoiceCommand;
 import bittech.lib.commands.ln.invoices.AddInvoiceResponse;
 import bittech.lib.commands.ln.invoices.DecodeInvoiceCommand;
 import bittech.lib.commands.ln.invoices.DecodeInvoiceResponse;
-import bittech.lib.commands.ln.invoices.DecodeInvoiceResponse.HopHint;
-import bittech.lib.commands.ln.invoices.DecodeInvoiceResponse.RouteHint;
+import bittech.lib.commands.ln.invoices.ListInvoicesCommand;
+import bittech.lib.commands.ln.invoices.ListInvoicesResponse;
+import bittech.lib.commands.ln.invoices.ListInvoicesResponse.Invoice;
 import bittech.lib.commands.ln.invoices.PayInvoiceCommand;
 import bittech.lib.commands.ln.invoices.PayInvoiceResponse;
+import bittech.lib.commands.ln.invoices.RouteHint;
+import bittech.lib.commands.ln.invoices.RouteHint.HopHint;
 import bittech.lib.commands.ln.onchain.ListChainTxnsCommand;
 import bittech.lib.commands.ln.onchain.ListChainTxnsResponse;
 import bittech.lib.commands.ln.onchain.ListUnspentCommand;
@@ -59,6 +62,8 @@ import bittech.lib.protocol.Command;
 import bittech.lib.protocol.ErrorResponse;
 import bittech.lib.protocol.common.NoDataResponse;
 import bittech.lib.utils.Btc;
+import bittech.lib.utils.FormattedTime;
+import bittech.lib.utils.FormattedTime.Precision;
 import bittech.lib.utils.Require;
 import bittech.lib.utils.exceptions.StoredException;
 import bittech.lib.utils.json.JsonBuilder;
@@ -288,27 +293,7 @@ public class LndCommandsExecutor {
 				cmd.response.expiry = response.getExpiry();
 				cmd.response.fallback_addr = response.getFallbackAddr();
 				cmd.response.payment_hash = response.getPaymentHash();
-				List<lnrpc.Rpc.RouteHint> routeHints = response.getRouteHintsList();
-				if (routeHints != null) {
-					cmd.response.route_hints = new ArrayList<RouteHint>(routeHints.size());
-					for (lnrpc.Rpc.RouteHint rpcHint : routeHints) {
-						RouteHint hint = new RouteHint();
-						List<lnrpc.Rpc.HopHint> hopHints = rpcHint.getHopHintsList();
-						if (hopHints != null) {
-							hint.hop_hints = new ArrayList<HopHint>();
-							for (lnrpc.Rpc.HopHint rpcHop : hopHints) {
-								HopHint hopHint = new HopHint();
-								hopHint.chan_id = rpcHop.getChanId();
-								hopHint.cltv_expiry_delta = rpcHop.getCltvExpiryDelta();
-								hopHint.fee_base = Btc.fromMsat(rpcHop.getFeeBaseMsat());
-								hopHint.fee_proportional_millionths = rpcHop.getFeeProportionalMillionths();
-								hopHint.node_id = rpcHop.getNodeId();
-								hint.hop_hints.add(hopHint);
-							}
-						}
-						cmd.response.route_hints.add(hint);
-					}
-				}
+				cmd.response.route_hints = copyRouteHints(response.getRouteHintsList()); 
 				cmd.response.timestamp = response.getTimestamp();
 
 			} else if (command instanceof PayInvoiceCommand) {
@@ -595,7 +580,39 @@ public class LndCommandsExecutor {
 				
 				cmd.response = new NoDataResponse(); // TODO: Tmp
 
+			} else if (command instanceof ListInvoicesCommand) {
 
+				ListInvoicesCommand cmd = (ListInvoicesCommand) command;
+				Rpc.ListInvoiceRequest.Builder builder = Rpc.ListInvoiceRequest.newBuilder();
+
+				Rpc.ListInvoiceResponse response = blockingStub.listInvoices(builder.build());
+
+
+					cmd.response = new ListInvoicesResponse();
+					cmd.response.invoices = new ArrayList<Invoice>(response.getInvoicesCount());
+					for(Rpc.Invoice rpcInvoice : response.getInvoicesList()) {
+						Invoice invoice = new Invoice();
+
+						invoice.memo = rpcInvoice.getMemo(); //	string	An optional memo to attach along with the invoice. Used for record keeping purposes for the invoice’s creator, and will also be set in the description field of the encoded payment request if the description_hash field is not being used.
+//						String r_preimage	bytes	The hex-encoded preimage (32 byte) which will allow settling an incoming HTLC payable to this preimage
+					//	r_hash	bytes	The hash of the preimage
+						invoice.amount = Btc.fromSat(rpcInvoice.getValue()); // value	int64	The value of this invoice in satoshis
+						invoice.creation_date = new FormattedTime(1000L * rpcInvoice.getCreationDate(), Precision.SECONDS); //	int64	When this invoice was created
+						invoice.settle_date = new FormattedTime(1000L * rpcInvoice.getSettleDate(), Precision.SECONDS); //	int64	When this invoice was settled
+						invoice.payment_request = rpcInvoice.getPaymentRequest(); //	string	A bare-bones invoice for a payment within the Lightning Network. With the details of the invoice, the sender has all the data necessary to send a payment to the recipient.
+						invoice.expiry = rpcInvoice.getExpiry(); //	int64	Payment request expiry time in seconds. Default is 3600 (1 hour).
+						invoice.fallback_addr = rpcInvoice.getFallbackAddr(); //	string	Fallback on-chain address.
+						invoice.cltv_expiry = rpcInvoice.getCltvExpiry(); //	uint64	Delta to use for the time-lock of the CLTV extended to the final hop.
+						invoice.route_hints = copyRouteHints(rpcInvoice.getRouteHintsList()); 
+						invoice.isPrivate = rpcInvoice.getPrivate(); //	bool	Whether this invoice should include routing hints for private channels.
+						invoice.add_index = rpcInvoice.getAddIndex(); //	uint64	The “add” index of this invoice. Each newly created invoice will increment this index making it monotonically increasing. Callers to the SubscribeInvoices call can use this to instantly get notified of all added invoices with an add_index greater than this one.
+						invoice.settle_index = rpcInvoice.getSettleIndex(); //	uint64	The “settle” index of this invoice. Each newly settled invoice will increment this index making it monotonically increasing. Callers to the SubscribeInvoices call can use this to instantly get notified of all settled invoices with an settle_index greater than this one.
+						invoice.amoutPaid = Btc.fromMsat(rpcInvoice.getAmtPaidMsat()); //	int64	The amount that was accepted for this invoice, in millisatoshis. This will ONLY be set if this invoice has been settled. We provide this field as if the invoice was created with a zero value, then we need to record what amount was ultimately accepted. Additionally, it’s possible that the sender paid MORE that was specified in the original invoice. So we’ll record that here as well.
+						invoice.state = rpcInvoice.getState().toString(); //	InvoiceState	The state the invoice is in.
+						
+						cmd.response.invoices.add(invoice);
+					}
+					
 			} else {
 
 				throw new StoredException("Command not supported by LndCommandsExecutor: " + command.type, null);
@@ -605,4 +622,29 @@ public class LndCommandsExecutor {
 		}
 	}
 
+	private List<RouteHint> copyRouteHints(List<lnrpc.Rpc.RouteHint> routeHints) {
+		if (routeHints != null) {
+			List<RouteHint> ret = new ArrayList<RouteHint>(routeHints.size());
+			for (lnrpc.Rpc.RouteHint rpcHint : routeHints) {
+				RouteHint hint = new RouteHint();
+				List<lnrpc.Rpc.HopHint> hopHints = rpcHint.getHopHintsList();
+				if (hopHints != null) {
+					hint.hop_hints = new ArrayList<HopHint>();
+					for (lnrpc.Rpc.HopHint rpcHop : hopHints) {
+						HopHint hopHint = new HopHint();
+						hopHint.chan_id = rpcHop.getChanId();
+						hopHint.cltv_expiry_delta = rpcHop.getCltvExpiryDelta();
+						hopHint.fee_base = Btc.fromMsat(rpcHop.getFeeBaseMsat());
+						hopHint.fee_proportional_millionths = rpcHop.getFeeProportionalMillionths();
+						hopHint.node_id = rpcHop.getNodeId();
+						hint.hop_hints.add(hopHint);
+					}
+				}
+				ret.add(hint);
+			}
+			return ret;
+		}
+		return null;
+	}
+	
 }

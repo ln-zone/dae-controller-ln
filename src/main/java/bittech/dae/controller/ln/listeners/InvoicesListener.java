@@ -7,6 +7,7 @@ import java.util.Map;
 import bittech.dae.controller.ln.lnd.LndCommandsExecutor;
 import bittech.lib.commands.ln.invoices.AddInvoiceCommand;
 import bittech.lib.commands.ln.invoices.DecodeInvoiceCommand;
+import bittech.lib.commands.ln.invoices.ListInvoicesCommand;
 import bittech.lib.commands.ln.invoices.PayInvoiceCommand;
 import bittech.lib.commands.ln.invoices.PaymentReceivedCommand;
 import bittech.lib.commands.ln.invoices.PaymentReceivedRequest;
@@ -88,7 +89,7 @@ public class InvoicesListener implements Listener {
 	@Override
 	public Class<?>[] getListeningCommands() {
 		return new Class<?>[] { RegisterPaymentsListenerCommand.class, AddInvoiceCommand.class,
-				DecodeInvoiceCommand.class, PayInvoiceCommand.class };
+				DecodeInvoiceCommand.class, PayInvoiceCommand.class, ListInvoicesCommand.class };
 	}
 
 	@Override
