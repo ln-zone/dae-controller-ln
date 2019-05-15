@@ -12,10 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import bittech.lib.commands.ln.invoices.AddInvoiceRequest;
-import bittech.lib.commands.ln.invoices.DecodeInvoiceResponse;
 import bittech.lib.commands.lnzone.EstablishedChannel;
 import bittech.lib.commands.lnzone.commans.Offer;
-import bittech.lib.commands.lnzone.commans.OpenPeerChannelRequest;
 import bittech.lib.commands.lnzone.external.OpenZoneChannelRequest;
 import bittech.lib.utils.Config;
 import bittech.lib.utils.Notificator;

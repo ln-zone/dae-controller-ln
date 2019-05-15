@@ -2,7 +2,6 @@ package bittech.dae.controller.zone;
 
 import org.junit.Assert;
 
-import bittech.dae.controller.zone.ZoneModule;
 import bittech.lib.protocol.Node;
 import bittech.lib.utils.Config;
 import bittech.lib.utils.Crypto;

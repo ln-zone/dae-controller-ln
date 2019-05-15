@@ -2,16 +2,14 @@ package bittech.dae.controller.zone.channels;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import bittech.lib.commands.ln.channels.ChannelChangedRequest;
 import bittech.lib.commands.lnzone.CompoundChannel;
-import bittech.lib.commands.lnzone.EstablishedChannel;
 import bittech.lib.commands.lnzone.CompoundChannel.Type;
+import bittech.lib.commands.lnzone.EstablishedChannel;
 import bittech.lib.commands.lnzone.internal.ChannelChangedRequest.ChangeType;
-import bittech.lib.utils.Btc;
 import bittech.lib.utils.Notificator;
 import bittech.lib.utils.Require;
 import bittech.lib.utils.Utils;

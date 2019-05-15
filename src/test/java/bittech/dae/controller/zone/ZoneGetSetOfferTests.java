@@ -8,7 +8,6 @@ import bittech.dae.controller.helpers.FakeZoneNode;
 import bittech.dae.controller.helpers.Feed;
 import bittech.dae.controller.helpers.SimpleThread;
 import bittech.dae.controller.helpers.Tester;
-import bittech.dae.controller.zone.ZoneModule;
 import bittech.lib.commands.lnzone.commans.Offer;
 import bittech.lib.commands.lnzone.internal.GetOfferCommand;
 import bittech.lib.commands.lnzone.internal.SetOfferCommand;

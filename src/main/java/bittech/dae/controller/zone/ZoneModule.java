@@ -5,6 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import bittech.dae.controller.ln.general.MixListener;
 import bittech.dae.controller.zone.channels.ChannelsListener;
 import bittech.dae.controller.zone.channels.ClientZoneListener;
 import bittech.dae.controller.zone.channels.CompoundChannels;
@@ -35,6 +36,7 @@ public class ZoneModule implements ManagerDataProvider, AutoCloseable {
 
 	private Connection controllerConnection;
 
+	private MixListener mixListener;
 	private OfferListener offerListener;
 	private OpenPeerChannelListener openPeerChannelListener;
 	private ChannelsListener channelsListener;
@@ -108,6 +110,8 @@ public class ZoneModule implements ManagerDataProvider, AutoCloseable {
 
 	private void createListeners() {
 
+		this.mixListener = new MixListener(node);
+		
 		this.standardChannelChangedListener = new StandardChannelChangedListener(this.controllerConnection);
 
 		this.offerListener = new OfferListener(this.zoneChannels, this.listeningPort);
@@ -140,6 +144,7 @@ public class ZoneModule implements ManagerDataProvider, AutoCloseable {
 	}
 
 	public void apply(Node node) {
+		node.registerListener(mixListener);
 		node.registerListener(offerListener);
 //		node.registerListener(openPeerChannelListener);
 		node.registerListener(allChannelsListener);
