@@ -598,7 +598,7 @@ public class LndCommandsExecutor {
 					//	r_hash	bytes	The hash of the preimage
 						invoice.amount = Btc.fromSat(rpcInvoice.getValue()); // value	int64	The value of this invoice in satoshis
 						invoice.creation_date = new FormattedTime(1000L * rpcInvoice.getCreationDate(), Precision.SECONDS); //	int64	When this invoice was created
-						invoice.settle_date = new FormattedTime(1000L * rpcInvoice.getSettleDate(), Precision.SECONDS); //	int64	When this invoice was settled
+						invoice.settle_date = rpcInvoice.getSettleDate()==0?null:new FormattedTime(1000L * rpcInvoice.getSettleDate(), Precision.SECONDS); //	int64	When this invoice was settled
 						invoice.payment_request = rpcInvoice.getPaymentRequest(); //	string	A bare-bones invoice for a payment within the Lightning Network. With the details of the invoice, the sender has all the data necessary to send a payment to the recipient.
 						invoice.expiry = rpcInvoice.getExpiry(); //	int64	Payment request expiry time in seconds. Default is 3600 (1 hour).
 						invoice.fallback_addr = rpcInvoice.getFallbackAddr(); //	string	Fallback on-chain address.
@@ -614,10 +614,11 @@ public class LndCommandsExecutor {
 					}
 					
 			} else {
-
 				throw new StoredException("Command not supported by LndCommandsExecutor: " + command.type, null);
 			}
 		} catch (Exception ex) {
+			command.response = null;
+			command.error = new ErrorResponse(ex);
 			throw new StoredException("Failed to execute: " + JsonBuilder.build().toJson(command), ex);
 		}
 	}
