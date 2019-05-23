@@ -4,6 +4,8 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import bittech.dae.controller.ln.lnd.LndCommandsExecutor;
 import bittech.lib.commands.ln.invoices.AddInvoiceCommand;
 import bittech.lib.commands.ln.invoices.DecodeInvoiceCommand;
@@ -20,6 +22,7 @@ import bittech.lib.protocol.helpers.CommandBroadcaster;
 import bittech.lib.utils.Btc;
 import bittech.lib.utils.Require;
 import bittech.lib.utils.exceptions.StoredException;
+import bittech.lib.utils.logs.Log;
 import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 import lnrpc.LightningGrpc;
@@ -54,10 +57,14 @@ public class InvoicesListener implements Listener {
 			@Override
 			public void onNext(Invoice invoice) {
 
+				Log log = Log.build().param("invoice", invoice);
+				log.event("onNext 1");
+				
 				if (invoice.getSettleIndex() == 0) {
+					log.event("onNext 2");
 					return; // Not paid. Probably added invoice.
 				}
-
+				log.event("onNext 3");
 				PaymentReceivedRequest req = new PaymentReceivedRequest();
 				req.label = invoicesLabels.get(invoice.getAddIndex());
 				req.index = invoice.getAddIndex();
@@ -67,9 +74,12 @@ public class InvoicesListener implements Listener {
 				req.payment_hash = Base64.getEncoder().encodeToString(invoice.getRPreimage().toByteArray());
 				req.status = "paid";
 
+				log.event("onNext 4");
 				PaymentReceivedCommand paymentReceivedCommand = new PaymentReceivedCommand(req);
 
+				log.event("onNext 5");
 				commandPaymentRecaivedBroadcaster.broadcast(paymentReceivedCommand);
+				log.event("onNext 6");
 			}
 
 			@Override
@@ -107,6 +117,9 @@ public class InvoicesListener implements Listener {
 		} else if (command instanceof AddInvoiceCommand) {
 			AddInvoiceCommand cmd = (AddInvoiceCommand) command;
 			String label = cmd.getRequest().label;
+			if(StringUtils.isEmpty(label)) {
+				throw new StoredException("Cannot add ibvoice without label", null);
+			}
 			executor.execute(cmd);
 			if(cmd.getError() != null) {
 				invoicesLabels.put(cmd.getResponse().add_index, label);

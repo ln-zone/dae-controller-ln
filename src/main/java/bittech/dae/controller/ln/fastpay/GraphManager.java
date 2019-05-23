@@ -55,8 +55,9 @@ public class GraphManager {
 				GraphChannel ch = new GraphChannel();
 				ch.id = channel.id;
 				ch.peerId = channel.node2Id;
-				ch.feeBaseMsat = channel.node1_policy.fee_base_msat;
-				ch.feeRateMilliMsat = channel.node1_policy.fee_rate_milli_msat;
+				ch.feeBaseMsat = channel.node2_policy.fee_base_msat;
+				ch.feeRateMilliMsat = channel.node2_policy.fee_rate_milli_msat;
+				ch.timeLockDelta = channel.node1_policy.time_lock_delta;
 				ch.maxToTransfer = channel.capacitySat;
 				node1.channels.add(ch);
 			}
@@ -65,8 +66,9 @@ public class GraphManager {
 				GraphChannel ch = new GraphChannel();
 				ch.id = channel.id;
 				ch.peerId = channel.node1Id;
-				ch.feeBaseMsat = channel.node2_policy.fee_base_msat;
-				ch.feeRateMilliMsat = channel.node2_policy.fee_rate_milli_msat;
+				ch.feeBaseMsat = channel.node1_policy.fee_base_msat;
+				ch.feeRateMilliMsat = channel.node1_policy.fee_rate_milli_msat;
+				ch.timeLockDelta = channel.node2_policy.time_lock_delta;
 				ch.maxToTransfer = channel.capacitySat;
 				node2.channels.add(ch);
 			}
@@ -77,14 +79,14 @@ public class GraphManager {
 			Collections.sort(node.channels);
 		}
 	}
-
-	public bittech.lib.commands.ln.channels.Route findRoute(String from, String to, Btc amount) {
+	
+	public bittech.lib.commands.ln.channels.Route findRoute(String from, String to, Btc amount, Set<String> excludeChannels) {
 		Log.build().param("from", from).param("to", to).param("amount", amount).event("Loking for route");
 		Route route = null;
 		int deph = 4;
 
 		Set<String> nodes1 = new HashSet<String>();
-		route = findRoute(from, to, amount.toSatRoundFloor(), new HashSet<String>(), nodes1, deph);
+		route = findRoute(from, to, amount.toSatRoundFloor(), new HashSet<String>(), excludeChannels, nodes1, deph);
 
 		if (route != null) {
 			route.firstNodId = from;
@@ -92,7 +94,7 @@ public class GraphManager {
 		}
 
 		Set<String> nodes2 = new HashSet<String>();
-		route = findRoute(to, from, amount.toSatRoundFloor(), new HashSet<String>(), nodes2, deph);
+		route = findRoute(to, from, amount.toSatRoundFloor(), new HashSet<String>(), excludeChannels, nodes2, deph);
 
 		if (route != null) {
 			route.firstNodId = from;
@@ -103,8 +105,8 @@ public class GraphManager {
 
 		for (String node1 : nodes1) {
 			if (nodes2.contains(node1)) {
-				Route route1 = findRoute(from, node1, amount.toSatRoundFloor(), new HashSet<String>(), null, deph);
-				Route route2 = findRoute(node1, to, amount.toSatRoundFloor(), new HashSet<String>(), null, deph);
+				Route route1 = findRoute(from, node1, amount.toSatRoundFloor(), new HashSet<String>(), excludeChannels, null, deph);
+				Route route2 = findRoute(node1, to, amount.toSatRoundFloor(), new HashSet<String>(), excludeChannels, null, deph);
 				Require.notNull(route1, "route1");
 				Require.notNull(route2, "route2");
 				for (GraphChannel ch : route2.hops) {
@@ -117,7 +119,7 @@ public class GraphManager {
 		return null;
 	}
 
-	public Route findRoute(String from, String to, long amountLimitSat, Set<String> usedNodes, Set<String> savedNodes,
+	public Route findRoute(String from, String to, long amountLimitSat, Set<String> usedNodes, Set<String> excludedChannels, Set<String> savedNodes,
 			int deph) {
 
 //		System.out.println(from);
@@ -155,7 +157,13 @@ public class GraphManager {
 			if (bannedChannels.contains(channel)) {
 				continue;
 			}
-			Route route = findRoute(channel.peerId, to, amountLimitSat, usedNodes, savedNodes, deph - 1);
+			if(excludedChannels.contains(channel.id)) {
+				continue;
+			}
+			if(channel.maxToTransfer > 10000000) { // TODODL Temporary for debug purpose!
+				continue;
+			}
+			Route route = findRoute(channel.peerId, to, amountLimitSat, usedNodes, excludedChannels, savedNodes, deph - 1);
 			if (route == null) {
 				continue;
 			}
@@ -190,6 +198,7 @@ public class GraphManager {
 		Btc amountToForward = new Btc(route.amount);
 
 		int index = 0;
+		Btc lastFee = new Btc("0");
 		while (listIterator.hasPrevious()) {
 			GraphChannel channel = listIterator.previous();
 			Hop hop = new Hop();
@@ -198,9 +207,11 @@ public class GraphManager {
 			hop.channelId = channel.id;
 			hop.expiry = 12345;
 			hop.pubKey = channel.peerId;
+			hop.timeLockDelta = channel.timeLockDelta;
 			if (index != 0) {
 				hop.fee = Btc.fromMsat(channel.feeBaseMsat + (amountToForward.toMsat() * channel.feeRateMilliMsat) / 1000000);
-				amountToForward = amountToForward.add(hop.fee);
+				lastFee = hop.fee;
+				amountToForward = amountToForward.add(lastFee);
 			} else {
 				hop.fee = new Btc("0");
 			}
@@ -210,8 +221,12 @@ public class GraphManager {
 	
 		Collections.reverse(retRoute.hops);
 
-		retRoute.totalAmount = retRoute.hops.get(0).amountToForward.add(retRoute.hops.get(0).fee);
-		retRoute.totalFees = retRoute.totalAmount.sub(route.amount);
+		if(retRoute.hops.size() > 0) {
+			retRoute.totalAmount = amountToForward; //retRoute.hops.get(0).amountToForward.add(lastFee);
+			retRoute.totalFees = retRoute.totalAmount.sub(route.amount);
+		} else {
+			retRoute.totalFees = new Btc("0");
+		}
 		
 		return retRoute;
 	}

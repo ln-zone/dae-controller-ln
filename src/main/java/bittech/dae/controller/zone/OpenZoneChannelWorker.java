@@ -1,6 +1,7 @@
 package bittech.dae.controller.zone;
 
 import bittech.dae.controller.zone.channels.StandardChannelChangeObserver;
+import bittech.dae.controller.zone.channels.TaskFlow;
 import bittech.dae.controller.zone.channels.ZoneChannel;
 import bittech.dae.controller.zone.channels.ZoneChannels;
 import bittech.lib.commands.ln.channels.ChannelChangedRequest;
@@ -10,8 +11,6 @@ import bittech.lib.commands.ln.invoices.AddInvoiceRequest;
 import bittech.lib.commands.ln.invoices.PayInvoiceCommand;
 import bittech.lib.commands.ln.invoices.PaymentReceivedRequest;
 import bittech.lib.commands.ln.peers.ConnectPeerCommand;
-import bittech.lib.commands.ln.peers.ListPeersWithChannelsCommand;
-import bittech.lib.commands.ln.peers.ListPeersWithChannelsResponse.Peer;
 import bittech.lib.commands.lnzone.external.OpenZoneChannelRequest;
 import bittech.lib.protocol.Connection;
 import bittech.lib.utils.Btc;
@@ -36,32 +35,6 @@ public class OpenZoneChannelWorker implements StandardChannelChangeObserver, Pay
 		}
 	}
 
-	private void verifyIfNoChannelYet(OpenZoneChannelRequest request) {
-		ListPeersWithChannelsCommand listPeersCommand = new ListPeersWithChannelsCommand();
-		controllerConnection.execute(listPeersCommand);
-		if (listPeersCommand.getError() != null) {
-			throw new StoredException("Cannot list existing peers", listPeersCommand.getError().toException());
-		}
-
-		String peerId = request.peerUri.substring(0, request.peerUri.indexOf("@"));
-		Require.notEmpty(peerId, "peerId");
-
-		for (Peer peer : listPeersCommand.getResponse().peers) {
-			if (peer.openedChannels == null) {
-				continue;
-			}
-			if (!peerId.equals(peer.id)) {
-				continue;
-			}
-//			for (ListPeersResponse.Channel channel : peer.openedChannels) {
-//				if (!"ONCHAIN".equals(channel.state) && !"CLOSINGD_COMPLETE".equals(channel.state)) {
-//					throw new StoredException("We have already channel created. Please close old channel first.", null);
-//				}
-//			}
-		}
-
-	}
-
 	private void verifyUri(OpenZoneChannelRequest request) {
 
 		Require.notNull(request.peerUri, "peerUri");
@@ -80,15 +53,20 @@ public class OpenZoneChannelWorker implements StandardChannelChangeObserver, Pay
 			Require.notNull(request, "request");
 
 			verifyOffer(request);
-			verifyIfNoChannelYet(request);
+//			verifyIfNoChannelYet(request);
 			verifyUri(request);
 
 			Btc costs = request.offer.fixedCost.add(request.feeReserve).add(request.myAmount);
 
 			String label = "lnzone" + (long) (Math.random() * Long.MAX_VALUE);
 			AddInvoiceRequest invRequest = new AddInvoiceRequest(costs, label, "Open lnzone channel");
-
-			return channels.newChannel(request, invRequest);
+			
+			TaskFlow taskFlow = createTaskFlow();
+			taskFlow.taskSucceeded("Verify request");
+			taskFlow.taskSucceeded("Add invoice");
+			taskFlow.taskSucceeded("Reply to peer");
+			
+			return channels.newChannel(taskFlow, request, invRequest);
 
 		} catch (Exception ex) {
 			throw new StoredException("Open channel request failed", ex);
@@ -224,6 +202,10 @@ public class OpenZoneChannelWorker implements StandardChannelChangeObserver, Pay
 		}
 		log.param("response", fundChannelCommand.getResponse()).event("Returning response");
 		return fundChannelCommand.getResponse();
+	}
+	
+	private TaskFlow createTaskFlow() {
+		return new TaskFlow(new String[] {"Verify request", "Add invoice", "Reply to peer", "Receive payment", "Fund channel"});
 	}
 
 }

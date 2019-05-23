@@ -86,8 +86,9 @@ public class ZoneChannels {
 		changeNotificator.register(chageObserver);
 	}
 
-	public synchronized ZoneChannel newChannel(OpenZoneChannelRequest openChannelRequest, AddInvoiceRequest invoiceRequest) {
+	public synchronized ZoneChannel newChannel(TaskFlow taskFlow, OpenZoneChannelRequest openChannelRequest, AddInvoiceRequest invoiceRequest) {
 		ZoneChannel ch = new ZoneChannel(true);
+		ch.taskFlow = Require.notNull(taskFlow, "taskFlow");
 		ch.setOpenChannelRequest(Require.notNull(openChannelRequest, "openChannelRequest"));
 		ch.setInvoiceRequest(Require.notNull(invoiceRequest, "invoiceRequest"));
 		ch.establishedChannel.status = bittech.lib.commands.lnzone.EstablishedChannel.Status.WAITING_FOR_PAYMENT;
@@ -106,7 +107,7 @@ public class ZoneChannels {
 		try {
 			log.event("channelPaid called");
 			for (ZoneChannel ch : data.channelsProposals) {
-				if ((ch.helperData.invoiceRequest != null) && invoiceLabel.equals(ch.helperData.invoiceRequest.label)) {
+				if ((ch.helperData != null) && (ch.helperData.invoiceRequest != null) && invoiceLabel.equals(ch.helperData.invoiceRequest.label)) {
 					ch.establishedChannel.status = bittech.lib.commands.lnzone.EstablishedChannel.Status.FUNDING;
 					return ch;
 				}

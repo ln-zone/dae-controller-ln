@@ -1,5 +1,11 @@
 package bittech.dae.controller.ln.fastpay;
 
+import java.util.HashSet;
+import java.util.ListIterator;
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+
 import bittech.dae.controller.ln.lnd.LndCommandsExecutor;
 import bittech.lib.commands.ln.GetInfoCommand;
 import bittech.lib.commands.ln.channels.DescribeGraphCommand;
@@ -11,6 +17,7 @@ import bittech.lib.commands.ln.invoices.DecodeInvoiceCommand;
 import bittech.lib.commands.ln.invoices.FastPayCommand;
 import bittech.lib.commands.ln.invoices.PayInvoiceResponse;
 import bittech.lib.protocol.Command;
+import bittech.lib.protocol.ErrorResponse;
 import bittech.lib.protocol.Listener;
 import bittech.lib.utils.Btc;
 import bittech.lib.utils.Require;
@@ -74,18 +81,37 @@ public class FastPayListener implements Listener {
 		}
 
 		Btc amountToPay = Btc.HasValue(amount) ? amount : decodeInvoieCmd.getResponse().amount;
-		bittech.lib.commands.ln.channels.Route route = graphManager.findRoute(myNodeId,
-				decodeInvoieCmd.getResponse().destination, amountToPay);
+		
+		Set<String> excludedChannels = new HashSet<String>();
+		
+		for(int i = 0; i<10; i++) {
+		
+			bittech.lib.commands.ln.channels.Route route = graphManager.findRoute(myNodeId,
+					decodeInvoieCmd.getResponse().destination, amountToPay, excludedChannels);
+	
+			addExpiryToRoute(route);
+	
+			{
+				PayToRouteCommand cmd = new PayToRouteCommand(decodeInvoieCmd.getResponse().payment_hash, route);
+				executor.execute(cmd);
 
-		addExpiryToRoute(route);
-
-		{
-			PayToRouteCommand cmd = new PayToRouteCommand(decodeInvoieCmd.getResponse().payment_hash, route);
-			executor.execute(cmd);
-			if (cmd.getError() != null) {
-				throw new StoredException("PayToRouteCommand failed", cmd.getError().toException());
+				if (cmd.getError() != null) {
+					// unable to route payment to destination: TemporaryChannelFailure: Link 573916:1745:0 has insufficient capacity: need 101000 mSAT, has 0 mSAT
+					ErrorResponse insufRes = cmd.getError().findWithMessage("has insufficient capacity");
+					if(insufRes != null) {
+						String channelId = StringUtils.substringBetween(insufRes.message, "Link ", " has");
+						excludedChannels.add(channelId);
+						continue;
+					}
+					Log.build().param("route", cmd.getRequest().route).event("Exception thrown for route");
+					throw new StoredException("PayToRouteCommand failed", cmd.getError().toException());
+				}
+				
+				
+				return;
 			}
 		}
+		throw new StoredException("Fast pay failed", new Exception("Couldn't find rout after 10 tries"));
 	}
 
 	private void addExpiryToRoute(bittech.lib.commands.ln.channels.Route route) {
@@ -96,17 +122,27 @@ public class FastPayListener implements Listener {
 			throw new StoredException("GetInfoCommand failed", getInfoCmd.getError().toException());
 		}
 
-		int htlcDiff = 100;
-		int index = route.hops.size() - 1;
-		int blockHight = getInfoCmd.getResponse().block_height;
-		route.totalTimeLock = blockHight + htlcDiff * (index + 2);
-		for (Hop hop : route.hops) {
-			hop.expiry = blockHight + htlcDiff * (index+1);
-			index--;
-			if (index < 1) {
-				index = 1;
+//		int index = route.hops.size() - 1;
+		int currentLock = getInfoCmd.getResponse().block_height; // TODO: Why 10?
+//		route.totalTimeLock = blockHight + htlcDiff * (index + 1);
+		
+		ListIterator<Hop> listIterator = route.hops.listIterator(route.hops.size());
+		
+		int i = 0;
+		while (listIterator.hasPrevious()) {
+			Hop hop = listIterator.previous();
+			if(i==0) {
+				currentLock += hop.timeLockDelta;
+				hop.expiry = currentLock;
+			} else {
+				hop.expiry = currentLock;
+				currentLock += hop.timeLockDelta;
 			}
+			i++;
 		}
+		
+		route.totalTimeLock = currentLock;
+
 	}
 
 	@Override
@@ -125,7 +161,7 @@ public class FastPayListener implements Listener {
 		if (command instanceof FindFastRouteCommand) {
 			FindFastRouteCommand cmd = (FindFastRouteCommand) command;
 			bittech.lib.commands.ln.channels.Route route = graphManager.findRoute(cmd.request.sourceId,
-					cmd.request.destId, cmd.request.amount);
+					cmd.request.destId, cmd.request.amount, new HashSet<String>());
 			if (route == null) {
 				throw new StoredException("No route found", null);
 			}
@@ -137,7 +173,7 @@ public class FastPayListener implements Listener {
 			pay(cmd.getRequest().invoice, cmd.getRequest().amount, cmd.getRequest().feeIncluded);
 			cmd.response = new PayInvoiceResponse();
 		} else {
-			throw new StoredException("Caommand not supported: " + command.type + " by FastPayListener", null);
+			throw new StoredException("Command not supported: " + command.type + " by FastPayListener", null);
 		}
 	}
 

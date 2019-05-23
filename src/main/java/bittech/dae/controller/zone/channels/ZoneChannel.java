@@ -8,6 +8,7 @@ import bittech.lib.commands.ln.invoices.DecodeInvoiceResponse;
 import bittech.lib.commands.lnzone.EstablishedChannel;
 import bittech.lib.commands.lnzone.EstablishedChannel.Status;
 import bittech.lib.commands.lnzone.external.OpenZoneChannelRequest;
+import bittech.lib.utils.logs.Log;
 
 public class ZoneChannel {
 
@@ -27,6 +28,8 @@ public class ZoneChannel {
 
 	public HelperData helperData = new HelperData();
 	public EstablishedChannel establishedChannel;
+
+	public TaskFlow taskFlow;
 
 	public static String createzoneChannelId() {
 		String randNum = Long.toString((long) (Math.random() * Long.MAX_VALUE))
@@ -69,6 +72,7 @@ public class ZoneChannel {
 		return this.helperData.invoiceRequest;
 	}
 	public void setInvoiceRequest(AddInvoiceRequest invoiceRequest) {
+		Log.build().param("invoice request", invoiceRequest).event("Setting invoice request");
 		this.helperData.invoiceRequest = invoiceRequest;
 	}
 	public DecodeInvoiceResponse getDecodedInvoice() {

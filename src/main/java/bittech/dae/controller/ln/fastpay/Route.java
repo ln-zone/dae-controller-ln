@@ -9,11 +9,12 @@ import bittech.lib.utils.Require;
 public class Route {
 	
 	static class GraphChannel implements Comparable<GraphChannel> {
-		public long id;
+		public String id;
 		public long minToTransfer;
 		public long maxToTransfer;
 		public long feeBaseMsat;
 		public long feeRateMilliMsat;
+		public int timeLockDelta;
 		public String peerId;
 		
 		@Override
