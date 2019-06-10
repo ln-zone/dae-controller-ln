@@ -1,9 +1,17 @@
 package bittech.dae.controller.ln.listeners;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import bittech.dae.controller.ln.lnd.LndCommandsExecutor;
 import bittech.lib.commands.ln.onchain.FundsReceivedCommand;
 import bittech.lib.commands.ln.onchain.ListChainTxnsCommand;
 import bittech.lib.commands.ln.onchain.ListUnspentCommand;
+import bittech.lib.commands.ln.onchain.ListUnspentResponse.Utxo;
 import bittech.lib.commands.ln.onchain.NewAddressCommand;
 import bittech.lib.commands.ln.onchain.RegisterFundsReceivedCommand;
 import bittech.lib.commands.ln.onchain.SendOnChainCommand;
@@ -39,6 +47,9 @@ public class OnChainListener implements Listener, ManagerDataProvider, OnChainFu
 
 	private WalletBalanceResponse lastResponse = null;
 
+	AtomicBoolean isWorking = new AtomicBoolean(true);
+	final ExecutorService exNewFunds = Executors.newSingleThreadExecutor();
+
 //	private Map<String, Btc> addrAmounts = new HashMap<String, Btc>();
 
 	public OnChainListener(Node node, ManagedChannel channel, LndCommandsExecutor executor) {
@@ -53,6 +64,40 @@ public class OnChainListener implements Listener, ManagerDataProvider, OnChainFu
 
 	public void start() {
 		grabWalletBalance();
+		waitForNewFunds();
+	}
+
+	private void waitForNewFunds() {
+		exNewFunds.submit(() -> {
+			Map<String, Utxo> oldUtxo = new HashMap<String, Utxo>();
+			Log.build().event("Start waitForNewFunds");
+			while (isWorking.get()) {
+				try {
+					Thread.sleep(10000);
+					
+					ListUnspentCommand cmd = new ListUnspentCommand();
+					executor.execute(cmd);
+					if (cmd.getError() != null) {
+						throw new StoredException("Executing ListUnspentCommand failed", cmd.getError().toException());
+					}
+					for (Utxo utxo : cmd.getResponse().list) {
+						String id = utxo.txId + ":" + utxo.txIndex;
+						Utxo oldU = oldUtxo.get(id);
+						if (oldU == null) {
+							oldUtxo.put(id, utxo);
+							Log.build().param("utxo", utxo).event("Notifying receivers"); 
+							onchainTransactionReceivedNotifier
+									.notifyThem((m) -> m.onchainFundsReceived(utxo.address, utxo.amount));
+						}
+					}
+				} catch (InterruptedException ex) {
+					throw new StoredException("Waiting for new Funds thread interrupted", ex);
+				} catch (Exception ex) {
+					throw new StoredException("Exception in waiting for new Funds thread", ex);
+				}
+			}
+			return null;
+		});
 	}
 
 	private void subcribeTransactions() {
@@ -66,7 +111,7 @@ public class OnChainListener implements Listener, ManagerDataProvider, OnChainFu
 			public void onNext(Transaction tx) {
 				try {
 					Log.build().param("transaction", tx).event("New transaction returned");
-					onchainTransactionReceivedNotifier.notifyThem((m) -> m.onchainFundsReceived("addr", new Btc()));
+//					onchainTransactionReceivedNotifier.notifyThem((m) -> m.onchainFundsReceived("addr", new Btc()));
 
 				} catch (Exception ex) {
 					new StoredException("Grab wallet balance failed", ex);
@@ -171,7 +216,13 @@ public class OnChainListener implements Listener, ManagerDataProvider, OnChainFu
 
 	@Override
 	public void close() {
-
+		try {
+			isWorking.set(false);
+			exNewFunds.shutdown();
+			exNewFunds.awaitTermination(15, TimeUnit.SECONDS);
+		} catch (Exception ex) {
+			throw new StoredException("Exception during closing OnChainListener", ex);
+		}
 	}
 
 	@Override
@@ -190,6 +241,7 @@ public class OnChainListener implements Listener, ManagerDataProvider, OnChainFu
 	@Override
 	public void onchainFundsReceived(String addr, Btc amount) {
 		FundsReceivedCommand cmd = new FundsReceivedCommand(addr, amount);
+		Log.build().param("cmd", cmd).event("Broadcasting FundsReceivedCommand: " + onchainTransactionReceivedBroadcaster);
 		onchainTransactionReceivedBroadcaster.broadcast(cmd);
 	}
 
