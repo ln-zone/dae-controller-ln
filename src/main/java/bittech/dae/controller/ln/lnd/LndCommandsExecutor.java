@@ -67,7 +67,6 @@ import bittech.lib.utils.FormattedTime;
 import bittech.lib.utils.FormattedTime.Precision;
 import bittech.lib.utils.Require;
 import bittech.lib.utils.exceptions.StoredException;
-import bittech.lib.utils.json.JsonBuilder;
 import bittech.lib.utils.logs.Log;
 import io.grpc.ManagedChannel;
 import lnrpc.LightningGrpc;
@@ -235,6 +234,8 @@ public class LndCommandsExecutor {
 
 				ListUnspentCommand cmd = (ListUnspentCommand) command;
 				Rpc.ListUnspentRequest.Builder builder = Rpc.ListUnspentRequest.newBuilder();
+				builder.setMinConfs(0);
+				builder.setMaxConfs(Integer.MAX_VALUE);
 
 				Rpc.ListUnspentResponse response = blockingStub.listUnspent(builder.build());
 
@@ -245,6 +246,8 @@ public class LndCommandsExecutor {
 				for (Rpc.Utxo rpcUtxo : response.getUtxosList()) {
 					Utxo utxo = new Utxo();
 					utxo.address = rpcUtxo.getAddress();
+					utxo.txId = rpcUtxo.getOutpoint().getTxidStr();
+					utxo.txIndex = rpcUtxo.getOutpoint().getOutputIndex();
 					utxo.amount = Btc.fromSat(rpcUtxo.getAmountSat());
 					utxo.confirmations = rpcUtxo.getConfirmations();
 					utxo.scriptPubkey = rpcUtxo.getPkScript();
@@ -294,7 +297,7 @@ public class LndCommandsExecutor {
 
 				cmd.response = new DecodeInvoiceResponse();
 				cmd.response.amount = response.getNumSatoshis() > 0 ? Btc.fromSat(response.getNumSatoshis()) : null;
-				cmd.response.cltv_expiry = response.getCltvExpiry();
+				cmd.response.cltv_expiry = (int)response.getCltvExpiry();
 				cmd.response.description = response.getDescription();
 				cmd.response.description_hash = response.getDescriptionHash();
 				cmd.response.destination = response.getDestination();
@@ -599,6 +602,39 @@ public class LndCommandsExecutor {
 				cmd.response = new NoDataResponse(); // TODO: Tmp
 
 			} else if (command instanceof ListInvoicesCommand) {
+//				
+//				String invoice = "lnbc10u1pwwh0l3pp55frt0rxf6nkkzjf8fxctey830sakgz9dfg6rj7v34tgv5yya5cgsdqqcqzysyylm9fw0mmffy0ps7kd9z6w09k7ngmpkuusqflu4js8u2nwjxzf3aenpsmsgh2d23czm2gg4ul3nmrhrs96sxqk3g3pfx8x2dr6pd4gpt0sqx3";
+//				
+//				Rpc.PayReq deodePayResponse;
+//				{
+//					Rpc.PayReqString.Builder builder = Rpc.PayReqString.newBuilder()
+//						.setPayReq(invoice);
+//					deodePayResponse = blockingStub.decodePayReq(builder.build());
+//					Log.build().param("deodePayResponse", deodePayResponse).event("decodePayReq");
+//				}
+//				
+//				Rpc.QueryRoutesResponse queryRoutesResponse = null;
+//				{
+//					Rpc.QueryRoutesRequest.Builder builder = Rpc.QueryRoutesRequest.newBuilder();
+//					builder.setAmt(deodePayResponse.getNumSatoshis());
+//					builder.setFinalCltvDelta((int)deodePayResponse.getCltvExpiry());
+//					builder.setNumRoutes(1);
+//					builder.setPubKey(deodePayResponse.getDestination());
+//	
+//					queryRoutesResponse = blockingStub.queryRoutes(builder.build());
+//					Log.build().param("queryRoutesResponse", queryRoutesResponse).event("queryRoutes");
+//				}
+//				
+//				{
+//					Rpc.SendToRouteRequest.Builder builder = Rpc.SendToRouteRequest.newBuilder();
+//					builder.setPaymentHashString(deodePayResponse.getPaymentHash()); // TODO: Payment hash
+//					builder.addRoutes(queryRoutesResponse.getRoutes(0));
+//					
+//					Rpc.SendToRouteRequest req = builder.build();
+//					Rpc.SendResponse response = blockingStub.sendToRouteSync(req);
+//					Log.build().param("response", response).event("sendToRouteSync");
+//				}
+				
 
 				ListInvoicesCommand cmd = (ListInvoicesCommand) command;
 				Rpc.ListInvoiceRequest.Builder builder = Rpc.ListInvoiceRequest.newBuilder();
