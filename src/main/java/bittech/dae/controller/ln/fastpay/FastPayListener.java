@@ -89,7 +89,7 @@ public class FastPayListener implements Listener {
 			bittech.lib.commands.ln.channels.Route route = graphManager.findRoute(myNodeId,
 					decodeInvoieCmd.getResponse().destination, amountToPay, excludedChannels);
 	
-			addExpiryToRoute(route);
+			addExpiryToRoute(route, decodeInvoieCmd.getResponse().cltv_expiry);
 	
 			{
 				PayToRouteCommand cmd = new PayToRouteCommand(decodeInvoieCmd.getResponse().payment_hash, route);
@@ -114,7 +114,7 @@ public class FastPayListener implements Listener {
 		throw new StoredException("Fast pay failed", new Exception("Couldn't find rout after 10 tries"));
 	}
 
-	private void addExpiryToRoute(bittech.lib.commands.ln.channels.Route route) {
+	private void addExpiryToRoute(bittech.lib.commands.ln.channels.Route route, int receiverExpiry) {
 
 		GetInfoCommand getInfoCmd = new GetInfoCommand();
 		executor.execute(getInfoCmd);
@@ -123,7 +123,7 @@ public class FastPayListener implements Listener {
 		}
 
 //		int index = route.hops.size() - 1;
-		int currentLock = getInfoCmd.getResponse().block_height; // TODO: Why 10?
+		int currentLock = getInfoCmd.getResponse().block_height + receiverExpiry;
 //		route.totalTimeLock = blockHight + htlcDiff * (index + 1);
 		
 		ListIterator<Hop> listIterator = route.hops.listIterator(route.hops.size());
@@ -131,11 +131,8 @@ public class FastPayListener implements Listener {
 		int i = 0;
 		while (listIterator.hasPrevious()) {
 			Hop hop = listIterator.previous();
-			if(i==0) {
-				currentLock += hop.timeLockDelta;
-				hop.expiry = currentLock;
-			} else {
-				hop.expiry = currentLock;
+			hop.expiry = currentLock;
+			if(i!=0) {
 				currentLock += hop.timeLockDelta;
 			}
 			i++;
@@ -165,7 +162,7 @@ public class FastPayListener implements Listener {
 			if (route == null) {
 				throw new StoredException("No route found", null);
 			}
-			addExpiryToRoute(route);
+			addExpiryToRoute(route, 144); // TODO: Maybe provide final as parameter
 			cmd.response = new FindRouteResponse();
 			cmd.response.route = route;
 		} else if (command instanceof FastPayCommand) {
