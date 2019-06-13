@@ -563,10 +563,10 @@ public class LndCommandsExecutor {
 					throw new Exception("Route not provided");
 				}
 				if(Btc.HasValue(cmd.getRequest().route.totalAmount) == false) {
-					throw new Exception("Tutal amount for route not provided");
+					throw new Exception("Total amount for route not provided");
 				}
 				if(Btc.HasValue(cmd.getRequest().route.totalFees) == false) {
-					throw new Exception("Tutal fees for route not provided");
+					throw new Exception("Total fees for route not provided");
 				}
 
 				Rpc.Route.Builder rpcRouteBuilder = Rpc.Route.newBuilder()

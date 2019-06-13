@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
@@ -57,7 +58,7 @@ public class GraphManager {
 				ch.peerId = channel.node2Id;
 				ch.feeBaseMsat = channel.node2_policy.fee_base_msat;
 				ch.feeRateMilliMsat = channel.node2_policy.fee_rate_milli_msat;
-				ch.timeLockDelta = channel.node1_policy.time_lock_delta;
+				ch.timeLockDelta = channel.node2_policy.time_lock_delta;
 				ch.maxToTransfer = channel.capacitySat;
 				node1.channels.add(ch);
 			}
@@ -68,7 +69,7 @@ public class GraphManager {
 				ch.peerId = channel.node1Id;
 				ch.feeBaseMsat = channel.node1_policy.fee_base_msat;
 				ch.feeRateMilliMsat = channel.node1_policy.fee_rate_milli_msat;
-				ch.timeLockDelta = channel.node2_policy.time_lock_delta;
+				ch.timeLockDelta = channel.node1_policy.time_lock_delta;
 				ch.maxToTransfer = channel.capacitySat;
 				node2.channels.add(ch);
 			}
@@ -81,7 +82,15 @@ public class GraphManager {
 	}
 	
 	public bittech.lib.commands.ln.channels.Route findRoute(String from, String to, Btc amount, Set<String> excludeChannels) {
-		Log.build().param("from", from).param("to", to).param("amount", amount).event("Loking for route");
+		Log log = Log.build().param("from", from).param("to", to).param("amount", amount).param("excludeChannels", excludeChannels);
+		log.event("Truing to find route");
+		bittech.lib.commands.ln.channels.Route route = prvFindRoute(from, to, amount, excludeChannels);
+		log.param("route", route).event("Route found");
+		return route;
+	}
+	
+	private bittech.lib.commands.ln.channels.Route prvFindRoute(String from, String to, Btc amount, Set<String> excludeChannels) {
+//		Log.build().param("from", from).param("to", to).param("amount", amount).event("Loking for route");
 		Route route = null;
 		int deph = 4;
 
@@ -189,7 +198,7 @@ public class GraphManager {
 	}
 
 	private final bittech.lib.commands.ln.channels.Route convertRoute(Route route) {
-		Log.build().param("route", route).event("Comverting route");
+//		Log.build().param("route", route).event("Comverting route");
 		bittech.lib.commands.ln.channels.Route retRoute = new bittech.lib.commands.ln.channels.Route();
 		retRoute.hops = new ArrayList<Hop>(route.hops.size());
 
@@ -229,6 +238,62 @@ public class GraphManager {
 		}
 		
 		return retRoute;
+	}
+	
+	
+	public static void addExpiry(bittech.lib.commands.ln.channels.Route route, int currentBlock, int receiverExpiry) {
+//		int index = route.hops.size() - 1;
+		int currentLock = currentBlock + receiverExpiry;
+//		route.totalTimeLock = blockHight + htlcDiff * (index + 1);
+		
+		ListIterator<Hop> listIterator = route.hops.listIterator(route.hops.size());
+		
+		int i = 0;
+		while (listIterator.hasPrevious()) {
+			Hop hop = listIterator.previous();
+			hop.expiry = currentLock;
+			if(i!=0) {
+				currentLock += hop.timeLockDelta;
+			}
+			i++;
+		}
+		
+		route.totalTimeLock = currentLock;
+
+	}
+	
+	// ----------------------- build channels (may be removed in the future)
+	public bittech.lib.commands.ln.channels.Route buildRoute(String firstNode, List<String> channelIds, Btc amount) {
+		Route route = new Route(amount);
+		GraphNode gn = nodes.get(firstNode);
+		if(gn == null) {
+			throw new StoredException("Cannot find node '" + firstNode + "' in channels graph", null);
+		}
+		for(String chId : channelIds) {
+
+			GraphChannel ch = findChannel(gn, chId);
+			if(ch == null) {
+				throw new StoredException("Channel '" + chId + "' not found in channels graph", null);
+			}
+			
+			route.hops.add(ch);
+			
+			gn = nodes.get(ch.peerId);
+			if(gn == null) {
+				throw new StoredException("Cannot find node '" + firstNode + "' in channels graph", null);
+			}
+		}
+		
+		return convertRoute(route);
+	}
+	
+	private GraphChannel findChannel(GraphNode gn, String id) {
+			for(GraphChannel ch : gn.channels) {
+				if(id.equals(ch.id)) {
+					return ch;
+				}
+			}
+		return null;
 	}
 
 }

@@ -1,17 +1,17 @@
 package bittech.dae.controller.ln.fastpay;
 
 import java.util.HashSet;
-import java.util.ListIterator;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
 import bittech.dae.controller.ln.lnd.LndCommandsExecutor;
 import bittech.lib.commands.ln.GetInfoCommand;
+import bittech.lib.commands.ln.channels.BuildRouteCommand;
+import bittech.lib.commands.ln.channels.BuildRouteResponse;
 import bittech.lib.commands.ln.channels.DescribeGraphCommand;
 import bittech.lib.commands.ln.channels.FindFastRouteCommand;
 import bittech.lib.commands.ln.channels.FindRouteResponse;
-import bittech.lib.commands.ln.channels.Hop;
 import bittech.lib.commands.ln.channels.PayToRouteCommand;
 import bittech.lib.commands.ln.invoices.DecodeInvoiceCommand;
 import bittech.lib.commands.ln.invoices.FastPayCommand;
@@ -84,7 +84,7 @@ public class FastPayListener implements Listener {
 		
 		Set<String> excludedChannels = new HashSet<String>();
 		
-		for(int i = 0; i<10; i++) {
+		for(int i = 0; i<20; i++) {
 		
 			bittech.lib.commands.ln.channels.Route route = graphManager.findRoute(myNodeId,
 					decodeInvoieCmd.getResponse().destination, amountToPay, excludedChannels);
@@ -103,6 +103,14 @@ public class FastPayListener implements Listener {
 						excludedChannels.add(channelId);
 						continue;
 					}
+					
+					ErrorResponse incorrectCltv = cmd.getError().findWithMessage("IncorrectCltvExpiry");
+					if(incorrectCltv != null) {
+						String channelId = StringUtils.substringBetween(incorrectCltv.message, "(lnwire.ShortChannelID) ", ",");
+						excludedChannels.add(channelId);
+						continue;
+					}
+					
 					Log.build().param("route", cmd.getRequest().route).event("Exception thrown for route");
 					throw new StoredException("PayToRouteCommand failed", cmd.getError().toException());
 				}
@@ -122,30 +130,13 @@ public class FastPayListener implements Listener {
 			throw new StoredException("GetInfoCommand failed", getInfoCmd.getError().toException());
 		}
 
-//		int index = route.hops.size() - 1;
-		int currentLock = getInfoCmd.getResponse().block_height + receiverExpiry;
-//		route.totalTimeLock = blockHight + htlcDiff * (index + 1);
-		
-		ListIterator<Hop> listIterator = route.hops.listIterator(route.hops.size());
-		
-		int i = 0;
-		while (listIterator.hasPrevious()) {
-			Hop hop = listIterator.previous();
-			hop.expiry = currentLock;
-			if(i!=0) {
-				currentLock += hop.timeLockDelta;
-			}
-			i++;
-		}
-		
-		route.totalTimeLock = currentLock;
-
+		GraphManager.addExpiry(route, getInfoCmd.getResponse().block_height, receiverExpiry);
 	}
 
 	@Override
 	public Class<?>[] getListeningCommands() {
 		// TODO Auto-generated method stub
-		return new Class<?>[] { FindFastRouteCommand.class, FastPayCommand.class };
+		return new Class<?>[] { FindFastRouteCommand.class, FastPayCommand.class, BuildRouteCommand.class };
 	}
 
 	@Override
@@ -162,13 +153,25 @@ public class FastPayListener implements Listener {
 			if (route == null) {
 				throw new StoredException("No route found", null);
 			}
-			addExpiryToRoute(route, 144); // TODO: Maybe provide final as parameter
+			addExpiryToRoute(route, cmd.getRequest().finalCltvDelta); // TODO: Maybe provide final as parameter
 			cmd.response = new FindRouteResponse();
 			cmd.response.route = route;
 		} else if (command instanceof FastPayCommand) {
 			FastPayCommand cmd = (FastPayCommand) command;
 			pay(cmd.getRequest().invoice, cmd.getRequest().amount, cmd.getRequest().feeIncluded);
 			cmd.response = new PayInvoiceResponse();
+		} else if (command instanceof BuildRouteCommand) {
+			BuildRouteCommand cmd = (BuildRouteCommand) command;
+			
+			bittech.lib.commands.ln.channels.Route route = graphManager.buildRoute(cmd.request.firstNodeId, cmd.request.channelsIds, cmd.request.amount);
+			if (route == null) {
+				throw new StoredException("No route found", null);
+			}
+			
+			addExpiryToRoute(route, cmd.request.finalCltvDelta);
+			
+			cmd.response = new BuildRouteResponse();
+			cmd.response.route = route;
 		} else {
 			throw new StoredException("Command not supported: " + command.type + " by FastPayListener", null);
 		}
