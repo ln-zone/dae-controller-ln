@@ -118,10 +118,10 @@ public class InvoicesListener implements Listener {
 			AddInvoiceCommand cmd = (AddInvoiceCommand) command;
 			String label = cmd.getRequest().label;
 			if(StringUtils.isEmpty(label)) {
-				throw new StoredException("Cannot add ibvoice without label", null);
+				throw new StoredException("Cannot add invoice without label", null);
 			}
 			executor.execute(cmd);
-			if(cmd.getError() != null) {
+			if(cmd.getError() == null) {
 				invoicesLabels.put(cmd.getResponse().add_index, label);
 			}
 
