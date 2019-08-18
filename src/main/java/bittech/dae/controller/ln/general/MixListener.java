@@ -100,7 +100,7 @@ public class MixListener implements Listener {
 			return false;
 		} else {
 			ExecResponse resp = SystemExec.exec(
-					"bitcoin-cli -rpcconnect=80.211.252.169 -rpcport=8332 -rpcuser=bitUser -rpcpassword=bitUser&7623GW6756@)! validateaddress "
+					"bitcoin-cli validateaddress "
 							+ addr,
 					5000);
 			// SystemExecResponse resp = SystemExec.exec("bitcoin-cli validateaddress " +
