@@ -79,7 +79,7 @@ public class MixListener implements Listener {
 			cmd.response = new NoDataResponse();
 		} else if (command instanceof DeleteLogsCommand) {
 			DeleteLogsCommand cmd = (DeleteLogsCommand) command;
-			Logs.getInstance().clear();
+			Logs.resetInstance();
 			cmd.response = new NoDataResponse();
 		} else if (command instanceof ValidateBtcAddrCommand) {
 			try {
@@ -100,7 +100,7 @@ public class MixListener implements Listener {
 			return false;
 		} else {
 			ExecResponse resp = SystemExec.exec(
-					"bitcoin-cli validateaddress "
+					"bitcoin-cli -rpcconnect=46.248.170.225 -rpcport=8332 -rpcuser=bitUser -rpcpassword=bitUser89723ge78g3g6 validateaddress "
 							+ addr,
 					5000);
 			// SystemExecResponse resp = SystemExec.exec("bitcoin-cli validateaddress " +

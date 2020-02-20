@@ -475,6 +475,38 @@ public final class LightningGrpc {
      return getListPeersMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<lnrpc.Rpc.PeerEventSubscription,
+      lnrpc.Rpc.PeerEvent> getSubscribePeerEventsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SubscribePeerEvents",
+      requestType = lnrpc.Rpc.PeerEventSubscription.class,
+      responseType = lnrpc.Rpc.PeerEvent.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+  public static io.grpc.MethodDescriptor<lnrpc.Rpc.PeerEventSubscription,
+      lnrpc.Rpc.PeerEvent> getSubscribePeerEventsMethod() {
+    io.grpc.MethodDescriptor<lnrpc.Rpc.PeerEventSubscription, lnrpc.Rpc.PeerEvent> getSubscribePeerEventsMethod;
+    if ((getSubscribePeerEventsMethod = LightningGrpc.getSubscribePeerEventsMethod) == null) {
+      synchronized (LightningGrpc.class) {
+        if ((getSubscribePeerEventsMethod = LightningGrpc.getSubscribePeerEventsMethod) == null) {
+          LightningGrpc.getSubscribePeerEventsMethod = getSubscribePeerEventsMethod = 
+              io.grpc.MethodDescriptor.<lnrpc.Rpc.PeerEventSubscription, lnrpc.Rpc.PeerEvent>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+              .setFullMethodName(generateFullMethodName(
+                  "lnrpc.Lightning", "SubscribePeerEvents"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.PeerEventSubscription.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.PeerEvent.getDefaultInstance()))
+                  .setSchemaDescriptor(new LightningMethodDescriptorSupplier("SubscribePeerEvents"))
+                  .build();
+          }
+        }
+     }
+     return getSubscribePeerEventsMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<lnrpc.Rpc.GetInfoRequest,
       lnrpc.Rpc.GetInfoResponse> getGetInfoMethod;
 
@@ -697,6 +729,70 @@ public final class LightningGrpc {
         }
      }
      return getOpenChannelMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<lnrpc.Rpc.FundingTransitionMsg,
+      lnrpc.Rpc.FundingStateStepResp> getFundingStateStepMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "FundingStateStep",
+      requestType = lnrpc.Rpc.FundingTransitionMsg.class,
+      responseType = lnrpc.Rpc.FundingStateStepResp.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<lnrpc.Rpc.FundingTransitionMsg,
+      lnrpc.Rpc.FundingStateStepResp> getFundingStateStepMethod() {
+    io.grpc.MethodDescriptor<lnrpc.Rpc.FundingTransitionMsg, lnrpc.Rpc.FundingStateStepResp> getFundingStateStepMethod;
+    if ((getFundingStateStepMethod = LightningGrpc.getFundingStateStepMethod) == null) {
+      synchronized (LightningGrpc.class) {
+        if ((getFundingStateStepMethod = LightningGrpc.getFundingStateStepMethod) == null) {
+          LightningGrpc.getFundingStateStepMethod = getFundingStateStepMethod = 
+              io.grpc.MethodDescriptor.<lnrpc.Rpc.FundingTransitionMsg, lnrpc.Rpc.FundingStateStepResp>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "lnrpc.Lightning", "FundingStateStep"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.FundingTransitionMsg.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.FundingStateStepResp.getDefaultInstance()))
+                  .setSchemaDescriptor(new LightningMethodDescriptorSupplier("FundingStateStep"))
+                  .build();
+          }
+        }
+     }
+     return getFundingStateStepMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<lnrpc.Rpc.ChannelAcceptResponse,
+      lnrpc.Rpc.ChannelAcceptRequest> getChannelAcceptorMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ChannelAcceptor",
+      requestType = lnrpc.Rpc.ChannelAcceptResponse.class,
+      responseType = lnrpc.Rpc.ChannelAcceptRequest.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.BIDI_STREAMING)
+  public static io.grpc.MethodDescriptor<lnrpc.Rpc.ChannelAcceptResponse,
+      lnrpc.Rpc.ChannelAcceptRequest> getChannelAcceptorMethod() {
+    io.grpc.MethodDescriptor<lnrpc.Rpc.ChannelAcceptResponse, lnrpc.Rpc.ChannelAcceptRequest> getChannelAcceptorMethod;
+    if ((getChannelAcceptorMethod = LightningGrpc.getChannelAcceptorMethod) == null) {
+      synchronized (LightningGrpc.class) {
+        if ((getChannelAcceptorMethod = LightningGrpc.getChannelAcceptorMethod) == null) {
+          LightningGrpc.getChannelAcceptorMethod = getChannelAcceptorMethod = 
+              io.grpc.MethodDescriptor.<lnrpc.Rpc.ChannelAcceptResponse, lnrpc.Rpc.ChannelAcceptRequest>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.BIDI_STREAMING)
+              .setFullMethodName(generateFullMethodName(
+                  "lnrpc.Lightning", "ChannelAcceptor"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.ChannelAcceptResponse.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.ChannelAcceptRequest.getDefaultInstance()))
+                  .setSchemaDescriptor(new LightningMethodDescriptorSupplier("ChannelAcceptor"))
+                  .build();
+          }
+        }
+     }
+     return getChannelAcceptorMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<lnrpc.Rpc.CloseChannelRequest,
@@ -1627,6 +1723,38 @@ public final class LightningGrpc {
      return getSubscribeChannelBackupsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<lnrpc.Rpc.BakeMacaroonRequest,
+      lnrpc.Rpc.BakeMacaroonResponse> getBakeMacaroonMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "BakeMacaroon",
+      requestType = lnrpc.Rpc.BakeMacaroonRequest.class,
+      responseType = lnrpc.Rpc.BakeMacaroonResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<lnrpc.Rpc.BakeMacaroonRequest,
+      lnrpc.Rpc.BakeMacaroonResponse> getBakeMacaroonMethod() {
+    io.grpc.MethodDescriptor<lnrpc.Rpc.BakeMacaroonRequest, lnrpc.Rpc.BakeMacaroonResponse> getBakeMacaroonMethod;
+    if ((getBakeMacaroonMethod = LightningGrpc.getBakeMacaroonMethod) == null) {
+      synchronized (LightningGrpc.class) {
+        if ((getBakeMacaroonMethod = LightningGrpc.getBakeMacaroonMethod) == null) {
+          LightningGrpc.getBakeMacaroonMethod = getBakeMacaroonMethod = 
+              io.grpc.MethodDescriptor.<lnrpc.Rpc.BakeMacaroonRequest, lnrpc.Rpc.BakeMacaroonResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "lnrpc.Lightning", "BakeMacaroon"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.BakeMacaroonRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.BakeMacaroonResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new LightningMethodDescriptorSupplier("BakeMacaroon"))
+                  .build();
+          }
+        }
+     }
+     return getBakeMacaroonMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -1659,7 +1787,7 @@ public final class LightningGrpc {
      ** lncli: `walletbalance`
      *WalletBalance returns total unspent outputs(confirmed and unconfirmed), all
      *confirmed unspent outputs and all unconfirmed unspent outputs under control
-     *of the wallet. 
+     *of the wallet.
      * </pre>
      */
     public void walletBalance(lnrpc.Rpc.WalletBalanceRequest request,
@@ -1834,6 +1962,19 @@ public final class LightningGrpc {
 
     /**
      * <pre>
+     **
+     *SubscribePeerEvents creates a uni-directional stream from the server to
+     *the client in which any events relevant to the state of peers are sent
+     *over. Events include peers going online and offline.
+     * </pre>
+     */
+    public void subscribePeerEvents(lnrpc.Rpc.PeerEventSubscription request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.PeerEvent> responseObserver) {
+      asyncUnimplementedUnaryCall(getSubscribePeerEventsMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
      ** lncli: `getinfo`
      *GetInfo returns general information concerning the lightning node including
      *it's identity pubkey, alias, the chains it is connected to, and information
@@ -1873,7 +2014,7 @@ public final class LightningGrpc {
 
     /**
      * <pre>
-     ** lncli: `subscribechannelevents`
+     **
      *SubscribeChannelEvents creates a uni-directional stream from the server to
      *the client in which any updates relevant to the state of the channels are
      *sent over. Events include new active channels, inactive channels, and closed
@@ -1888,7 +2029,7 @@ public final class LightningGrpc {
     /**
      * <pre>
      ** lncli: `closedchannels`
-     *ClosedChannels returns a description of all the closed channels that 
+     *ClosedChannels returns a description of all the closed channels that
      *this node was a participant in.
      * </pre>
      */
@@ -1918,12 +2059,48 @@ public final class LightningGrpc {
      *request to a remote peer. Users are able to specify a target number of
      *blocks that the funding transaction should be confirmed in, or a manual fee
      *rate to us for the funding transaction. If neither are specified, then a
-     *lax block confirmation target is used.
+     *lax block confirmation target is used. Each OpenStatusUpdate will return
+     *the pending channel ID of the in-progress channel. Depending on the
+     *arguments specified in the OpenChannelRequest, this pending channel ID can
+     *then be used to manually progress the channel funding flow.
      * </pre>
      */
     public void openChannel(lnrpc.Rpc.OpenChannelRequest request,
         io.grpc.stub.StreamObserver<lnrpc.Rpc.OpenStatusUpdate> responseObserver) {
       asyncUnimplementedUnaryCall(getOpenChannelMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     **
+     *FundingStateStep is an advanced funding related call that allows the caller
+     *to either execute some preparatory steps for a funding workflow, or
+     *manually progress a funding workflow. The primary way a funding flow is
+     *identified is via its pending channel ID. As an example, this method can be
+     *used to specify that we're expecting a funding flow for a particular
+     *pending channel ID, for which we need to use specific parameters.
+     *Alternatively, this can be used to interactively drive PSBT signing for
+     *funding for partially complete funding transactions.
+     * </pre>
+     */
+    public void fundingStateStep(lnrpc.Rpc.FundingTransitionMsg request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.FundingStateStepResp> responseObserver) {
+      asyncUnimplementedUnaryCall(getFundingStateStepMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     **
+     *ChannelAcceptor dispatches a bi-directional streaming RPC in which
+     *OpenChannel requests are sent to the client and the client responds with
+     *a boolean that tells LND whether or not to accept the channel. This allows
+     *node operators to specify their own criteria for accepting inbound channels
+     *through a single persistent connection.
+     * </pre>
+     */
+    public io.grpc.stub.StreamObserver<lnrpc.Rpc.ChannelAcceptResponse> channelAcceptor(
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.ChannelAcceptRequest> responseObserver) {
+      return asyncUnimplementedStreamingCall(getChannelAcceptorMethod(), responseObserver);
     }
 
     /**
@@ -2061,9 +2238,9 @@ public final class LightningGrpc {
      *notifying the client of newly added/settled invoices. The caller can
      *optionally specify the add_index and/or the settle_index. If the add_index
      *is specified, then we'll first start by sending add invoice events for all
-     *invoices with an add_index greater than the specified value.  If the
+     *invoices with an add_index greater than the specified value. If the
      *settle_index is specified, the next, we'll send out all settle events for
-     *invoices with a settle_index greater than the specified value.  One or both
+     *invoices with a settle_index greater than the specified value. One or both
      *of these fields can be set. If no fields are set, then we'll only send out
      *the latest add/settle events.
      * </pre>
@@ -2114,7 +2291,7 @@ public final class LightningGrpc {
      *DescribeGraph returns a description of the latest graph state from the
      *point of view of the node. The graph information is partitioned into two
      *components: all the nodes/vertexes, and all the edges that connect the
-     *vertexes themselves.  As this is a directed graph, the edges also contain
+     *vertexes themselves. As this is a directed graph, the edges also contain
      *the node directional specific routing policy which includes: the time lock
      *delta, fee information, etc.
      * </pre>
@@ -2155,7 +2332,7 @@ public final class LightningGrpc {
      ** lncli: `queryroutes`
      *QueryRoutes attempts to query the daemon's Channel Router for a possible
      *route to a target destination capable of carrying a specific amount of
-     *satoshis. The retuned route contains the full details required to craft and
+     *satoshis. The returned route contains the full details required to craft and
      *send an HTLC, also including the necessary information that should be
      *present within the Sphinx packet encapsulated within the HTLC.
      * </pre>
@@ -2252,7 +2429,7 @@ public final class LightningGrpc {
      *of the past 24 hrs of forwarding history are returned.
      *A list of forwarding events are returned. The size of each forwarding event
      *is 40 bytes, and the max message size able to be returned in gRPC is 4 MiB.
-     *As a result each message can only contain 50k entries.  Each response has
+     *As a result each message can only contain 50k entries. Each response has
      *the index offset of the last entry. The index offset can be provided to the
      *request to allow the caller to skip a series of records.
      * </pre>
@@ -2335,6 +2512,19 @@ public final class LightningGrpc {
     public void subscribeChannelBackups(lnrpc.Rpc.ChannelBackupSubscription request,
         io.grpc.stub.StreamObserver<lnrpc.Rpc.ChanBackupSnapshot> responseObserver) {
       asyncUnimplementedUnaryCall(getSubscribeChannelBackupsMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     ** lncli: `bakemacaroon`
+     *BakeMacaroon allows the creation of a new macaroon with custom read and
+     *write permissions. No first-party caveats are added since this can be done
+     *offline.
+     * </pre>
+     */
+    public void bakeMacaroon(lnrpc.Rpc.BakeMacaroonRequest request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.BakeMacaroonResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getBakeMacaroonMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
@@ -2438,6 +2628,13 @@ public final class LightningGrpc {
                 lnrpc.Rpc.ListPeersResponse>(
                   this, METHODID_LIST_PEERS)))
           .addMethod(
+            getSubscribePeerEventsMethod(),
+            asyncServerStreamingCall(
+              new MethodHandlers<
+                lnrpc.Rpc.PeerEventSubscription,
+                lnrpc.Rpc.PeerEvent>(
+                  this, METHODID_SUBSCRIBE_PEER_EVENTS)))
+          .addMethod(
             getGetInfoMethod(),
             asyncUnaryCall(
               new MethodHandlers<
@@ -2486,6 +2683,20 @@ public final class LightningGrpc {
                 lnrpc.Rpc.OpenChannelRequest,
                 lnrpc.Rpc.OpenStatusUpdate>(
                   this, METHODID_OPEN_CHANNEL)))
+          .addMethod(
+            getFundingStateStepMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                lnrpc.Rpc.FundingTransitionMsg,
+                lnrpc.Rpc.FundingStateStepResp>(
+                  this, METHODID_FUNDING_STATE_STEP)))
+          .addMethod(
+            getChannelAcceptorMethod(),
+            asyncBidiStreamingCall(
+              new MethodHandlers<
+                lnrpc.Rpc.ChannelAcceptResponse,
+                lnrpc.Rpc.ChannelAcceptRequest>(
+                  this, METHODID_CHANNEL_ACCEPTOR)))
           .addMethod(
             getCloseChannelMethod(),
             asyncServerStreamingCall(
@@ -2689,6 +2900,13 @@ public final class LightningGrpc {
                 lnrpc.Rpc.ChannelBackupSubscription,
                 lnrpc.Rpc.ChanBackupSnapshot>(
                   this, METHODID_SUBSCRIBE_CHANNEL_BACKUPS)))
+          .addMethod(
+            getBakeMacaroonMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                lnrpc.Rpc.BakeMacaroonRequest,
+                lnrpc.Rpc.BakeMacaroonResponse>(
+                  this, METHODID_BAKE_MACAROON)))
           .build();
     }
   }
@@ -2716,7 +2934,7 @@ public final class LightningGrpc {
      ** lncli: `walletbalance`
      *WalletBalance returns total unspent outputs(confirmed and unconfirmed), all
      *confirmed unspent outputs and all unconfirmed unspent outputs under control
-     *of the wallet. 
+     *of the wallet.
      * </pre>
      */
     public void walletBalance(lnrpc.Rpc.WalletBalanceRequest request,
@@ -2905,6 +3123,20 @@ public final class LightningGrpc {
 
     /**
      * <pre>
+     **
+     *SubscribePeerEvents creates a uni-directional stream from the server to
+     *the client in which any events relevant to the state of peers are sent
+     *over. Events include peers going online and offline.
+     * </pre>
+     */
+    public void subscribePeerEvents(lnrpc.Rpc.PeerEventSubscription request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.PeerEvent> responseObserver) {
+      asyncServerStreamingCall(
+          getChannel().newCall(getSubscribePeerEventsMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
      ** lncli: `getinfo`
      *GetInfo returns general information concerning the lightning node including
      *it's identity pubkey, alias, the chains it is connected to, and information
@@ -2947,7 +3179,7 @@ public final class LightningGrpc {
 
     /**
      * <pre>
-     ** lncli: `subscribechannelevents`
+     **
      *SubscribeChannelEvents creates a uni-directional stream from the server to
      *the client in which any updates relevant to the state of the channels are
      *sent over. Events include new active channels, inactive channels, and closed
@@ -2963,7 +3195,7 @@ public final class LightningGrpc {
     /**
      * <pre>
      ** lncli: `closedchannels`
-     *ClosedChannels returns a description of all the closed channels that 
+     *ClosedChannels returns a description of all the closed channels that
      *this node was a participant in.
      * </pre>
      */
@@ -2995,13 +3227,51 @@ public final class LightningGrpc {
      *request to a remote peer. Users are able to specify a target number of
      *blocks that the funding transaction should be confirmed in, or a manual fee
      *rate to us for the funding transaction. If neither are specified, then a
-     *lax block confirmation target is used.
+     *lax block confirmation target is used. Each OpenStatusUpdate will return
+     *the pending channel ID of the in-progress channel. Depending on the
+     *arguments specified in the OpenChannelRequest, this pending channel ID can
+     *then be used to manually progress the channel funding flow.
      * </pre>
      */
     public void openChannel(lnrpc.Rpc.OpenChannelRequest request,
         io.grpc.stub.StreamObserver<lnrpc.Rpc.OpenStatusUpdate> responseObserver) {
       asyncServerStreamingCall(
           getChannel().newCall(getOpenChannelMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     **
+     *FundingStateStep is an advanced funding related call that allows the caller
+     *to either execute some preparatory steps for a funding workflow, or
+     *manually progress a funding workflow. The primary way a funding flow is
+     *identified is via its pending channel ID. As an example, this method can be
+     *used to specify that we're expecting a funding flow for a particular
+     *pending channel ID, for which we need to use specific parameters.
+     *Alternatively, this can be used to interactively drive PSBT signing for
+     *funding for partially complete funding transactions.
+     * </pre>
+     */
+    public void fundingStateStep(lnrpc.Rpc.FundingTransitionMsg request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.FundingStateStepResp> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getFundingStateStepMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     **
+     *ChannelAcceptor dispatches a bi-directional streaming RPC in which
+     *OpenChannel requests are sent to the client and the client responds with
+     *a boolean that tells LND whether or not to accept the channel. This allows
+     *node operators to specify their own criteria for accepting inbound channels
+     *through a single persistent connection.
+     * </pre>
+     */
+    public io.grpc.stub.StreamObserver<lnrpc.Rpc.ChannelAcceptResponse> channelAcceptor(
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.ChannelAcceptRequest> responseObserver) {
+      return asyncBidiStreamingCall(
+          getChannel().newCall(getChannelAcceptorMethod(), getCallOptions()), responseObserver);
     }
 
     /**
@@ -3148,9 +3418,9 @@ public final class LightningGrpc {
      *notifying the client of newly added/settled invoices. The caller can
      *optionally specify the add_index and/or the settle_index. If the add_index
      *is specified, then we'll first start by sending add invoice events for all
-     *invoices with an add_index greater than the specified value.  If the
+     *invoices with an add_index greater than the specified value. If the
      *settle_index is specified, the next, we'll send out all settle events for
-     *invoices with a settle_index greater than the specified value.  One or both
+     *invoices with a settle_index greater than the specified value. One or both
      *of these fields can be set. If no fields are set, then we'll only send out
      *the latest add/settle events.
      * </pre>
@@ -3205,7 +3475,7 @@ public final class LightningGrpc {
      *DescribeGraph returns a description of the latest graph state from the
      *point of view of the node. The graph information is partitioned into two
      *components: all the nodes/vertexes, and all the edges that connect the
-     *vertexes themselves.  As this is a directed graph, the edges also contain
+     *vertexes themselves. As this is a directed graph, the edges also contain
      *the node directional specific routing policy which includes: the time lock
      *delta, fee information, etc.
      * </pre>
@@ -3249,7 +3519,7 @@ public final class LightningGrpc {
      ** lncli: `queryroutes`
      *QueryRoutes attempts to query the daemon's Channel Router for a possible
      *route to a target destination capable of carrying a specific amount of
-     *satoshis. The retuned route contains the full details required to craft and
+     *satoshis. The returned route contains the full details required to craft and
      *send an HTLC, also including the necessary information that should be
      *present within the Sphinx packet encapsulated within the HTLC.
      * </pre>
@@ -3353,7 +3623,7 @@ public final class LightningGrpc {
      *of the past 24 hrs of forwarding history are returned.
      *A list of forwarding events are returned. The size of each forwarding event
      *is 40 bytes, and the max message size able to be returned in gRPC is 4 MiB.
-     *As a result each message can only contain 50k entries.  Each response has
+     *As a result each message can only contain 50k entries. Each response has
      *the index offset of the last entry. The index offset can be provided to the
      *request to allow the caller to skip a series of records.
      * </pre>
@@ -3443,6 +3713,20 @@ public final class LightningGrpc {
       asyncServerStreamingCall(
           getChannel().newCall(getSubscribeChannelBackupsMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     ** lncli: `bakemacaroon`
+     *BakeMacaroon allows the creation of a new macaroon with custom read and
+     *write permissions. No first-party caveats are added since this can be done
+     *offline.
+     * </pre>
+     */
+    public void bakeMacaroon(lnrpc.Rpc.BakeMacaroonRequest request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.BakeMacaroonResponse> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getBakeMacaroonMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -3468,7 +3752,7 @@ public final class LightningGrpc {
      ** lncli: `walletbalance`
      *WalletBalance returns total unspent outputs(confirmed and unconfirmed), all
      *confirmed unspent outputs and all unconfirmed unspent outputs under control
-     *of the wallet. 
+     *of the wallet.
      * </pre>
      */
     public lnrpc.Rpc.WalletBalanceResponse walletBalance(lnrpc.Rpc.WalletBalanceRequest request) {
@@ -3644,6 +3928,20 @@ public final class LightningGrpc {
 
     /**
      * <pre>
+     **
+     *SubscribePeerEvents creates a uni-directional stream from the server to
+     *the client in which any events relevant to the state of peers are sent
+     *over. Events include peers going online and offline.
+     * </pre>
+     */
+    public java.util.Iterator<lnrpc.Rpc.PeerEvent> subscribePeerEvents(
+        lnrpc.Rpc.PeerEventSubscription request) {
+      return blockingServerStreamingCall(
+          getChannel(), getSubscribePeerEventsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
      ** lncli: `getinfo`
      *GetInfo returns general information concerning the lightning node including
      *it's identity pubkey, alias, the chains it is connected to, and information
@@ -3683,7 +3981,7 @@ public final class LightningGrpc {
 
     /**
      * <pre>
-     ** lncli: `subscribechannelevents`
+     **
      *SubscribeChannelEvents creates a uni-directional stream from the server to
      *the client in which any updates relevant to the state of the channels are
      *sent over. Events include new active channels, inactive channels, and closed
@@ -3699,7 +3997,7 @@ public final class LightningGrpc {
     /**
      * <pre>
      ** lncli: `closedchannels`
-     *ClosedChannels returns a description of all the closed channels that 
+     *ClosedChannels returns a description of all the closed channels that
      *this node was a participant in.
      * </pre>
      */
@@ -3729,13 +4027,34 @@ public final class LightningGrpc {
      *request to a remote peer. Users are able to specify a target number of
      *blocks that the funding transaction should be confirmed in, or a manual fee
      *rate to us for the funding transaction. If neither are specified, then a
-     *lax block confirmation target is used.
+     *lax block confirmation target is used. Each OpenStatusUpdate will return
+     *the pending channel ID of the in-progress channel. Depending on the
+     *arguments specified in the OpenChannelRequest, this pending channel ID can
+     *then be used to manually progress the channel funding flow.
      * </pre>
      */
     public java.util.Iterator<lnrpc.Rpc.OpenStatusUpdate> openChannel(
         lnrpc.Rpc.OpenChannelRequest request) {
       return blockingServerStreamingCall(
           getChannel(), getOpenChannelMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     **
+     *FundingStateStep is an advanced funding related call that allows the caller
+     *to either execute some preparatory steps for a funding workflow, or
+     *manually progress a funding workflow. The primary way a funding flow is
+     *identified is via its pending channel ID. As an example, this method can be
+     *used to specify that we're expecting a funding flow for a particular
+     *pending channel ID, for which we need to use specific parameters.
+     *Alternatively, this can be used to interactively drive PSBT signing for
+     *funding for partially complete funding transactions.
+     * </pre>
+     */
+    public lnrpc.Rpc.FundingStateStepResp fundingStateStep(lnrpc.Rpc.FundingTransitionMsg request) {
+      return blockingUnaryCall(
+          getChannel(), getFundingStateStepMethod(), getCallOptions(), request);
     }
 
     /**
@@ -3846,9 +4165,9 @@ public final class LightningGrpc {
      *notifying the client of newly added/settled invoices. The caller can
      *optionally specify the add_index and/or the settle_index. If the add_index
      *is specified, then we'll first start by sending add invoice events for all
-     *invoices with an add_index greater than the specified value.  If the
+     *invoices with an add_index greater than the specified value. If the
      *settle_index is specified, the next, we'll send out all settle events for
-     *invoices with a settle_index greater than the specified value.  One or both
+     *invoices with a settle_index greater than the specified value. One or both
      *of these fields can be set. If no fields are set, then we'll only send out
      *the latest add/settle events.
      * </pre>
@@ -3900,7 +4219,7 @@ public final class LightningGrpc {
      *DescribeGraph returns a description of the latest graph state from the
      *point of view of the node. The graph information is partitioned into two
      *components: all the nodes/vertexes, and all the edges that connect the
-     *vertexes themselves.  As this is a directed graph, the edges also contain
+     *vertexes themselves. As this is a directed graph, the edges also contain
      *the node directional specific routing policy which includes: the time lock
      *delta, fee information, etc.
      * </pre>
@@ -3941,7 +4260,7 @@ public final class LightningGrpc {
      ** lncli: `queryroutes`
      *QueryRoutes attempts to query the daemon's Channel Router for a possible
      *route to a target destination capable of carrying a specific amount of
-     *satoshis. The retuned route contains the full details required to craft and
+     *satoshis. The returned route contains the full details required to craft and
      *send an HTLC, also including the necessary information that should be
      *present within the Sphinx packet encapsulated within the HTLC.
      * </pre>
@@ -4039,7 +4358,7 @@ public final class LightningGrpc {
      *of the past 24 hrs of forwarding history are returned.
      *A list of forwarding events are returned. The size of each forwarding event
      *is 40 bytes, and the max message size able to be returned in gRPC is 4 MiB.
-     *As a result each message can only contain 50k entries.  Each response has
+     *As a result each message can only contain 50k entries. Each response has
      *the index offset of the last entry. The index offset can be provided to the
      *request to allow the caller to skip a series of records.
      * </pre>
@@ -4124,6 +4443,19 @@ public final class LightningGrpc {
       return blockingServerStreamingCall(
           getChannel(), getSubscribeChannelBackupsMethod(), getCallOptions(), request);
     }
+
+    /**
+     * <pre>
+     ** lncli: `bakemacaroon`
+     *BakeMacaroon allows the creation of a new macaroon with custom read and
+     *write permissions. No first-party caveats are added since this can be done
+     *offline.
+     * </pre>
+     */
+    public lnrpc.Rpc.BakeMacaroonResponse bakeMacaroon(lnrpc.Rpc.BakeMacaroonRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getBakeMacaroonMethod(), getCallOptions(), request);
+    }
   }
 
   /**
@@ -4149,7 +4481,7 @@ public final class LightningGrpc {
      ** lncli: `walletbalance`
      *WalletBalance returns total unspent outputs(confirmed and unconfirmed), all
      *confirmed unspent outputs and all unconfirmed unspent outputs under control
-     *of the wallet. 
+     *of the wallet.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<lnrpc.Rpc.WalletBalanceResponse> walletBalance(
@@ -4367,7 +4699,7 @@ public final class LightningGrpc {
     /**
      * <pre>
      ** lncli: `closedchannels`
-     *ClosedChannels returns a description of all the closed channels that 
+     *ClosedChannels returns a description of all the closed channels that
      *this node was a participant in.
      * </pre>
      */
@@ -4390,6 +4722,25 @@ public final class LightningGrpc {
         lnrpc.Rpc.OpenChannelRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getOpenChannelSyncMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     **
+     *FundingStateStep is an advanced funding related call that allows the caller
+     *to either execute some preparatory steps for a funding workflow, or
+     *manually progress a funding workflow. The primary way a funding flow is
+     *identified is via its pending channel ID. As an example, this method can be
+     *used to specify that we're expecting a funding flow for a particular
+     *pending channel ID, for which we need to use specific parameters.
+     *Alternatively, this can be used to interactively drive PSBT signing for
+     *funding for partially complete funding transactions.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<lnrpc.Rpc.FundingStateStepResp> fundingStateStep(
+        lnrpc.Rpc.FundingTransitionMsg request) {
+      return futureUnaryCall(
+          getChannel().newCall(getFundingStateStepMethod(), getCallOptions()), request);
     }
 
     /**
@@ -4525,7 +4876,7 @@ public final class LightningGrpc {
      *DescribeGraph returns a description of the latest graph state from the
      *point of view of the node. The graph information is partitioned into two
      *components: all the nodes/vertexes, and all the edges that connect the
-     *vertexes themselves.  As this is a directed graph, the edges also contain
+     *vertexes themselves. As this is a directed graph, the edges also contain
      *the node directional specific routing policy which includes: the time lock
      *delta, fee information, etc.
      * </pre>
@@ -4569,7 +4920,7 @@ public final class LightningGrpc {
      ** lncli: `queryroutes`
      *QueryRoutes attempts to query the daemon's Channel Router for a possible
      *route to a target destination capable of carrying a specific amount of
-     *satoshis. The retuned route contains the full details required to craft and
+     *satoshis. The returned route contains the full details required to craft and
      *send an HTLC, also including the necessary information that should be
      *present within the Sphinx packet encapsulated within the HTLC.
      * </pre>
@@ -4656,7 +5007,7 @@ public final class LightningGrpc {
      *of the past 24 hrs of forwarding history are returned.
      *A list of forwarding events are returned. The size of each forwarding event
      *is 40 bytes, and the max message size able to be returned in gRPC is 4 MiB.
-     *As a result each message can only contain 50k entries.  Each response has
+     *As a result each message can only contain 50k entries. Each response has
      *the index offset of the last entry. The index offset can be provided to the
      *request to allow the caller to skip a series of records.
      * </pre>
@@ -4728,6 +5079,20 @@ public final class LightningGrpc {
       return futureUnaryCall(
           getChannel().newCall(getRestoreChannelBackupsMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     ** lncli: `bakemacaroon`
+     *BakeMacaroon allows the creation of a new macaroon with custom read and
+     *write permissions. No first-party caveats are added since this can be done
+     *offline.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<lnrpc.Rpc.BakeMacaroonResponse> bakeMacaroon(
+        lnrpc.Rpc.BakeMacaroonRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getBakeMacaroonMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_WALLET_BALANCE = 0;
@@ -4744,42 +5109,46 @@ public final class LightningGrpc {
   private static final int METHODID_CONNECT_PEER = 11;
   private static final int METHODID_DISCONNECT_PEER = 12;
   private static final int METHODID_LIST_PEERS = 13;
-  private static final int METHODID_GET_INFO = 14;
-  private static final int METHODID_PENDING_CHANNELS = 15;
-  private static final int METHODID_LIST_CHANNELS = 16;
-  private static final int METHODID_SUBSCRIBE_CHANNEL_EVENTS = 17;
-  private static final int METHODID_CLOSED_CHANNELS = 18;
-  private static final int METHODID_OPEN_CHANNEL_SYNC = 19;
-  private static final int METHODID_OPEN_CHANNEL = 20;
-  private static final int METHODID_CLOSE_CHANNEL = 21;
-  private static final int METHODID_ABANDON_CHANNEL = 22;
-  private static final int METHODID_SEND_PAYMENT_SYNC = 23;
-  private static final int METHODID_SEND_TO_ROUTE_SYNC = 24;
-  private static final int METHODID_ADD_INVOICE = 25;
-  private static final int METHODID_LIST_INVOICES = 26;
-  private static final int METHODID_LOOKUP_INVOICE = 27;
-  private static final int METHODID_SUBSCRIBE_INVOICES = 28;
-  private static final int METHODID_DECODE_PAY_REQ = 29;
-  private static final int METHODID_LIST_PAYMENTS = 30;
-  private static final int METHODID_DELETE_ALL_PAYMENTS = 31;
-  private static final int METHODID_DESCRIBE_GRAPH = 32;
-  private static final int METHODID_GET_CHAN_INFO = 33;
-  private static final int METHODID_GET_NODE_INFO = 34;
-  private static final int METHODID_QUERY_ROUTES = 35;
-  private static final int METHODID_GET_NETWORK_INFO = 36;
-  private static final int METHODID_STOP_DAEMON = 37;
-  private static final int METHODID_SUBSCRIBE_CHANNEL_GRAPH = 38;
-  private static final int METHODID_DEBUG_LEVEL = 39;
-  private static final int METHODID_FEE_REPORT = 40;
-  private static final int METHODID_UPDATE_CHANNEL_POLICY = 41;
-  private static final int METHODID_FORWARDING_HISTORY = 42;
-  private static final int METHODID_EXPORT_CHANNEL_BACKUP = 43;
-  private static final int METHODID_EXPORT_ALL_CHANNEL_BACKUPS = 44;
-  private static final int METHODID_VERIFY_CHAN_BACKUP = 45;
-  private static final int METHODID_RESTORE_CHANNEL_BACKUPS = 46;
-  private static final int METHODID_SUBSCRIBE_CHANNEL_BACKUPS = 47;
-  private static final int METHODID_SEND_PAYMENT = 48;
-  private static final int METHODID_SEND_TO_ROUTE = 49;
+  private static final int METHODID_SUBSCRIBE_PEER_EVENTS = 14;
+  private static final int METHODID_GET_INFO = 15;
+  private static final int METHODID_PENDING_CHANNELS = 16;
+  private static final int METHODID_LIST_CHANNELS = 17;
+  private static final int METHODID_SUBSCRIBE_CHANNEL_EVENTS = 18;
+  private static final int METHODID_CLOSED_CHANNELS = 19;
+  private static final int METHODID_OPEN_CHANNEL_SYNC = 20;
+  private static final int METHODID_OPEN_CHANNEL = 21;
+  private static final int METHODID_FUNDING_STATE_STEP = 22;
+  private static final int METHODID_CLOSE_CHANNEL = 23;
+  private static final int METHODID_ABANDON_CHANNEL = 24;
+  private static final int METHODID_SEND_PAYMENT_SYNC = 25;
+  private static final int METHODID_SEND_TO_ROUTE_SYNC = 26;
+  private static final int METHODID_ADD_INVOICE = 27;
+  private static final int METHODID_LIST_INVOICES = 28;
+  private static final int METHODID_LOOKUP_INVOICE = 29;
+  private static final int METHODID_SUBSCRIBE_INVOICES = 30;
+  private static final int METHODID_DECODE_PAY_REQ = 31;
+  private static final int METHODID_LIST_PAYMENTS = 32;
+  private static final int METHODID_DELETE_ALL_PAYMENTS = 33;
+  private static final int METHODID_DESCRIBE_GRAPH = 34;
+  private static final int METHODID_GET_CHAN_INFO = 35;
+  private static final int METHODID_GET_NODE_INFO = 36;
+  private static final int METHODID_QUERY_ROUTES = 37;
+  private static final int METHODID_GET_NETWORK_INFO = 38;
+  private static final int METHODID_STOP_DAEMON = 39;
+  private static final int METHODID_SUBSCRIBE_CHANNEL_GRAPH = 40;
+  private static final int METHODID_DEBUG_LEVEL = 41;
+  private static final int METHODID_FEE_REPORT = 42;
+  private static final int METHODID_UPDATE_CHANNEL_POLICY = 43;
+  private static final int METHODID_FORWARDING_HISTORY = 44;
+  private static final int METHODID_EXPORT_CHANNEL_BACKUP = 45;
+  private static final int METHODID_EXPORT_ALL_CHANNEL_BACKUPS = 46;
+  private static final int METHODID_VERIFY_CHAN_BACKUP = 47;
+  private static final int METHODID_RESTORE_CHANNEL_BACKUPS = 48;
+  private static final int METHODID_SUBSCRIBE_CHANNEL_BACKUPS = 49;
+  private static final int METHODID_BAKE_MACAROON = 50;
+  private static final int METHODID_CHANNEL_ACCEPTOR = 51;
+  private static final int METHODID_SEND_PAYMENT = 52;
+  private static final int METHODID_SEND_TO_ROUTE = 53;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -4854,6 +5223,10 @@ public final class LightningGrpc {
           serviceImpl.listPeers((lnrpc.Rpc.ListPeersRequest) request,
               (io.grpc.stub.StreamObserver<lnrpc.Rpc.ListPeersResponse>) responseObserver);
           break;
+        case METHODID_SUBSCRIBE_PEER_EVENTS:
+          serviceImpl.subscribePeerEvents((lnrpc.Rpc.PeerEventSubscription) request,
+              (io.grpc.stub.StreamObserver<lnrpc.Rpc.PeerEvent>) responseObserver);
+          break;
         case METHODID_GET_INFO:
           serviceImpl.getInfo((lnrpc.Rpc.GetInfoRequest) request,
               (io.grpc.stub.StreamObserver<lnrpc.Rpc.GetInfoResponse>) responseObserver);
@@ -4881,6 +5254,10 @@ public final class LightningGrpc {
         case METHODID_OPEN_CHANNEL:
           serviceImpl.openChannel((lnrpc.Rpc.OpenChannelRequest) request,
               (io.grpc.stub.StreamObserver<lnrpc.Rpc.OpenStatusUpdate>) responseObserver);
+          break;
+        case METHODID_FUNDING_STATE_STEP:
+          serviceImpl.fundingStateStep((lnrpc.Rpc.FundingTransitionMsg) request,
+              (io.grpc.stub.StreamObserver<lnrpc.Rpc.FundingStateStepResp>) responseObserver);
           break;
         case METHODID_CLOSE_CHANNEL:
           serviceImpl.closeChannel((lnrpc.Rpc.CloseChannelRequest) request,
@@ -4990,6 +5367,10 @@ public final class LightningGrpc {
           serviceImpl.subscribeChannelBackups((lnrpc.Rpc.ChannelBackupSubscription) request,
               (io.grpc.stub.StreamObserver<lnrpc.Rpc.ChanBackupSnapshot>) responseObserver);
           break;
+        case METHODID_BAKE_MACAROON:
+          serviceImpl.bakeMacaroon((lnrpc.Rpc.BakeMacaroonRequest) request,
+              (io.grpc.stub.StreamObserver<lnrpc.Rpc.BakeMacaroonResponse>) responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -5000,6 +5381,9 @@ public final class LightningGrpc {
     public io.grpc.stub.StreamObserver<Req> invoke(
         io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
+        case METHODID_CHANNEL_ACCEPTOR:
+          return (io.grpc.stub.StreamObserver<Req>) serviceImpl.channelAcceptor(
+              (io.grpc.stub.StreamObserver<lnrpc.Rpc.ChannelAcceptRequest>) responseObserver);
         case METHODID_SEND_PAYMENT:
           return (io.grpc.stub.StreamObserver<Req>) serviceImpl.sendPayment(
               (io.grpc.stub.StreamObserver<lnrpc.Rpc.SendResponse>) responseObserver);
@@ -5071,6 +5455,7 @@ public final class LightningGrpc {
               .addMethod(getConnectPeerMethod())
               .addMethod(getDisconnectPeerMethod())
               .addMethod(getListPeersMethod())
+              .addMethod(getSubscribePeerEventsMethod())
               .addMethod(getGetInfoMethod())
               .addMethod(getPendingChannelsMethod())
               .addMethod(getListChannelsMethod())
@@ -5078,6 +5463,8 @@ public final class LightningGrpc {
               .addMethod(getClosedChannelsMethod())
               .addMethod(getOpenChannelSyncMethod())
               .addMethod(getOpenChannelMethod())
+              .addMethod(getFundingStateStepMethod())
+              .addMethod(getChannelAcceptorMethod())
               .addMethod(getCloseChannelMethod())
               .addMethod(getAbandonChannelMethod())
               .addMethod(getSendPaymentMethod())
@@ -5107,6 +5494,7 @@ public final class LightningGrpc {
               .addMethod(getVerifyChanBackupMethod())
               .addMethod(getRestoreChannelBackupsMethod())
               .addMethod(getSubscribeChannelBackupsMethod())
+              .addMethod(getBakeMacaroonMethod())
               .build();
         }
       }

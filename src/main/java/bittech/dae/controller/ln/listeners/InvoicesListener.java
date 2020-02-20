@@ -115,6 +115,7 @@ public class InvoicesListener implements Listener {
 			cmd.response = new NoDataResponse();
 
 		} else if (command instanceof AddInvoiceCommand) {
+			System.out.println("Adding invoice");
 			AddInvoiceCommand cmd = (AddInvoiceCommand) command;
 			String label = cmd.getRequest().label;
 			if(StringUtils.isEmpty(label)) {
@@ -124,6 +125,7 @@ public class InvoicesListener implements Listener {
 			if(cmd.getError() == null) {
 				invoicesLabels.put(cmd.getResponse().add_index, label);
 			}
+			System.out.println("Invoice added");
 
 		} else {
 			executor.execute(command);

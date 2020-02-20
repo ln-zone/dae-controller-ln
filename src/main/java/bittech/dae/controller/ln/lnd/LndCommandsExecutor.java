@@ -525,7 +525,7 @@ public class LndCommandsExecutor {
 				Rpc.QueryRoutesRequest.Builder builder = Rpc.QueryRoutesRequest.newBuilder();
 				builder.setAmt(cmd.getRequest().amount.toSatRoundFloor());
 				builder.setFinalCltvDelta(cmd.getRequest().finalCltvDelta);
-				builder.setNumRoutes(1);
+			//	builder.setNumRoutes(1);
 				builder.setPubKey(cmd.getRequest().destId);
 
 				Rpc.QueryRoutesResponse response = blockingStub.queryRoutes(builder.build());
@@ -587,7 +587,7 @@ public class LndCommandsExecutor {
 				}
 
 //				builder.setRoute(rpcRouteBuilder.build());
-				builder.addRoutes(rpcRouteBuilder.build());
+				builder.setRoute(rpcRouteBuilder.build());
 
 				Rpc.SendToRouteRequest req = builder.build();
 				Log.build().param("req", req).event("Sending to route");
