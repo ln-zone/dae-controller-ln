@@ -251,7 +251,6 @@ public class LndCommandsExecutor {
 					utxo.amount = Btc.fromSat(rpcUtxo.getAmountSat());
 					utxo.confirmations = rpcUtxo.getConfirmations();
 					utxo.scriptPubkey = rpcUtxo.getPkScript();
-					utxo.type = rpcUtxo.getType().toString();
 					cmd.response.list.add(utxo);
 				}
 
@@ -315,7 +314,7 @@ public class LndCommandsExecutor {
 
 				if (cmd.getRequest().feeLimit.hasValue()) {
 					builder.setFeeLimit(
-							Rpc.FeeLimit.newBuilder().setFixed(cmd.getRequest().feeLimit.toSatRoundFloor()).build());
+							Rpc.FeeLimit.newBuilder().setFixed(cmd.getRequest().feeLimit.toSatRoundFloor()).setPercent(5L).build());
 				}
 
 				if (cmd.getRequest().amount.hasValue()) {

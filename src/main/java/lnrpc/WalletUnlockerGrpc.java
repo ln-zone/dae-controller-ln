@@ -209,7 +209,7 @@ public final class WalletUnlockerGrpc {
 
     /**
      * <pre>
-     ** 
+     **
      *InitWallet is used when lnd is starting up for the first time to fully
      *initialize the daemon and its internal wallet. At the very least a wallet
      *password must be provided. This will be used to encrypt sensitive material
@@ -327,7 +327,7 @@ public final class WalletUnlockerGrpc {
 
     /**
      * <pre>
-     ** 
+     **
      *InitWallet is used when lnd is starting up for the first time to fully
      *initialize the daemon and its internal wallet. At the very least a wallet
      *password must be provided. This will be used to encrypt sensitive material
@@ -414,7 +414,7 @@ public final class WalletUnlockerGrpc {
 
     /**
      * <pre>
-     ** 
+     **
      *InitWallet is used when lnd is starting up for the first time to fully
      *initialize the daemon and its internal wallet. At the very least a wallet
      *password must be provided. This will be used to encrypt sensitive material
@@ -499,7 +499,7 @@ public final class WalletUnlockerGrpc {
 
     /**
      * <pre>
-     ** 
+     **
      *InitWallet is used when lnd is starting up for the first time to fully
      *initialize the daemon and its internal wallet. At the very least a wallet
      *password must be provided. This will be used to encrypt sensitive material

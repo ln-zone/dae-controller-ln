@@ -1243,6 +1243,38 @@ public final class LightningGrpc {
      return getDescribeGraphMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<lnrpc.Rpc.NodeMetricsRequest,
+      lnrpc.Rpc.NodeMetricsResponse> getGetNodeMetricsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetNodeMetrics",
+      requestType = lnrpc.Rpc.NodeMetricsRequest.class,
+      responseType = lnrpc.Rpc.NodeMetricsResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<lnrpc.Rpc.NodeMetricsRequest,
+      lnrpc.Rpc.NodeMetricsResponse> getGetNodeMetricsMethod() {
+    io.grpc.MethodDescriptor<lnrpc.Rpc.NodeMetricsRequest, lnrpc.Rpc.NodeMetricsResponse> getGetNodeMetricsMethod;
+    if ((getGetNodeMetricsMethod = LightningGrpc.getGetNodeMetricsMethod) == null) {
+      synchronized (LightningGrpc.class) {
+        if ((getGetNodeMetricsMethod = LightningGrpc.getGetNodeMetricsMethod) == null) {
+          LightningGrpc.getGetNodeMetricsMethod = getGetNodeMetricsMethod = 
+              io.grpc.MethodDescriptor.<lnrpc.Rpc.NodeMetricsRequest, lnrpc.Rpc.NodeMetricsResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "lnrpc.Lightning", "GetNodeMetrics"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.NodeMetricsRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  lnrpc.Rpc.NodeMetricsResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new LightningMethodDescriptorSupplier("GetNodeMetrics"))
+                  .build();
+          }
+        }
+     }
+     return getGetNodeMetricsMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<lnrpc.Rpc.ChanInfoRequest,
       lnrpc.Rpc.ChannelEdge> getGetChanInfoMethod;
 
@@ -2303,6 +2335,18 @@ public final class LightningGrpc {
 
     /**
      * <pre>
+     ** lncli: `getnodemetrics`
+     *GetNodeMetrics returns node metrics calculated from the graph. Currently
+     *the only supported metric is betweenness centrality of individual nodes.
+     * </pre>
+     */
+    public void getNodeMetrics(lnrpc.Rpc.NodeMetricsRequest request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.NodeMetricsResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getGetNodeMetricsMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
      ** lncli: `getchaninfo`
      *GetChanInfo returns the latest authenticated network announcement for the
      *given channel identified by its channel ID: an 8-byte integer which
@@ -2795,6 +2839,13 @@ public final class LightningGrpc {
                 lnrpc.Rpc.ChannelGraphRequest,
                 lnrpc.Rpc.ChannelGraph>(
                   this, METHODID_DESCRIBE_GRAPH)))
+          .addMethod(
+            getGetNodeMetricsMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                lnrpc.Rpc.NodeMetricsRequest,
+                lnrpc.Rpc.NodeMetricsResponse>(
+                  this, METHODID_GET_NODE_METRICS)))
           .addMethod(
             getGetChanInfoMethod(),
             asyncUnaryCall(
@@ -3484,6 +3535,19 @@ public final class LightningGrpc {
         io.grpc.stub.StreamObserver<lnrpc.Rpc.ChannelGraph> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getDescribeGraphMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     ** lncli: `getnodemetrics`
+     *GetNodeMetrics returns node metrics calculated from the graph. Currently
+     *the only supported metric is betweenness centrality of individual nodes.
+     * </pre>
+     */
+    public void getNodeMetrics(lnrpc.Rpc.NodeMetricsRequest request,
+        io.grpc.stub.StreamObserver<lnrpc.Rpc.NodeMetricsResponse> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetNodeMetricsMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -4231,6 +4295,18 @@ public final class LightningGrpc {
 
     /**
      * <pre>
+     ** lncli: `getnodemetrics`
+     *GetNodeMetrics returns node metrics calculated from the graph. Currently
+     *the only supported metric is betweenness centrality of individual nodes.
+     * </pre>
+     */
+    public lnrpc.Rpc.NodeMetricsResponse getNodeMetrics(lnrpc.Rpc.NodeMetricsRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetNodeMetricsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
      ** lncli: `getchaninfo`
      *GetChanInfo returns the latest authenticated network announcement for the
      *given channel identified by its channel ID: an 8-byte integer which
@@ -4889,6 +4965,19 @@ public final class LightningGrpc {
 
     /**
      * <pre>
+     ** lncli: `getnodemetrics`
+     *GetNodeMetrics returns node metrics calculated from the graph. Currently
+     *the only supported metric is betweenness centrality of individual nodes.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<lnrpc.Rpc.NodeMetricsResponse> getNodeMetrics(
+        lnrpc.Rpc.NodeMetricsRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetNodeMetricsMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
      ** lncli: `getchaninfo`
      *GetChanInfo returns the latest authenticated network announcement for the
      *given channel identified by its channel ID: an 8-byte integer which
@@ -5130,25 +5219,26 @@ public final class LightningGrpc {
   private static final int METHODID_LIST_PAYMENTS = 32;
   private static final int METHODID_DELETE_ALL_PAYMENTS = 33;
   private static final int METHODID_DESCRIBE_GRAPH = 34;
-  private static final int METHODID_GET_CHAN_INFO = 35;
-  private static final int METHODID_GET_NODE_INFO = 36;
-  private static final int METHODID_QUERY_ROUTES = 37;
-  private static final int METHODID_GET_NETWORK_INFO = 38;
-  private static final int METHODID_STOP_DAEMON = 39;
-  private static final int METHODID_SUBSCRIBE_CHANNEL_GRAPH = 40;
-  private static final int METHODID_DEBUG_LEVEL = 41;
-  private static final int METHODID_FEE_REPORT = 42;
-  private static final int METHODID_UPDATE_CHANNEL_POLICY = 43;
-  private static final int METHODID_FORWARDING_HISTORY = 44;
-  private static final int METHODID_EXPORT_CHANNEL_BACKUP = 45;
-  private static final int METHODID_EXPORT_ALL_CHANNEL_BACKUPS = 46;
-  private static final int METHODID_VERIFY_CHAN_BACKUP = 47;
-  private static final int METHODID_RESTORE_CHANNEL_BACKUPS = 48;
-  private static final int METHODID_SUBSCRIBE_CHANNEL_BACKUPS = 49;
-  private static final int METHODID_BAKE_MACAROON = 50;
-  private static final int METHODID_CHANNEL_ACCEPTOR = 51;
-  private static final int METHODID_SEND_PAYMENT = 52;
-  private static final int METHODID_SEND_TO_ROUTE = 53;
+  private static final int METHODID_GET_NODE_METRICS = 35;
+  private static final int METHODID_GET_CHAN_INFO = 36;
+  private static final int METHODID_GET_NODE_INFO = 37;
+  private static final int METHODID_QUERY_ROUTES = 38;
+  private static final int METHODID_GET_NETWORK_INFO = 39;
+  private static final int METHODID_STOP_DAEMON = 40;
+  private static final int METHODID_SUBSCRIBE_CHANNEL_GRAPH = 41;
+  private static final int METHODID_DEBUG_LEVEL = 42;
+  private static final int METHODID_FEE_REPORT = 43;
+  private static final int METHODID_UPDATE_CHANNEL_POLICY = 44;
+  private static final int METHODID_FORWARDING_HISTORY = 45;
+  private static final int METHODID_EXPORT_CHANNEL_BACKUP = 46;
+  private static final int METHODID_EXPORT_ALL_CHANNEL_BACKUPS = 47;
+  private static final int METHODID_VERIFY_CHAN_BACKUP = 48;
+  private static final int METHODID_RESTORE_CHANNEL_BACKUPS = 49;
+  private static final int METHODID_SUBSCRIBE_CHANNEL_BACKUPS = 50;
+  private static final int METHODID_BAKE_MACAROON = 51;
+  private static final int METHODID_CHANNEL_ACCEPTOR = 52;
+  private static final int METHODID_SEND_PAYMENT = 53;
+  private static final int METHODID_SEND_TO_ROUTE = 54;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -5306,6 +5396,10 @@ public final class LightningGrpc {
         case METHODID_DESCRIBE_GRAPH:
           serviceImpl.describeGraph((lnrpc.Rpc.ChannelGraphRequest) request,
               (io.grpc.stub.StreamObserver<lnrpc.Rpc.ChannelGraph>) responseObserver);
+          break;
+        case METHODID_GET_NODE_METRICS:
+          serviceImpl.getNodeMetrics((lnrpc.Rpc.NodeMetricsRequest) request,
+              (io.grpc.stub.StreamObserver<lnrpc.Rpc.NodeMetricsResponse>) responseObserver);
           break;
         case METHODID_GET_CHAN_INFO:
           serviceImpl.getChanInfo((lnrpc.Rpc.ChanInfoRequest) request,
@@ -5479,6 +5573,7 @@ public final class LightningGrpc {
               .addMethod(getListPaymentsMethod())
               .addMethod(getDeleteAllPaymentsMethod())
               .addMethod(getDescribeGraphMethod())
+              .addMethod(getGetNodeMetricsMethod())
               .addMethod(getGetChanInfoMethod())
               .addMethod(getGetNodeInfoMethod())
               .addMethod(getQueryRoutesMethod())
